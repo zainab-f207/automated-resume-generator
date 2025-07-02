@@ -1,0 +1,411 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="VP_Project_Automated_Resume_Generator.SiteMaster" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %> - ResumeCraft Pro</title>
+    
+    <!-- Bootstrap Dark Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary: #00cec9;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --darkest: #0f1123;
+            --light: #e2e2e2;
+            --lighter: #f5f5f5;
+            --accent: #f8a5c2;
+        }
+        
+        body {
+            padding-top: 70px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--dark) !important;
+            color: var(--light);
+            font-family: 'Poppins', sans-serif;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.03"><path fill="%23a29bfe" d="M30,50 Q50,30 70,50 T90,50 Q70,70 50,50 T10,50 Q30,30 50,50 T90,50" /></svg>');
+            background-size: 200px;
+        }
+        
+        .main-content {
+            flex: 1;
+        }
+        
+        /* Navbar Styling */
+        .navbar {
+            background: rgba(22, 33, 62, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(108, 92, 231, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: white !important;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand i {
+            margin-right: 10px;
+            color: var(--primary-light);
+            font-size: 1.6rem;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.2rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover, .nav-link:focus {
+            color: white !important;
+            background: rgba(108, 92, 231, 0.2);
+        }
+        
+        .nav-link i {
+            margin-right: 6px;
+            font-size: 1.1rem;
+        }
+        
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-light);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover:after {
+            width: 70%;
+            left: 15%;
+        }
+        
+        .navbar-toggler {
+            border: none;
+            color: white !important;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.5);
+        }
+        
+        /* Dropdown Menu */
+        .dropdown-menu {
+            background: var(--darker);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .dropdown-item {
+            color: var(--light);
+            padding: 0.5rem 1.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .dropdown-item:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .dropdown-divider {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Footer Styling */
+        footer {
+            background: var(--darkest);
+            color: var(--light);
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(108, 92, 231, 0.2);
+        }
+        
+        footer h5 {
+            color: var(--primary-light);
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        footer h5:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px !important;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+        
+        footer ul li {
+            margin-bottom: 10px;
+        }
+        
+        footer a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+        
+        footer a:hover {
+            color: var(--primary-light);
+            transform: translateX(5px);
+        }
+        
+        footer a:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--primary-light);
+            transition: all 0.3s ease;
+        }
+        
+        footer a:hover:after {
+            width: 100%;
+        }
+        
+        footer hr {
+            border-color: rgba(255, 255, 255, 0.1);
+            margin: 30px 0;
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+        
+        /* Container adjustments */
+        .container.body-content {
+            padding: 30px 15px;
+            max-width: 1400px;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInDown {
+            from { 
+                opacity: 0; 
+                transform: translateY(-20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .navbar-collapse {
+                background: var(--darker);
+                padding: 20px;
+                border-radius: 10px;
+                margin-top: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            }
+            
+            .nav-link {
+                margin: 5px 0;
+                padding: 10px 15px !important;
+            }
+            
+            .dropdown-menu {
+                margin-left: 15px;
+                width: calc(100% - 30px);
+            }
+        }
+    </style>
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form runat="server">
+        <asp:ScriptManager runat="server">
+            <Scripts>
+                <%-- Framework Scripts --%>
+                <asp:ScriptReference Name="jquery" />
+                <asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
+                <asp:ScriptReference Name="WebUIValidation.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebUIValidation.js" />
+                <%--Site Scripts--%>
+            </Scripts>
+        </asp:ScriptManager>
+
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="Default.aspx">
+                    <i class="bi bi-file-earmark-person-fill"></i> ResumeCraft Pro
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item" id="homeNavItem" runat="server">
+                            <a class="nav-link" href="Default.aspx"><i class="bi bi-house-door"></i> Home</a>
+                        </li>
+                        <asp:PlaceHolder ID="LoggedInMenu" runat="server" Visible="false">
+                            <li class="nav-item">
+                                <a class="nav-link" href="UserProfile.aspx"><i class="bi bi-person-circle"></i> Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="ResumeBuilder.aspx"><i class="bi bi-file-earmark-text"></i> Resume Builder</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="TemplateList.aspx"><i class="bi bi-collection"></i> Templates</a>
+                            </li>
+                        </asp:PlaceHolder>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <asp:PlaceHolder ID="AnonymousMenu" runat="server">
+                            <li class="nav-item">
+                                <a class="nav-link" href="RegisterSelector.aspx"><i class="bi bi-person-plus"></i> Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="LoginSelector.aspx"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                            </li>
+                        </asp:PlaceHolder>
+                        <asp:PlaceHolder ID="AdminMenu" runat="server" Visible="false">
+    <li class="nav-item">
+        <a class="nav-link" href="AdminDashboard.aspx"><i class="bi bi-shield-lock"></i> Admin Dashboard</a>
+    </li>
+</asp:PlaceHolder>
+
+                        <asp:PlaceHolder ID="LoggedInUserMenu" runat="server" Visible="false">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-badge"></i> <asp:Label ID="lblUsername" runat="server"></asp:Label>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="UserProfile.aspx"><i class="bi bi-person"></i> Profile</a></li>
+                                    <li><a class="dropdown-item" href="ChangePassword.aspx"><i class="bi bi-key"></i> Change Password</a></li>
+                                    <li>
+    <asp:LinkButton ID="btnDeleteAccount" runat="server" CssClass="dropdown-item text-danger" OnClick="btnDeleteAccount_Click" OnClientClick="return confirm('Are you sure you want to delete your account permanently?');">
+        <i class="bi bi-x-circle-fill"></i> Delete Account
+    </asp:LinkButton>
+</li>
+
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <asp:LinkButton ID="btnLogout" runat="server" CssClass="dropdown-item" OnClick="btnLogout_Click">
+                                            <i class="bi bi-box-arrow-left"></i> Logout
+                                        </asp:LinkButton>
+                                    </li>
+                                </ul>
+                            </li>
+                        </asp:PlaceHolder>
+                        <asp:PlaceHolder ID="LoggedInAdminMenu" runat="server" Visible="false">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="adminnavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-badge"></i> <asp:Label ID="lbladmin" runat="server"></asp:Label>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <li>
+                <asp:LinkButton ID="adminlogout" runat="server" CssClass="dropdown-item" OnClick="btnLogout_Click">
+                    <i class="bi bi-box-arrow-left"></i> Logout
+                </asp:LinkButton>
+            </li>
+        </ul>
+    </li>
+</asp:PlaceHolder>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container body-content main-content">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <h5><i class="bi bi-file-earmark-person-fill me-2"></i>ResumeCraft Pro</h5>
+                        <p class="mt-3">Create professional resumes that stand out from the crowd with our easy-to-use resume builder.</p>
+                        <div class="social-icons mt-3">
+                            <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="text-light me-3"><i class="bi bi-twitter"></i></a>
+                            <a href="#" class="text-light me-3"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 mb-4">
+                        <h5>Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="About.aspx"><i class="bi bi-info-circle me-2"></i>About Us</a></li>
+                            <li><a href="Contact.aspx"><i class="bi bi-envelope me-2"></i>Contact</a></li>
+                            <li><a href="PrivacyPolicy.aspx"><i class="bi bi-shield-lock me-2"></i>Privacy Policy</a></li>
+                            <li><a href="TermsOfServices.aspx"><i class="bi bi-file-text me-2"></i>Terms of Service</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-4 mb-4">
+                        <h5>Resources</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="Instructions.aspx"><i class="bi bi-question-circle me-2"></i>Instructions</a></li>
+                            <li><a href="Tutorial.aspx"><i class="bi bi-collection-play me-2"></i>Tutorials</a></li>
+                            <li><a href="Blog.aspx"><i class="bi bi-newspaper me-2"></i>Blog</a></li>
+                            <li><a href="FAQs.aspx"><i class="bi bi-patch-question me-2"></i>FAQs</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-4 col-md-4 mb-4">
+                        <h5>Newsletter</h5>
+                        <p>Subscribe to get updates on new features and templates.</p>
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control bg-dark border-secondary text-light" placeholder="Your email" aria-label="Your email">
+                            <button class="btn btn-primary" type="button">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="text-center copyright">
+                    <p class="mb-0">&copy; <%: DateTime.Now.Year %> ResumeCraft Pro. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Bootstrap Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+        
+        <!-- Custom Scripts -->
+        <asp:ContentPlaceHolder ID="FooterScripts" runat="server">
+        </asp:ContentPlaceHolder>
+    </form>
+</body>
+</html>

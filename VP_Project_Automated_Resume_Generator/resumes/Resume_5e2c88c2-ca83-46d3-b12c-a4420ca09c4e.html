@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shaheer Abass - Professional Resume</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            background-color: #f0e8db;
+            color: #44312b;
+            line-height: 1.6;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .resume-container {
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            page-break-after: avoid;
+            page-break-inside: avoid;
+        }
+
+        .content-columns {
+            display: flex;
+            position: relative;
+            height: calc(100% - 120px);
+        }
+
+            .content-columns::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 35%;
+                width: 1px;
+                height: 100%;
+                background-color: #44312b;
+            }
+
+        .left-column {
+            width: 35%;
+            padding: 20px;
+            position: relative;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+
+        .right-column {
+            width: 65%;
+            padding: 20px;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        /* Centered Profile Section */
+        .profile-section {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            border: 6px solid #44312b;
+            margin-bottom: 10px;
+        }
+
+        .profile-text h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 28px;
+            color: #44312b;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            page-break-after: avoid;
+        }
+
+            .profile-text h1 span {
+                display: inline-block;
+                margin: 0 5px;
+            }
+
+        .job-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            color: #44312b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Contact Icons Strip */
+        .contact-strip {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+            .contact-strip::before {
+                content: '';
+                position: absolute;
+                left: -20px;
+                top: 0;
+                width: 10px;
+                height: 100%;
+                background-color: #44312b;
+                border-radius: 0 0 10px 0;
+            }
+
+        .contact-info {
+            padding-left: 15px;
+        }
+
+            .contact-info div {
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                font-size: 12px;
+                page-break-inside: avoid;
+            }
+
+            .contact-info span {
+                width: 25px;
+                height: 25px;
+                background-color: #44312b;
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 8px;
+                font-size: 12px;
+                flex-shrink: 0;
+            }
+
+        /* Section Headings */
+        h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #44312b;
+            margin-bottom: 10px;
+            position: relative;
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            page-break-after: avoid;
+        }
+
+            h3::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 40px;
+                height: 2px;
+                background-color: #44312b;
+            }
+
+        /* Content Styles */
+        .about-section p {
+            margin-bottom: 15px;
+            font-size: 13px;
+            line-height: 1.5;
+            text-align: justify;
+        }
+
+        .skills-list {
+            list-style-type: none;
+            page-break-inside: avoid;
+        }
+
+            .skills-list li {
+                margin-bottom: 8px;
+                position: relative;
+                padding-left: 15px;
+                font-size: 12px;
+            }
+
+                .skills-list li::before {
+                    content: '•';
+                    position: absolute;
+                    left: 0;
+                    color: #44312b;
+                    font-weight: bold;
+                }
+
+        .education-item {
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+
+        .institution {
+            font-weight: 600;
+            margin-bottom: 3px;
+            font-size: 13px;
+        }
+
+        .degree {
+            font-size: 12px;
+            color: #555;
+        }
+
+        .job {
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+
+        .position {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .company {
+            font-style: italic;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .job-description {
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: justify;
+        }
+
+        .reference {
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .content-columns {
+                flex-direction: column;
+            }
+
+                .content-columns::after {
+                    display: none;
+                }
+
+            .left-column, .right-column {
+                width: 100%;
+            }
+
+            .contact-strip::before {
+                left: -15px;
+            }
+        }
+
+        @media print {
+            body {
+                width: 210mm;
+                height: 297mm;
+                background-color: white;
+                margin: 0;
+                padding: 0;
+            }
+
+            .resume-container {
+                box-shadow: none;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .left-column, .right-column {
+                padding: 15px;
+            }
+
+            .profile-section {
+                padding: 15px;
+                margin-bottom: 5px;
+            }
+
+            .profile-text h1 {
+                font-size: 24px;
+            }
+
+            .job-title {
+                font-size: 14px;
+            }
+
+            .contact-strip::before {
+                left: -15px;
+                width: 8px;
+            }
+
+            .contact-info div {
+                margin-bottom: 8px;
+                font-size: 11px;
+            }
+
+            h3 {
+                font-size: 14px;
+            }
+
+            .about-section p, .job-description, .reference {
+                font-size: 11px;
+            }
+
+            .skills-list li, .degree, .company {
+                font-size: 11px;
+            }
+
+            .position {
+                font-size: 12px;
+            }
+
+            .institution {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <!-- Centered Profile Section -->
+        <div class="profile-section">
+            <div class="profile-text">
+                <h1>
+                    <span class="first-name">Shaheer</span>
+                    <span class="last-name">Abass</span>
+                </h1>
+                <div class="job-title">Software Engineer</div>
+            </div>
+        </div>
+
+        <!-- Content Columns -->
+        <div class="content-columns">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Contact Section with Icon Strip -->
+                <div class="contact-strip">
+                    <div class="contact-info">
+                        <div><span>✉</span>shaheerabass123@gmail.com</div>
+                        <div><span>📞</span>03162322563</div>
+                        <div><span>🌐</span>www.shaheer.com</div>
+                        <div><span>📍</span>Lahore</div>
+                    </div>
+                </div>
+
+                <!-- Education -->
+                <div class="education-section">
+                    <h3>Education</h3>
+                    <div class="education-item">
+                        Institute: ssssssssssss<br/>Degree: sssssssssssssss<br/>Year: dddddddddd<br/>
+                    </div>
+                </div>
+
+                <!-- Skills -->
+                <div class="skills-section">
+                    <h3>Skills</h3>
+                    <ul class="skills-list">
+                        ssssssssssssssssss<br/>ssssssssssss
+dddddddddddddd
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- About Me -->
+                <div class="about-section">
+                    <h3>About Me</h3>
+                    <p>ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p>
+                </div>
+
+                <!-- Work Experience -->
+                <section class="experience-section">
+                    <h3>Experience</h3>
+                    <div class="job">
+                        Job Title: sssssssssss<br/>Company: ddddddd<br/>Duration: dddddddddddd<br/>Description: ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss<br/>
+                    </div>
+                </section>
+
+                <!-- References -->
+                <section class="references-section">
+                    <h3>References</h3>
+                    <div class="reference">
+                        Name: ddddddddd<br/>Relation: dddddddddddd<br/>Contact: dddddd<br/>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

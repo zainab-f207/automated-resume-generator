@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Khadija Fayyaz - Professional Resume</title>
+    <style>
+        /* Print-optimized base styles */
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            padding: 0;
+            background-color: #f0e8db;
+            color: #44312b;
+            line-height: 1.4;
+        }
+
+        /* Main container with fixed dimensions */
+        .resume-container {
+            width: 190mm;
+            min-height: 277mm;
+            margin: 10mm auto;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Profile section */
+        .profile-section {
+            width: 100%;
+            text-align: center;
+            padding: 10mm;
+            border: 1.5mm solid #44312b;
+            margin-bottom: 5mm;
+        }
+
+        .profile-text h1 {
+            font-size: 14pt;
+            font-weight: 600;
+            color: #44312b;
+            margin-bottom: 2mm;
+            text-transform: uppercase;
+        }
+
+            .profile-text h1 span {
+                display: inline-block;
+                margin: 0 1mm;
+            }
+
+        .job-title {
+            font-size: 9pt;
+            color: #44312b;
+            text-transform: uppercase;
+            letter-spacing: 1pt;
+        }
+
+        /* Two-column layout using tables (most reliable for PDF) */
+        .content-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .content-table td {
+                vertical-align: top;
+                padding: 5mm;
+            }
+
+        .left-column {
+            width: 35%;
+            border-right: 0.5mm solid #44312b;
+        }
+
+        .right-column {
+            width: 65%;
+        }
+
+        /* Contact section */
+        .contact-strip {
+            position: relative;
+            margin-bottom: 8mm;
+        }
+
+            .contact-strip::before {
+                content: '';
+                position: absolute;
+                left: -5mm;
+                top: 0;
+                width: 3mm;
+                height: 100%;
+                background-color: #44312b;
+                border-radius: 0 0 3mm 0;
+            }
+
+        .contact-info {
+            padding-left: 5mm;
+        }
+
+            .contact-info div {
+                margin-bottom: 3mm;
+                display: flex;
+                align-items: center;
+                font-size: 9pt;
+            }
+
+            .contact-info span {
+                width: 6mm;
+                height: 6mm;
+                background-color: #44312b;
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 3mm;
+                font-size: 9pt;
+                flex-shrink: 0;
+            }
+
+        /* Section headings */
+        h3 {
+            font-size: 10pt;
+            font-weight: 600;
+            color: #44312b;
+            margin-bottom: 4mm;
+            position: relative;
+            padding-bottom: 1mm;
+            text-transform: uppercase;
+        }
+
+            h3::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 15mm;
+                height: 0.5mm;
+                background-color: #44312b;
+            }
+
+        /* Content styles */
+        .about-section p {
+            margin-bottom: 6mm;
+            font-size: 9pt;
+            line-height: 1.5;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .skills-list {
+            list-style-type: none;
+        }
+
+            .skills-list li {
+                margin-bottom: 2mm;
+                position: relative;
+                padding-left: 5mm;
+                font-size: 9pt;
+            }
+
+                .skills-list li::before {
+                    content: '•';
+                    position: absolute;
+                    left: 0;
+                    color: #44312b;
+                    font-weight: bold;
+                }
+
+        .education-item {
+            margin-bottom: 5mm;
+        }
+
+        .institution {
+            font-weight: 600;
+            margin-bottom: 1mm;
+            font-size: 9pt;
+        }
+
+        .degree {
+            font-size: 8pt;
+            color: #555;
+        }
+
+        .job {
+            margin-bottom: 6mm;
+        }
+
+        .position {
+            font-weight: 600;
+            font-size: 9pt;
+            margin-bottom: 1mm;
+        }
+
+        .company {
+            font-style: italic;
+            font-size: 8pt;
+            margin-bottom: 2mm;
+            color: #555;
+        }
+
+        .job-description {
+            font-size: 9pt;
+            line-height: 1.5;
+            text-align: justify;
+        }
+
+        .reference {
+            font-size: 9pt;
+            line-height: 1.5;
+        }
+
+        /* Print-specific adjustments */
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+                width: 210mm;
+                height: 297mm;
+            }
+
+            .resume-container {
+                margin: 0 auto;
+                width: 190mm;
+                min-height: 277mm;
+                box-shadow: none;
+                page-break-after: avoid;
+            }
+
+            .content-table {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 5mm;
+                width: 100%;
+            }
+
+            .resume-container {
+                width: 100%;
+                margin: 0;
+            }
+
+            .content-table,
+            .content-table tbody,
+            .content-table tr,
+            .content-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .left-column {
+                border-right: none;
+                border-bottom: 0.5mm solid #44312b;
+            }
+        }
+    </style>
+<style>/* Print-optimized base styles */
+@page {
+    size: A4;
+    margin: 0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 0;
+    background-color: #f0e8db;
+    color: #44312b;
+    line-height: 1.4;
+}
+
+/* Main container with fixed dimensions */
+.resume-container {
+    width: 190mm;
+    min-height: 277mm;
+    margin: 10mm auto;
+    background-color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Profile section */
+.profile-section {
+    width: 100%;
+    text-align: center;
+    padding: 10mm;
+    border: 1.5mm solid #44312b;
+    margin-bottom: 5mm;
+}
+
+.profile-text h1 {
+    font-size: 14pt;
+    font-weight: 600;
+    color: #44312b;
+    margin-bottom: 2mm;
+    text-transform: uppercase;
+}
+
+    .profile-text h1 span {
+        display: inline-block;
+        margin: 0 1mm;
+    }
+
+.job-title {
+    font-size: 9pt;
+    color: #44312b;
+    text-transform: uppercase;
+    letter-spacing: 1pt;
+}
+
+/* Two-column layout using tables (most reliable for PDF) */
+.content-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .content-table td {
+        vertical-align: top;
+        padding: 5mm;
+    }
+
+.left-column {
+    width: 35%;
+    border-right: 0.5mm solid #44312b;
+}
+
+.right-column {
+    width: 65%;
+}
+
+/* Contact section */
+.contact-strip {
+    position: relative;
+    margin-bottom: 8mm;
+}
+
+    .contact-strip::before {
+        content: '';
+        position: absolute;
+        left: -5mm;
+        top: 0;
+        width: 3mm;
+        height: 100%;
+        background-color: #44312b;
+        border-radius: 0 0 3mm 0;
+    }
+
+.contact-info {
+    padding-left: 5mm;
+}
+
+    .contact-info div {
+        margin-bottom: 3mm;
+        display: flex;
+        align-items: center;
+        font-size: 9pt;
+    }
+
+    .contact-info span {
+        width: 6mm;
+        height: 6mm;
+        background-color: #44312b;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 3mm;
+        font-size: 9pt;
+        flex-shrink: 0;
+    }
+
+/* Section headings */
+h3 {
+    font-size: 10pt;
+    font-weight: 600;
+    color: #44312b;
+    margin-bottom: 4mm;
+    position: relative;
+    padding-bottom: 1mm;
+    text-transform: uppercase;
+}
+
+    h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 15mm;
+        height: 0.5mm;
+        background-color: #44312b;
+    }
+
+/* Content styles */
+.about-section p {
+    margin-bottom: 6mm;
+    font-size: 9pt;
+    line-height: 1.5;
+    text-align: justify;
+    hyphens: auto;
+}
+
+.skills-list {
+    list-style-type: none;
+}
+
+    .skills-list li {
+        margin-bottom: 2mm;
+        position: relative;
+        padding-left: 5mm;
+        font-size: 9pt;
+    }
+
+        .skills-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #44312b;
+            font-weight: bold;
+        }
+
+.education-item {
+    margin-bottom: 5mm;
+}
+
+.institution {
+    font-weight: 600;
+    margin-bottom: 1mm;
+    font-size: 9pt;
+}
+
+.degree {
+    font-size: 8pt;
+    color: #555;
+}
+
+.job {
+    margin-bottom: 6mm;
+}
+
+.position {
+    font-weight: 600;
+    font-size: 9pt;
+    margin-bottom: 1mm;
+}
+
+.company {
+    font-style: italic;
+    font-size: 8pt;
+    margin-bottom: 2mm;
+    color: #555;
+}
+
+.job-description {
+    font-size: 9pt;
+    line-height: 1.5;
+    text-align: justify;
+}
+
+.reference {
+    font-size: 9pt;
+    line-height: 1.5;
+}
+
+/* Print-specific adjustments */
+@media print {
+    body {
+        background-color: white;
+        padding: 0;
+        width: 210mm;
+        height: 297mm;
+    }
+
+    .resume-container {
+        margin: 0 auto;
+        width: 190mm;
+        min-height: 277mm;
+        box-shadow: none;
+        page-break-after: avoid;
+    }
+
+    .content-table {
+        page-break-inside: avoid;
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    body {
+        padding: 5mm;
+        width: 100%;
+    }
+
+    .resume-container {
+        width: 100%;
+        margin: 0;
+    }
+
+    .content-table,
+    .content-table tbody,
+    .content-table tr,
+    .content-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .left-column {
+        border-right: none;
+        border-bottom: 0.5mm solid #44312b;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="resume-container">
+        <!-- Centered Profile Section -->
+        <div class="profile-section">
+            <div class="profile-text">
+                <h1>
+                    <span class="first-name">Khadija</span>
+                    <span class="last-name">Fayyaz</span>
+                </h1>
+                <div class="job-title">Graphic Designer</div>
+            </div>
+        </div>
+
+        <!-- Content Columns using TABLE for most reliable PDF rendering -->
+        <table class="content-table">
+            <tr>
+                <td class="left-column">
+                    <!-- Contact Section with Icon Strip -->
+                    <div class="contact-strip">
+                        <div class="contact-info">
+                            <div><span>✉</span>khadijafayyaz@gmail.com</div>
+                            <div><span>📞</span>03162341563</div>
+                            <div><span>🌐</span>www.khadijafayyaz.com</div>
+                            <div><span>📍</span>Gujrat</div>
+                        </div>
+                    </div>
+
+                    <!-- Education -->
+                    <div class="education-section">
+                        <h3>Education</h3>
+                        <div class="education-item">
+                            Institute: ggggg<br/>Degree: gggggggg<br/>Year: 2012-2018<br/>
+                        </div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="skills-section">
+                        <h3>Skills</h3>
+                        <ul class="skills-list">
+                            gggggggg<br/>ggggggggggg
+                        </ul>
+                    </div>
+                </td>
+
+                <td class="right-column">
+                    <!-- About Me -->
+                    <div class="about-section">
+                        <h3>About Me</h3>
+                        <p>ggggggggggggggggggggggggggggggggg</p>
+                    </div>
+
+                    <!-- Work Experience -->
+                    <section class="experience-section">
+                        <h3>Experience</h3>
+                        <div class="job">
+                            Job Title: bbbbbbbb<br/>Company: bbbbbbbbbbbb<br/>Duration: 2019-2020<br/>Description: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb<br/>
+                        </div>
+                    </section>
+
+                    <!-- References -->
+                    <section class="references-section">
+                        <h3>References</h3>
+                        <div class="reference">
+                            Name: bbbbbbbbbbbb<br/>Relation: bbbbbbbbbb<br/>Contact: 03217632301<br/>
+                        </div>
+                    </section>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

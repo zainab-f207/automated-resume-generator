@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zaid Waseem - Professional Resume</title>
+    <style>
+        /* Base Styles */
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            padding: 10mm;
+            background-color: #f5f5f5;
+            color: #313131;
+            line-height: 1.4;
+        }
+
+        .resume-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            background-color: white;
+            box-shadow: 0 2mm 4mm rgba(0,0,0,0.1);
+        }
+
+        /* Columns */
+        .left-column {
+            width: 75%;
+            padding: 10mm;
+            overflow: hidden;
+        }
+
+        .right-column {
+            width: 25%;
+            padding: 10mm;
+            background-color: #f8f9fa;
+            overflow: hidden;
+        }
+
+        /* Profile Section */
+        .profile-text h1 {
+            font-size: 14pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #3f63ad;
+            margin-bottom: 4mm;
+            letter-spacing: 0.5px;
+        }
+
+        .job-title {
+            font-size: 10pt;
+            color: #666;
+            margin-bottom: 8mm;
+            font-weight: 500;
+        }
+
+        /* Section Headings */
+        h3 {
+            font-size: 10pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #3f63ad;
+            margin-bottom: 4mm;
+            letter-spacing: 0.5px;
+            page-break-after: avoid;
+        }
+
+        /* Content Sections */
+        .about-section p {
+            color: #1e1e1e;
+            margin-bottom: 8mm;
+            font-size: 10pt;
+            line-height: 1.5;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        /* Contact Info */
+        .contact-info div {
+            margin-bottom: 4mm;
+            font-size: 9pt;
+            display: flex;
+            align-items: center;
+            word-break: break-all;
+        }
+
+        .contact-info span {
+            width: 5mm;
+            margin-right: 3mm;
+            color: #3f63ad;
+            font-size: 9pt;
+        }
+
+        /* Dividers */
+        .divider {
+            border: none;
+            height: 0.5pt;
+            background-color: #e0e0e0;
+            margin: 6mm 0;
+        }
+
+        /* Lists */
+        .skills-list {
+            list-style-type: none;
+            page-break-inside: avoid;
+        }
+
+            .skills-list li {
+                margin-bottom: 3mm;
+                position: relative;
+                padding-left: 5mm;
+                font-size: 9pt;
+            }
+
+                .skills-list li:before {
+                    content: "•";
+                    position: absolute;
+                    left: 0;
+                    color: #3f63ad;
+                    font-weight: bold;
+                }
+
+        /* Education & Experience Items */
+        .education-item, .job {
+            margin-bottom: 6mm;
+            page-break-inside: avoid;
+        }
+
+        .company, .institution {
+            font-weight: 600;
+            margin-bottom: 1mm;
+            font-size: 9pt;
+        }
+
+        .position, .degree {
+            font-style: italic;
+            margin-bottom: 2mm;
+            font-size: 9pt;
+        }
+
+        /* Job Duties */
+        .job-duties {
+            list-style-type: none;
+            padding-left: 5mm;
+            margin-top: 2mm;
+        }
+
+            .job-duties li {
+                margin-bottom: 2mm;
+                position: relative;
+                padding-left: 5mm;
+                font-size: 9pt;
+            }
+
+                .job-duties li:before {
+                    content: "•";
+                    position: absolute;
+                    left: 0;
+                    color: #3f63ad;
+                    font-weight: bold;
+                }
+
+        /* References */
+        .reference {
+            font-size: 9pt;
+        }
+
+        /* Print Specific Adjustments */
+        @media print {
+            body {
+                padding: 0;
+                background-color: white;
+            }
+
+            .resume-container {
+                box-shadow: none;
+                border: 0.5pt solid #ccc;
+            }
+
+            .left-column, .right-column {
+                padding: 8mm;
+            }
+
+            h1, h3 {
+                color: #000 !important;
+            }
+
+            .divider {
+                background-color: #000 !important;
+            }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 5mm;
+            }
+
+            .resume-container {
+                flex-direction: column;
+            }
+
+            .left-column, .right-column {
+                width: 100%;
+                padding: 8mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <!-- Left Column (Main Content) -->
+        <div class="left-column">
+            <!-- Name and Title -->
+            <div class="profile-text">
+                <h1><span class="first-name">Zaid</span> <span class="last-name">Waseem</span></h1>
+                <div class="job-title">Graphic Designer</div>
+            </div>
+
+            <!-- About Me -->
+            <div class="about-section">
+                <p>zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</p>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Work Experience -->
+            <section class="experience-section">
+                <h3>Work Experience</h3>
+                <div class="job">
+                    Job Title: zzzzzzzzzzzzzzzzz<br/>Company: zzzzzzzzzzz<br/>Duration: zzzzzzzzzzzzzzzzz<br/>Description: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz<br/>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+            <!-- Education -->
+            <div class="education-section">
+                <h3>Education</h3>
+                <div class="education-item">
+                    Institute: zzzzzzzzzzzzzzzz<br/>Degree: zzzzzzzz<br/>Year: zzzzzzzzzzzz<br/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column (Sidebar) -->
+        <div class="right-column">
+            <!-- Contact Info -->
+            <div class="contact-section">
+                <h3>Contact</h3>
+                <div class="contact-info">
+                    <div><span>✉</span>zaidwaseem321@gmail.com</div>
+                    <div><span>📞</span>03162341563</div>
+                    <div><span>🌐</span>www.zaidwaseem.com</div>
+                    <div><span>📍</span>Lahore</div>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Skills -->
+            <div class="skills-section">
+                <h3>Skills</h3>
+                <ul class="skills-list">
+                    zzzzzzzzzzzzzzzzzzzz<br/>zzzzzzzzzzzzzzzzzzzzzzzz
+                </ul>
+            </div>
+
+            <hr class="divider">
+
+            <!-- References -->
+            <section class="references-section">
+                <h3>References</h3>
+                <div class="reference">
+                    Name: zzzzzzzzzzz<br/>Relation: zzzzzzzzzzzzzzzz<br/>Contact: zzzzzzzz<br/>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

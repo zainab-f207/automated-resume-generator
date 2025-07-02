@@ -1,0 +1,674 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zainab Fayyaz - Resume</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!--<link rel="stylesheet" href="/Templates/Template1/styles.css">-->
+    <style>
+
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #444;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        td {
+            vertical-align: top;
+            padding: 10px;
+        }
+
+        .resume-wrapper {
+            display: flex;
+            max-width: 595px;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left-column, .right-column {
+            display: table-cell;
+            vertical-align: top;
+            padding: 10px;
+        }
+
+        /* Blue triangle decoration */
+        .resume-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 200px 200px 0 0;
+            border-color: #2a5f9e transparent transparent transparent;
+            z-index: 1;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            margin-top: 50px;
+        }
+        /* Left Column Styles */
+        .left-column {
+            width: 55%;
+            padding: 10px;
+            background-color: #f8f9fa;
+            position: relative;
+            z-index: 2;
+            padding-top: 50px;
+        }
+
+        .profile-image-container {
+            width: 140px;
+            height: 140px;
+            min-width: 140px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #d3c3c3;
+            margin-left: 100px;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px; /* Centers horizontally and adds space below */
+            position: relative;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            margin-top: 0;
+            padding-left: 0;
+        }
+
+        .profile-section {
+            margin-top: 20px;
+            padding-top: 30px;
+            padding-left: 30px;
+            text-align: center; /* Center all content in this section */
+            padding-left: 0;
+        }
+
+        .profile-text {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+            .profile-text h1 {
+                font-size: 28px;
+                font-weight: bold;
+                text-transform: uppercase;
+                color: #2a5f9e;
+                margin-bottom: 5px;
+                position: relative;
+            }
+
+        .job-title {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        h2 {
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #2a5f9e;
+            border-bottom: 2px solid #2a5f9e;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+            h2 i {
+                margin-right: 10px;
+                color: #2a5f9e;
+            }
+
+        .contact-info div {
+            margin-bottom: 12px;
+            color: #555;
+        }
+
+        .contact-info i {
+            width: 20px;
+            margin-right: 10px;
+            color: #2a5f9e;
+            text-align: center;
+        }
+
+        .education-item {
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .institution {
+            font-weight: bold;
+            margin-bottom: 3px;
+            color: #333;
+        }
+
+        .degree, .details {
+            margin-bottom: 3px;
+        }
+
+        .skills-list {
+            list-style-type: none;
+        }
+
+            .skills-list li {
+                margin-bottom: 10px;
+                position: relative;
+                padding-left: 25px;
+                color: #555;
+            }
+
+                .skills-list li::before {
+                    content: '✓';
+                    font-family: 'Font Awesome 6 Free';
+                    font-weight: 900;
+                    position: absolute;
+                    left: 0;
+                    color: #2a5f9e;
+                }
+
+        /* Right Column Styles */
+        .right-column {
+            width: 65%;
+            padding: 30px;
+        }
+
+        .about-text {
+            margin-bottom: 30px;
+            color: #555;
+        }
+
+        .job {
+            margin-bottom: 25px;
+            color: #555;
+        }
+
+        .company {
+            font-weight: bold;
+            margin-bottom: 3px;
+            color: #333;
+        }
+
+        .position {
+            margin-bottom: 8px;
+        }
+
+        .date {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+
+        .job-duties {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+            .job-duties li {
+                margin-bottom: 8px;
+                position: relative;
+                padding-left: 20px;
+            }
+
+                .job-duties li::before {
+                    content: '›';
+                    font-family: 'Font Awesome 6 Free';
+                    font-weight: 900;
+                    font-size: 10px;
+                    position: absolute;
+                    left: 0;
+                    top: 5px;
+                    color: #2a5f9e;
+                }
+
+        .reference {
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .ref-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+            color: #333;
+        }
+
+        .ref-contact {
+            margin-bottom: 3px;
+        }
+
+        i {
+            margin-right: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .resume-wrapper {
+                flex-direction: column;
+            }
+
+                .resume-wrapper::before {
+                    border-width: 100px 100px 0 0;
+                }
+
+            .left-column, .right-column {
+                width: 100%;
+            }
+
+            .profile-image-container {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+    </style>
+
+<style>
+@page {
+    size: A4;
+    margin: 20mm;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #444;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+td {
+    vertical-align: top;
+    padding: 10px;
+}
+
+.resume-wrapper {
+    display: flex;
+    max-width: 595px;
+    margin: 0 auto;
+    background-color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.left-column, .right-column {
+    display: table-cell;
+    vertical-align: top;
+    padding: 10px;
+}
+
+/* Blue triangle decoration */
+.resume-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 200px 200px 0 0;
+    border-color: #2a5f9e transparent transparent transparent;
+    z-index: 1;
+}
+
+.section {
+    margin-bottom: 20px;
+    margin-top: 50px;
+}
+/* Left Column Styles */
+.left-column {
+    width: 55%;
+    padding: 10px;
+    background-color: #f8f9fa;
+    position: relative;
+    z-index: 2;
+    padding-top:50px;
+   
+}
+
+.profile-image-container {
+    width: 140px;
+    height: 140px;
+    min-width: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #d3c3c3;
+    margin-left: 100px;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px; /* Centers horizontally and adds space below */
+    position: relative;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    
+    margin-top: 0;
+    padding-left: 0;
+}
+.profile-section {
+    margin-top: 20px;
+    padding-top: 30px;
+    padding-left: 30px;
+    text-align: center; /* Center all content in this section */
+    padding-left: 0;
+    
+}
+
+.profile-text {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+    .profile-text h1 {
+        font-size: 28px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #2a5f9e;
+        margin-bottom: 5px;
+        position: relative;
+    }
+
+.job-title {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.section {
+    margin-bottom: 30px;
+    position: relative;
+    padding-left: 30px;
+}
+
+h2 {
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #2a5f9e;
+    border-bottom: 2px solid #2a5f9e;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+    h2 i {
+        margin-right: 10px;
+        color: #2a5f9e;
+    }
+
+.contact-info div {
+    margin-bottom: 12px;
+    color: #555;
+}
+
+.contact-info i {
+    width: 20px;
+    margin-right: 10px;
+    color: #2a5f9e;
+    text-align: center;
+}
+
+.education-item {
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.institution {
+    font-weight: bold;
+    margin-bottom: 3px;
+    color: #333;
+}
+
+.degree, .details {
+    margin-bottom: 3px;
+}
+
+.skills-list {
+    list-style-type: none;
+}
+
+    .skills-list li {
+        margin-bottom: 10px;
+        position: relative;
+        padding-left: 25px;
+        color: #555;
+    }
+
+        .skills-list li::before {
+            content: '✓';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: #2a5f9e;
+        }
+
+/* Right Column Styles */
+.right-column {
+    width: 65%;
+    padding: 30px;
+}
+
+.about-text {
+    margin-bottom: 30px;
+    color: #555;
+}
+
+.job {
+    margin-bottom: 25px;
+    color: #555;
+}
+
+.company {
+    font-weight: bold;
+    margin-bottom: 3px;
+    color: #333;
+}
+
+.position {
+    margin-bottom: 8px;
+}
+
+.date {
+    color: #666;
+    font-style: italic;
+    margin-bottom: 8px;
+}
+
+.job-duties {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+    .job-duties li {
+        margin-bottom: 8px;
+        position: relative;
+        padding-left: 20px;
+    }
+
+        .job-duties li::before {
+            content: '›';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 10px;
+            position: absolute;
+            left: 0;
+            top: 5px;
+            color: #2a5f9e;
+        }
+
+.reference {
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.ref-name {
+    font-weight: bold;
+    margin-bottom: 3px;
+    color: #333;
+}
+
+.ref-contact {
+    margin-bottom: 3px;
+}
+
+i {
+    margin-right: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .resume-wrapper {
+        flex-direction: column;
+    }
+
+        .resume-wrapper::before {
+            border-width: 100px 100px 0 0;
+        }
+
+    .left-column, .right-column {
+        width: 100%;
+    }
+
+    .profile-image-container {
+        width: 120px;
+        height: 120px;
+    }
+}
+</style>
+</head>
+<body>
+<div style='padding: 15px; position: relative;'>
+    <a id='exportResume' href='/ExportResume.aspx?ResumeID=11042' 
+       style='padding: 8px 12px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px;'>
+        📥 Export Resume
+    </a>
+</div>
+<div style='padding: 15px; position: fixed; bottom: 20px; right: 20px;'>
+    <a id='showEdit' href='/EditResume.aspx?ResumeID=11042' 
+       style='padding: 8px 12px; background-color: #28a745; color: white; text-decoration: none; border-radius: 4px;'>
+        ✏️ Edit Resume
+    </a>
+</div>
+    <table>
+        <tr>
+            <!-- LEFT COLUMN -->
+            <td class="left-column">
+                <div class="resume-wrapper">
+                    <!-- PROFILE SECTION AT THE VERY TOP -->
+                    <div class="profile-section">
+                        <div class="profile-image-container">
+                            <img src='/UploadedImages/profile_1_638835407581930218.jpg' alt='Profile Image' class='profile-image' />
+                        </div>
+                        <div class="profile-text">
+                            <h1>Zainab Fayyaz</h1>
+                            <div class="job-title">Software Engineer</div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="section contact-info">
+                        <h2><i class="fas fa-address-card"></i>Contact</h2>
+                        <div><i class="fas fa-envelope"></i>zainabfayyaz123@gmail.com</div>
+                        <div><i class="fas fa-phone"></i>03247949009</div>
+                        <div><i class="fas fa-globe"></i>www.zainabfayyaz.com</div>
+                        <div><i class="fas fa-map-marker-alt"></i>Lahore</div>
+                    </div>
+
+
+                    <div class="section">
+                        <h2><i class="fas fa-code"></i>Skills</h2>
+                        <ul class="skills-list">
+                            zzzzzzzzzzzzz<br/>zzzzzzzzz
+zzzzzzzzzzzzzzz
+                        </ul>
+                    </div>
+</td>
+
+            <!-- RIGHT COLUMN -->
+            <td class="right-column">
+                <div class="section about-text">
+                    <h2><i class="fas fa-user"></i>About Me</h2>
+                    <p>zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</p>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-graduation-cap"></i>Education</h2>
+                    <div class="education-item">
+                        Institute: zzzzz<br/>Degree: zzzzzzzzzzz<br/>Year: zzzzzzzz<br/>Institution: zzzzzzzzzzzzzzzzzz
+Degreeszzzzzzzzzz
+Yearszzzzzzz
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-briefcase"></i>Experience</h2>
+                    <div class="job">
+                        Job Title: zzzzzzzzzzzzzz<br/>Company: zzzzzzzz<br/>Duration: zzzzzzzzzz<br/>Description: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz<br/>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-comments"></i>References</h2>
+                    <div class="reference">
+                        Name: zzzzzzzzzzzzzzzzz<br/>Relation: zzzzzzzzzz<br/>Contact: zzzzzzzzzz<br/>Name: zzzzzzzzzzzzzzzz
+Relation: zzzzzzzzz
+Contact: zzzzzzzzzzzzz
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

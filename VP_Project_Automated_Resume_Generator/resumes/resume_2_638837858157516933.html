@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zaid Waseem - Professional Resume</title>
+    <link href="https://fonts.cdnfonts.com/css/arial-nova" rel="stylesheet">
+    <style>
+        @page {
+            size: A4;
+            margin: 1in;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Nova', Arial, sans-serif;
+        }
+
+        body {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            background-color: #f5f5f5;
+            color: #313131;
+            line-height: 1.5;
+        }
+
+        .resume-container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .left-column {
+            width: 75%;
+            padding: 40px 30px;
+        }
+
+        .right-column {
+            width: 25%;
+            padding: 40px 30px;
+            background-color: #f8f9fa;
+        }
+
+        .profile-text h1 {
+            font-size: 32px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #3f63ad;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .job-title {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #3f63ad;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .about-section p {
+            color: #1e1e1e;
+            margin-bottom: 30px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .contact-info div {
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .contact-info span {
+            width: 25px;
+            margin-right: 10px;
+            color: #3f63ad;
+            font-size: 16px;
+        }
+
+        .divider {
+            border: none;
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 25px 0;
+        }
+
+        .skills-list {
+            list-style-type: none;
+        }
+
+            .skills-list li {
+                margin-bottom: 10px;
+                position: relative;
+                padding-left: 20px;
+            }
+
+                .skills-list li:before {
+                    content: "•";
+                    position: absolute;
+                    left: 0;
+                    color: #3f63ad;
+                    font-weight: bold;
+                }
+
+        .education-item, .job {
+            margin-bottom: 25px;
+        }
+
+        .company, .institution {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .position, .degree {
+            font-style: italic;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .job-duties {
+            list-style-type: none;
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+            .job-duties li {
+                margin-bottom: 8px;
+                position: relative;
+                padding-left: 20px;
+                font-size: 14px;
+            }
+
+                .job-duties li:before {
+                    content: "•";
+                    position: absolute;
+                    left: 0;
+                    color: #3f63ad;
+                    font-weight: bold;
+                }
+
+        .reference {
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .resume-container {
+                flex-direction: column;
+            }
+
+            .left-column, .right-column {
+                width: 100%;
+            }
+        }
+        @media print{
+            body {
+                background-color: white;
+            }
+
+            .resume-container {
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+
+            .left-column, .right-column {
+                padding: 20px;
+            }
+
+            h1, h3 {
+                color: #000;
+            }
+
+            .divider {
+                background-color: #000;
+            }
+        }
+    </style>
+<style>@page {
+    size: A4;
+    margin: 1in;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial Nova', Arial, sans-serif;
+}
+
+body {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    background-color: #f5f5f5;
+    color: #313131;
+    line-height: 1.5;
+}
+
+.resume-container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    background-color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.left-column {
+    width: 75%;
+    padding: 40px 30px;
+}
+
+.right-column {
+    width: 25%;
+    padding: 40px 30px;
+    background-color: #f8f9fa;
+}
+
+.profile-text h1 {
+    font-size: 32px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #3f63ad;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+}
+
+.job-title {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 30px;
+    font-weight: 500;
+}
+
+h3 {
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #3f63ad;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+}
+
+.about-section p {
+    color: #1e1e1e;
+    margin-bottom: 30px;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.contact-info div {
+    margin-bottom: 15px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.contact-info span {
+    width: 25px;
+    margin-right: 10px;
+    color: #3f63ad;
+    font-size: 16px;
+}
+
+.divider {
+    border: none;
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 25px 0;
+}
+
+.skills-list {
+    list-style-type: none;
+}
+
+    .skills-list li {
+        margin-bottom: 10px;
+        position: relative;
+        padding-left: 20px;
+    }
+
+        .skills-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #3f63ad;
+            font-weight: bold;
+        }
+
+.education-item, .job {
+    margin-bottom: 25px;
+}
+
+.company, .institution {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.position, .degree {
+    font-style: italic;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.job-duties {
+    list-style-type: none;
+    padding-left: 20px;
+    margin-top: 10px;
+}
+
+    .job-duties li {
+        margin-bottom: 8px;
+        position: relative;
+        padding-left: 20px;
+        font-size: 14px;
+    }
+
+        .job-duties li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #3f63ad;
+            font-weight: bold;
+        }
+
+.reference {
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .resume-container {
+        flex-direction: column;
+    }
+
+    .left-column, .right-column {
+        width: 100%;
+    }
+}
+@media print {
+    body {
+        background-color: white;
+    }
+
+    .resume-container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+
+    .left-column, .right-column {
+        padding: 20px;
+    }
+
+    h1, h3 {
+        color: #000;
+    }
+
+    .divider {
+        background-color: #000;
+    }
+}
+</style>
+</head>
+<body>
+<div style='padding: 15px; position: fixed; bottom: 20px; left: 20px;'>
+    <a id='backToTemplateList' href='TemplateList.aspx' 
+       style='padding: 8px 12px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px;'>
+        🔙 Back
+    </a>
+</div>
+<div style='padding: 15px; position: relative;'>
+    <a id='exportResume' href='/ExportResume.aspx?ResumeID=1013' 
+       style='padding: 8px 12px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px;'>
+        📥 Export Resume
+    </a>
+</div>
+<div style='padding: 15px; position: fixed; bottom: 20px; right: 20px;'>
+    <a id='showEdit' href='/EditResume.aspx?ResumeID=1013' 
+       style='padding: 8px 12px; background-color: #28a745; color: white; text-decoration: none; border-radius: 4px;'>
+        ✏️ Edit Resume
+    </a>
+</div>
+    <div class="resume-container">
+        <!-- Left Column (Main Content) -->
+        <div class="left-column">
+            <!-- Name and Title -->
+            <div class="profile-text">
+                <h1><span class="first-name">Zaid</span> <span class="last-name">Waseem</span></h1>
+                <div class="job-title">Software Engineer</div>
+            </div>
+
+            <!-- About Me -->
+            <div class="about-section">
+                <p>zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</p>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Work Experience -->
+            <section class="experience-section">
+                <h3>Work Experience</h3>
+                <div class="job">
+                    Job Title: zzzzzzzzzzzzzzzzzzzzzz<br/>Company: zzzzzzzzzzzz<br/>Duration: zzzzzzzzzzzzzzz<br/>Description: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz<br/>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+            <!-- Education -->
+            <div class="education-section">
+                <h3>Education</h3>
+                <div class="education-item">
+                    Institute: zzzzzzzzzzzzzzzzzzz<br/>Degree: zzzzzzzzzz<br/>Year: zzzzzzzzzzzzzzz<br/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column (Sidebar) -->
+        <div class="right-column">
+            <!-- Contact Info -->
+            <div class="contact-section">
+                <h3>Contact</h3>
+                <div class="contact-info">
+                    <div>zaidwaseem321@gmail.com</div>
+                    <div>0316234156</div>
+                    <div>www.zaidwaseem.com</div>
+                    <div>Lahore</div>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Skills -->
+            <div class="skills-section">
+                <h3>Skills</h3>
+                <ul class="skills-list">
+                    zzzzzzzzzzzzzzzzzzzzzzzz<br/>zzzzzzzzzzzzzz
+zzzzzzzzzzzzzzzzzzz
+                </ul>
+            </div>
+
+            <hr class="divider">
+
+            <!-- References -->
+            <section class="references-section">
+                <h3>References</h3>
+                <div class="reference">
+                    Name: zzzzzzzzzzzzzzzz<br/>Relation: zzzzzzzzzzzzzzzzzzzzzz<br/>Contact: zzzzzzzzzz<br/>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

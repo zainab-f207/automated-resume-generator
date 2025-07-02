@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zaid Waseem - Professional Resume</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm 15mm 15mm 15mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .resume-container {
+            background-color: white;
+            padding: 30px;
+        }
+
+        /* Header Section */
+        .header-content {
+            margin-bottom: 30px;
+          
+        }
+
+        .profile-text h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a237e; /* Dark Blue */
+            margin-bottom: 5px;
+        }
+
+        .job-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a237e; /* Dark Blue */
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            margin-bottom: 30px;
+        }
+
+        .contact-info div {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .contact-info strong {
+            font-weight: 600;
+            color: #1a237e; /* Dark Blue */
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        /* Section Headings */
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a237e; /* Dark Blue */
+            margin: 30px 0 15px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #1a237e; /* Dark Blue line */
+            text-transform: uppercase;
+        }
+
+        /* Content Styles */
+        .about-section p {
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .skills-list {
+            list-style-type: none;
+        }
+
+            .skills-list li {
+                margin-bottom: 8px;
+                position: relative;
+                padding-left: 20px;
+                font-size: 14px;
+            }
+
+                .skills-list li::before {
+                    content: '•';
+                    position: absolute;
+                    left: 0;
+                    color: #1a237e; /* Dark Blue */
+                    font-weight: bold;
+                }
+
+        .education-item, .job {
+            margin-bottom: 25px;
+        }
+
+        .institution, .position {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .company, .degree {
+            font-style: italic;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .date {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .job-description, .details {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .reference {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* Print Styles for PDF/DOC Export */
+        @media print {
+            body {
+                width: 210mm;
+                height: 297mm;
+                padding: 15mm;
+            }
+
+            .resume-container {
+                padding: 0;
+            }
+
+            h3 {
+                page-break-after: avoid;
+            }
+
+            .job, .education-item {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+<style>@page {
+    size: A4;
+    margin: 15mm 15mm 15mm 15mm;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    color: #333;
+    line-height: 1.5;
+}
+
+.resume-container {
+    background-color: white;
+    padding: 30px;
+}
+
+/* Header Section */
+.header-content {
+    margin-bottom: 30px;
+}
+
+.profile-text h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a237e; /* Dark Blue */
+    margin-bottom: 5px;
+}
+
+.job-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a237e; /* Dark Blue */
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* Contact Section */
+.contact-section {
+    margin-bottom: 30px;
+}
+
+.contact-info div {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.contact-info strong {
+    font-weight: 600;
+    color: #1a237e; /* Dark Blue */
+    display: inline-block;
+    min-width: 80px;
+}
+
+/* Section Headings */
+h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a237e; /* Dark Blue */
+    margin: 30px 0 15px 0;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #1a237e; /* Dark Blue line */
+    text-transform: uppercase;
+}
+
+/* Content Styles */
+.about-section p {
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.skills-list {
+    list-style-type: none;
+}
+
+    .skills-list li {
+        margin-bottom: 8px;
+        position: relative;
+        padding-left: 20px;
+        font-size: 14px;
+    }
+
+        .skills-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #1a237e; /* Dark Blue */
+            font-weight: bold;
+        }
+
+.education-item, .job {
+    margin-bottom: 25px;
+}
+
+.institution, .position {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 3px;
+}
+
+.company, .degree {
+    font-style: italic;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.date {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.job-description, .details {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.reference {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Print Styles for PDF/DOC Export */
+@media print {
+    body {
+        width: 210mm;
+        height: 297mm;
+        padding: 15mm;
+    }
+
+    .resume-container {
+        padding: 0;
+    }
+
+    h3 {
+        page-break-after: avoid;
+    }
+
+    .job, .education-item {
+        page-break-inside: avoid;
+    }
+}
+</style>
+</head>
+<body>
+<div style='padding: 15px; position: fixed; bottom: 20px; left: 20px;'>
+    <a id='backToTemplateList' href='TemplateList.aspx' 
+       style='padding: 8px 12px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px;'>
+        🔙 Back
+    </a>
+</div>
+<div style='padding: 15px; position: relative;'>
+    <a id='exportResume' href='/ExportResume.aspx?ResumeID=1006' 
+       style='padding: 8px 12px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px;'>
+        📥 Export Resume
+    </a>
+</div>
+<div style='padding: 15px; position: fixed; bottom: 20px; right: 20px;'>
+    <a id='showEdit' href='/EditResume.aspx?ResumeID=1006' 
+       style='padding: 8px 12px; background-color: #28a745; color: white; text-decoration: none; border-radius: 4px;'>
+        ✏️ Edit Resume
+    </a>
+</div>
+    <div class="resume-container">
+        <!-- Header Section -->
+        <header class="resume-header">
+            <div class="header-content">
+                <div class="profile-text">
+                    <h1><span class="first-name">Zaid</span> <span class="last-name">Waseem</span></h1>
+                    <div class="job-title">Software Engineer</div>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="contact-section">
+                    <div class="contact-info">
+                        <div><strong>Email:</strong> zaidwaseem321@gmail.com</div>
+                        <div><strong>Phone:</strong> 03162341563</div>
+                        <div><strong>Website:</strong> www.zaidwaseem.com</div>
+                        <div><strong>Address:</strong> Lahore</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- About Me Section -->
+        <div class="about-section">
+            <h3>About Me</h3>
+            <p>My name is Zaid</p>
+        </div>
+
+        <!-- Skills Section -->
+        <div class="skills-section">
+            <h3>Skills</h3>
+            <ul class="skills-list">
+                JavaScript<br/>HTML & CSS
+            </ul>
+        </div>
+
+        <!-- Work Experience Section -->
+        <section class="experience-section">
+            <h3>Experience</h3>
+            <div class="job">
+                Job Title: Front-End Developer<br/>Company: Tech Solutions Inc.<br/>Duration: June 2020 - Present<br/>Description: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz<br/>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <div class="education-section">
+            <h3>Education</h3>
+            <div class="education-item">
+                Institute: University of Illinois<br/>Degree: Bachelor of Science in Computer Science<br/>Year: 2020<br/>
+            </div>
+        </div>
+
+        <!-- References Section -->
+        <section class="references-section">
+            <h3>References</h3>
+            <div class="reference">
+                Name: Sarah Johnson<br/>Relation: Former Manager at Tech Solutions Inc.<br/>Contact: +1 987 654 3210<br/>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zainab Fayyaz - Professional Resume</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @page {
+            size: A4;
+            margin: 1in;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            background-color: ivory;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .resume-container {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+
+        /* Header Section */
+        .header-content {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-text h1 {
+            font-size: 32px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .job-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center items horizontally */
+            gap: 10px; /* Space between items */
+            margin-bottom: 30px;
+        }
+
+            .contact-info div {
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                width: 100%; /* Take full width */
+                justify-content: center; /* Center content */
+            }
+
+            .contact-info span {
+                width: 30px;
+                height: 30px;
+                background-color: #5a4a42;
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 8px;
+                font-size: 14px;
+            }
+
+        /* Section Headings */
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: white;
+            background-color: #5a4a42;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        /* Content Styles */
+        .about-section p {
+            margin-bottom: 30px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Two-column layout for Skills and References */
+        .skills-references {
+            display: flex;
+            margin-top: 30px;
+        }
+
+        .skills-column {
+            width: 50%;
+            padding-right: 20px;
+        }
+
+        .references-column {
+            width: 50%;
+            padding-left: 20px;
+        }
+
+        .skills-list {
+            list-style-type: none;
+        }
+
+            .skills-list li {
+                margin-bottom: 10px;
+                position: relative;
+                padding-left: 20px;
+                font-size: 14px;
+            }
+
+                .skills-list li::before {
+                    content: '•';
+                    position: absolute;
+                    left: 0;
+                    color: #5a4a42;
+                    font-weight: bold;
+                }
+
+        .education-item, .job {
+            margin-bottom: 25px;
+        }
+
+        .institution, .position {
+            font-weight: 600;
+            margin-bottom: 3px;
+            font-size: 16px;
+        }
+
+        .degree, .company {
+            font-style: italic;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .date {
+            font-size: 14px;
+            color: #5a4a42;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .job-description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .reference {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .ref-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .skills-references {
+                flex-direction: column;
+            }
+
+            .skills-column, .references-column {
+                width: 100%;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <!-- Header Section -->
+        <header class="resume-header">
+            <div class="header-content">
+                <div class="profile-text">
+                    <h1><span class="first-name">Zainab</span> <span class="last-name">Fayyaz</span></h1>
+                    <div class="job-title">Web developer</div>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="contact-section">
+                    <div class="contact-info">
+                        <div><span>✉</span>zainabfayyaz201@gmail.com</div>
+                        <div><span>📞</span>03162341563</div>
+                        <div><span>🌐</span>www.zainabfayyaz.com</div>
+                        <div><span>📍</span>Lahore</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- About Me Section -->
+        <div class="about-section">
+            <h3>Professional Summary</h3>
+            <p>zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</p>
+        </div>
+
+        <!-- Education Section -->
+        <div class="education-section">
+            <h3>Academic Background</h3>
+            <div class="education-item">
+                Institute: zzzzzzzzzzzzzzz<br/>Degree: zzzzzzzzzzzzzzzzzzzz<br/>Year: zzzzzzzzzzz<br/>
+            </div>
+        </div>
+
+        <!-- Work Experience Section -->
+        <section class="experience-section">
+            <h3>Career History</h3>
+            <div class="job">
+                Job Title: zzzzzzzzzzzzzzzzzzzzzzz<br/>Company: zzzzzzzzzzz<br/>Duration: zzzzzzzzzzzzzzzz<br/>Description: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz<br/>
+            </div>
+        </section>
+
+        <!-- Skills and References Columns -->
+        <div class="skills-references">
+            <!-- Skills Column -->
+            <div class="skills-column">
+                <div class="skills-section">
+                    <h3>Core Skills</h3>
+                    <ul class="skills-list">
+                        zzzzzzzzzzzzzzzz<br/>zzzzzzzzzzzzzzzzzzzzz
+                    </ul>
+                </div>
+            </div>
+
+            <!-- References Column -->
+            <div class="references-column">
+                <section class="references-section">
+                    <h3>Work References</h3>
+                    <div class="reference">
+                        Name: zzzzzzzzzzzzzzzzzzzzzzzz<br/>Relation: zzzzzzzzzzzzzzzzzzzz<br/>Contact: zzzzzzzz<br/>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

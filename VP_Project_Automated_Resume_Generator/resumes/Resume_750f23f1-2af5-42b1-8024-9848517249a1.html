@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Akmal Naseer - Professional Resume</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            background-color: white;
+            position: relative;
+        }
+
+        .resume-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Left Column (Green Box) */
+        .left-column {
+            width: 35%;
+            background-color: #959987;
+            padding: 130px 25px 60px; /* Added bottom padding for contact strip */
+            color: white;
+            position: relative;
+        }
+
+        /* Right Column */
+        .right-column {
+            width: 65%;
+            padding: 130px 30px 60px; /* Added bottom padding */
+        }
+
+        /* Name and Title Section */
+        .name-title-box {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background-color: #b2b6a4;
+            padding: 15px 25px;
+            text-align: right;
+            z-index: 2;
+            width: auto;
+            max-width: 60%;
+        }
+
+        .profile-text h1 {
+            font-weight: 600;
+            font-size: 24px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+
+        .job-title {
+            font-weight: 500;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section Headings */
+        .left-column h3 {
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin: 30px 0 15px 0;
+            color: white;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+            .left-column h3::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 40px;
+                height: 2px;
+                background-color: white;
+            }
+
+        .right-column h3 {
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin: 30px 0 15px 0;
+            color: #757969;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+            .right-column h3::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 40px;
+                height: 2px;
+                background-color: #757969;
+            }
+
+        /* Improved Text Containment */
+        .about-section p, .job-description, .details, .reference {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            word-wrap: break-word; /* Breaks long words */
+            overflow-wrap: break-word; /* Alternative to word-wrap */
+            hyphens: auto; /* Adds hyphens when breaking words */
+            text-align: justify; /* Creates even edges */
+            max-width: 100%; /* Ensures text stays within bounds */
+        }
+
+        .skills-list {
+            list-style-type: none;
+        }
+
+            .skills-list li {
+                margin-bottom: 10px;
+                position: relative;
+                padding-left: 20px;
+                font-size: 14px;
+            }
+
+                .skills-list li::before {
+                    content: '•';
+                    position: absolute;
+                    left: 0;
+                    font-weight: bold;
+                }
+
+        .job {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+
+        .position {
+            font-weight: 600;
+            font-size: 16px;
+            color: #444440;
+            margin-bottom: 3px;
+        }
+
+        .company {
+            font-style: italic;
+            font-size: 14px;
+            color: #444440;
+            margin-bottom: 8px;
+        }
+
+        .date {
+            font-size: 14px;
+            color: #444440;
+            margin-bottom: 8px;
+        }
+
+        .job-description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #444440;
+        }
+
+        .education-item {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+
+        .institution {
+            font-weight: 600;
+            font-size: 16px;
+            color: #444440;
+            margin-bottom: 3px;
+        }
+
+        .degree {
+            font-size: 14px;
+            color: #444440;
+            margin-bottom: 3px;
+        }
+
+        .details {
+            font-size: 14px;
+            color: #444440;
+            line-height: 1.6;
+        }
+
+        .reference {
+            font-size: 14px;
+            color: #444440;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* Contact Strip (Fixed at bottom) */
+        .contact-strip {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #e8bcbc;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            border-radius: 0;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+            .contact-info div {
+                display: flex;
+                align-items: center;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            .contact-info span {
+                margin-right: 8px;
+                color: #757969;
+            }
+
+        /* Print-specific adjustments */
+        @media print {
+            body {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+                background-color: white;
+            }
+
+            .resume-container {
+                display: flex !important;
+                height: 100%;
+            }
+
+            .left-column, .right-column {
+                page-break-inside: avoid;
+                height: auto;
+            }
+
+            .name-title-box {
+                position: absolute;
+                top: 15mm;
+                right: 15mm;
+            }
+
+            .contact-strip {
+                position: fixed;
+                bottom: 0;
+            }
+
+            .about-section p, .job-description, .details, .reference {
+                word-break: break-word;
+                hyphens: auto;
+            }
+
+            /* Prevent sections from breaking across pages */
+            h3 {
+                page-break-after: avoid;
+            }
+
+            .job, .education-item {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <!-- Name and Title Box (Top Right) -->
+        <div class="name-title-box">
+            <div class="profile-text">
+                <h1>
+                    <span class="first-name">Akmal</span>
+                    <span class="last-name">Naseer</span>
+                </h1>
+                <div class="job-title">Web developer</div>
+            </div>
+        </div>
+
+        <!-- Left Column (Green Box) -->
+        <div class="left-column">
+            <!-- About Me -->
+            <div class="about-section">
+                <h3>About Me</h3>
+                <p>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+            </div>
+
+            <!-- Skills -->
+            <div class="skills-section">
+                <h3>Skills</h3>
+                <ul class="skills-list">
+                    aaaaaaaaaaaaaa<br/>aaaaaaaaaaaaaaaaaaaaaaaa<br/>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-column">
+            <!-- Work Experience -->
+            <section class="experience-section">
+                <h3>Work Experience</h3>
+                <div class="job">
+                    Job Title: aaaaaaaaaa<br/>Company: aaaaaaaaaaaaa<br/>Duration: aaaaaa<br/>Description: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa<br/>
+                </div>
+            </section>
+
+            <!-- Education -->
+            <div class="education-section">
+                <h3>Educational History</h3>
+                <div class="education-item">
+                    Institute: aaaaaaaaaaa<br/>Degree: aaaaaaaaaaaaa<br/>Year: aaaaaa<br/><br/>Institution: ssssssssssssss<br/>Degree: zzzzzzzzzz<br/>Year: 2222222
+                </div>
+            </div>
+
+            <!-- References -->
+            <section class="references-section">
+                <h3>References</h3>
+                <div class="reference">
+                    Name: aaaaaaaaa<br/>Relation: aaaaaaaaaaaaa<br/>Contact: aaaaaaaa<br/>Name: aaaaaaa<br/>Relation: aaaaaaaaaaaa<br/>Contact: aaaaaaa<br/>Name: ssssssssssssssssssss<br/>Relation: sssssssssssssss<br/>Contact: 0321 4532301
+                </div>
+            </section>
+        </div>
+
+        <!-- Contact Strip (Bottom) -->
+        <div class="contact-strip">
+            <div class="contact-info">
+                <div><span>📞</span>031623415632</div>
+                <div><span>✉</span>akmalnaseer123@gmail.com</div>
+                <div><span>📍</span>Lahore</div>
+                <div><span>🌐</span>www.akmalnaseer.com</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

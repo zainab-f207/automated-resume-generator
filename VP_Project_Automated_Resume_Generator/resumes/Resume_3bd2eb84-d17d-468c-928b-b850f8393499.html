@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shaheer Abass - Professional Resume</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Use physical units for print media */
+        @page {
+            size: A4;
+            margin: 15mm 15mm 15mm 15mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            background-color: ivory;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .resume-container {
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20mm;
+            position: relative;
+        }
+
+        /* Header Section */
+        .header-content {
+            text-align: center;
+            margin-bottom: 10mm;
+        }
+
+        .profile-text h1 {
+            font-size: 32px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #333;
+            margin-bottom: 5px;
+            word-break: break-word;
+        }
+
+        .job-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 5mm;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            word-break: break-word;
+        }
+
+        /* Contact Section */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10mm;
+        }
+
+            .contact-info div {
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                width: 100%;
+                justify-content: center;
+                word-break: break-all;
+            }
+
+            .contact-info span {
+                width: 30px;
+                height: 30px;
+                background-color: #5a4a42;
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 8px;
+                font-size: 14px;
+            }
+
+        /* Section Headings */
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: white;
+            background-color: #5a4a42;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            page-break-after: avoid;
+        }
+
+        /* Content Styles with Text Containment */
+        .about-section p,
+        .job-description,
+        .details,
+        .reference {
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            text-align: left;
+            max-width: 100%;
+        }
+
+        /* Two-column layout for Skills and References */
+        .skills-references {
+            display: flex;
+            margin-top: 30px;
+            page-break-inside: avoid;
+        }
+
+        .skills-column {
+            width: 50%;
+            padding-right: 10mm;
+        }
+
+        .references-column {
+            width: 50%;
+            padding-left: 10mm;
+        }
+
+        .skills-list {
+            list-style-type: none;
+        }
+
+            .skills-list li {
+                margin-bottom: 10px;
+                position: relative;
+                padding-left: 20px;
+                font-size: 14px;
+                word-wrap: break-word;
+            }
+
+                .skills-list li::before {
+                    content: '•';
+                    position: absolute;
+                    left: 0;
+                    color: #5a4a42;
+                    font-weight: bold;
+                }
+
+        .education-item, .job {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+
+        .institution, .position {
+            font-weight: 600;
+            margin-bottom: 3px;
+            font-size: 16px;
+            word-break: break-word;
+        }
+
+        .degree, .company {
+            font-style: italic;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #555;
+            word-break: break-word;
+        }
+
+        .date {
+            font-size: 14px;
+            color: #5a4a42;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .ref-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        /* Print-specific adjustments */
+        @media print {
+            body {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+                background-color: white;
+            }
+
+            .resume-container {
+                padding: 20mm;
+                box-shadow: none;
+            }
+
+            h3 {
+                page-break-after: avoid;
+            }
+
+            .job, .education-item {
+                page-break-inside: avoid;
+            }
+
+            .skills-references {
+                display: flex !important;
+            }
+
+            /* Force colors in print */
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <!-- Header Section -->
+        <header class="resume-header">
+            <div class="header-content">
+                <div class="profile-text">
+                    <h1><span class="first-name">Shaheer</span> <span class="last-name">Abass</span></h1>
+                    <div class="job-title">Web developer</div>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="contact-section">
+                    <div class="contact-info">
+                        <div><span>✉</span>shaheerabass123@gmail.com</div>
+                        <div><span>📞</span>03162322563</div>
+                        <div><span>🌐</span>www.shaheer.com</div>
+                        <div><span>📍</span>Lahore</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- About Me Section -->
+        <div class="about-section">
+            <h3>Professional Summary</h3>
+            <p>My name is Shaheer....ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p>
+        </div>
+
+        <!-- Education Section -->
+        <div class="education-section">
+            <h3>Academic Background</h3>
+            <div class="education-item">
+                Institute: University of Illinois<br/>Degree: Bachelor of Science in Computer Science<br/>Year: 2020<br/>Institution: zzzzzzzzzzz
+Degree: ddddddddddddd
+Year: 2222222
+            </div>
+        </div>
+
+        <!-- Work Experience Section -->
+        <section class="experience-section">
+            <h3>Career History</h3>
+            <div class="job">
+                Job Title: Front-End Developer<br/>Company: Tech Solutions Inc.<br/>Duration: June 2020 - Present<br/>Description: sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss<br/>
+            </div>
+        </section>
+
+        <!-- Skills and References Columns -->
+        <div class="skills-references">
+            <!-- Skills Column -->
+            <div class="skills-column">
+                <div class="skills-section">
+                    <h3>Core Skills</h3>
+                    <ul class="skills-list">
+                        sssssssssss<br/>ssssssssssssssss
+HTML & CSS
+                    </ul>
+                </div>
+            </div>
+
+            <!-- References Column -->
+            <div class="references-column">
+                <section class="references-section">
+                    <h3>Work References</h3>
+                    <div class="reference">
+                        Name: Sarah Johnson<br/>Relation: Former Manager at Tech Solutions Inc.<br/>Contact: +1 987 654 3210<br/>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
