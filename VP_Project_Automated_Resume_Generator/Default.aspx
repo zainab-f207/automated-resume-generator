@@ -234,7 +234,7 @@
             <div class="hero-content">
                 <h1 class="hero-title">ResumeCraft Pro</h1>
                 <p class="hero-subtitle">Create stunning, professional resumes in minutes with our easy-to-use templates and builder</p>
-                <asp:HyperLink runat="server" NavigateUrl="~/RegisterSelector.aspx" 
+                <asp:HyperLink runat="server" NavigateUrl="~/Register.aspx" 
                     CssClass="btn btn-hero" Text="Get Started Now" />
             </div>
         </section>

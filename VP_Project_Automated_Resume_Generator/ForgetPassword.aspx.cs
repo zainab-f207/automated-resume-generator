@@ -13,7 +13,7 @@ namespace VP_Project_Automated_Resume_Generator
         protected void btnResetPassword_Click(object sender, EventArgs e)
         {
             string email = txtEmail.Text.ToLower();
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
             SqlConnection con = new SqlConnection(connectionString);
 
@@ -43,3 +43,4 @@ namespace VP_Project_Automated_Resume_Generator
         }
     }
 }
+

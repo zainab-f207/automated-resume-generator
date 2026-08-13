@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="VP_Project_Automated_Resume_Generator.Login" %>
+<%@ Page Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="VP_Project_Automated_Resume_Generator.Login" %>
 
 <asp:Content ID="HeadContent" ContentPlaceHolderID="HeadContent" runat="server">
     <title>Login - ResumeCraft Pro</title>
@@ -289,7 +289,8 @@
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
                         <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" 
-                            CssClass="form-control form-control-lg" placeholder="Enter your password" required="true"></asp:TextBox>
+                            CssClass="form-control form-control-lg" placeholder="Enter your password" required="true" style="border-radius: 0 !important; border-right: none !important;"></asp:TextBox>
+                        <span class="input-group-text toggle-password" style="cursor: pointer; border-radius: 0 12px 12px 0 !important; border-left: none !important; background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important;" onclick="togglePasswordVisibility('<%= txtPassword.ClientID %>', this)"><i class="bi bi-eye"></i></span>
                     </div>
                     <div class="forgot-password">
                         <a href="ForgetPassword.aspx" class="text-decoration-none">Forgot password?</a>
@@ -313,4 +314,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function togglePasswordVisibility(inputId, iconSpan) {
+            var input = document.getElementById(inputId);
+            var icon = iconSpan.querySelector('i');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("bi-eye");
+                icon.classList.add("bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("bi-eye-slash");
+                icon.classList.add("bi-eye");
+            }
+        }
+    </script>
 </asp:Content>

@@ -34,7 +34,7 @@ namespace VP_Project_Automated_Resume_Generator
                 return;
             }
 
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
             SqlConnection con = new SqlConnection(connectionString);
 
@@ -61,3 +61,4 @@ namespace VP_Project_Automated_Resume_Generator
         }
     }
 }
+

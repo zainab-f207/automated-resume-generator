@@ -84,35 +84,57 @@
             display: block;
         }
         
-        .form-control, .form-select {
-    background: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    color: white !important;
-    padding: 14px 20px !important;
-    width: 100% !important;
-    display: block !important;
-    border-radius: 12px !important;
-}
-
+        /* --- Fixed Input Group Layout --- */
 .input-group {
     display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     width: 100% !important;
-    align-items: center;
+    align-items: stretch !important;
 }
 
 .input-group-text {
     background: rgba(108, 92, 231, 0.2) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    color: var(--primary-light) !important;
+    color: #a29bfe !important;
     padding: 14px 15px !important;
     border-radius: 12px 0 0 12px !important;
-    margin-right: -1px; /* Remove double border */
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.form-control, .form-select {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-left: none !important;
+    color: white !important;
+    padding: 14px 20px !important;
+    flex: 1 1 auto !important;
+    width: 1% !important;
+    min-width: 0 !important;
+    display: block !important;
+    border-radius: 0 12px 12px 0 !important;
+}
+
+.input-group > .form-control:not(:last-child),
+.input-group > .form-select:not(:last-child) {
+    border-radius: 0 !important;
+}
+
+.toggle-password {
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    border-left: none !important;
+    border-radius: 0 12px 12px 0 !important;
 }
 
 .form-control:focus, .form-select:focus {
-    background: rgba(255, 255, 255, 0.2) !important;
-    border-color: var(--primary-light) !important;
-    box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.3) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: #a29bfe !important;
+    box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.3) !important;
+    outline: none !important;
 }
         .form-control::placeholder {
             color: rgba(255, 255, 255, 0.4);
@@ -244,6 +266,11 @@
             20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
         
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -270,6 +297,20 @@
                 return false;
             }
             return true;
+        }
+
+        function togglePasswordVisibility(inputId, iconSpan) {
+            var input = document.getElementById(inputId);
+            var icon = iconSpan.querySelector('i');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("bi-eye");
+                icon.classList.add("bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("bi-eye-slash");
+                icon.classList.add("bi-eye");
+            }
         }
     </script>
 
@@ -320,6 +361,7 @@
         <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
         <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" CssClass="form-control" 
             placeholder="Create a password" required="true"></asp:TextBox>
+        <span class="input-group-text toggle-password" style="cursor: pointer; border-radius: 0 12px 12px 0 !important; border-left: none !important;" onclick="togglePasswordVisibility('<%= txtPassword.ClientID %>', this)"><i class="bi bi-eye"></i></span>
     </div>
     <small class="form-text text-muted">Password must be exactly 8 characters.</small>
 </div>
@@ -331,6 +373,7 @@
                         <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
                         <asp:TextBox ID="txtConfirmPassword" runat="server" TextMode="Password" CssClass="form-control" 
                             placeholder="Confirm your password" required="true"></asp:TextBox>
+                        <span class="input-group-text toggle-password" style="cursor: pointer; border-radius: 0 12px 12px 0 !important; border-left: none !important;" onclick="togglePasswordVisibility('<%= txtConfirmPassword.ClientID %>', this)"><i class="bi bi-eye"></i></span>
                     </div>
                     <asp:CompareValidator ID="CompareValidator1" runat="server" 
                         ControlToValidate="txtConfirmPassword" ControlToCompare="txtPassword"

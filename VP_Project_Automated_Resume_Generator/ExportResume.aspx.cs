@@ -60,7 +60,7 @@ namespace VP_Project_Automated_Resume_Generator
             }
         private string GetTemplatePathById(int templateId)
         {
-            string connStr = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
+            string connStr = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
             using (SqlConnection con = new SqlConnection(connStr))
             {
                 string query = "SELECT TemplateFilePath FROM Templates WHERE TemplateID = @TemplateID";
@@ -93,7 +93,7 @@ namespace VP_Project_Automated_Resume_Generator
         {
             
             Resume resume = new Resume();
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {

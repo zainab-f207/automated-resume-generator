@@ -15,7 +15,7 @@ namespace TemplatedDAL
         {
             List<Template> templates = new List<Template>();
 
-            SqlConnection conn = new SqlConnection("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True");
+            SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True");
             
                 SqlCommand cmd = new SqlCommand("SELECT TemplateID, TemplateName, TemplateFilePath FROM Templates WHERE IsActive = 1", conn);
                 conn.Open();
@@ -39,7 +39,7 @@ namespace TemplatedDAL
         {
             Template template = null;
 
-            SqlConnection conn = new SqlConnection("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True");
+            SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True");
             
                 SqlCommand cmd = new SqlCommand("SELECT TemplateID, TemplateName, TemplateFilePath FROM Templates WHERE TemplateID = @TemplateID", conn);
                 cmd.Parameters.AddWithValue("@TemplateID", templateId);
@@ -63,7 +63,7 @@ namespace TemplatedDAL
 
         public static string AddTemplate(string templateName, string filePath)
         {
-            SqlConnection conn = new SqlConnection("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True");
+            SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True");
             
                 SqlCommand cmd = new SqlCommand(
                     "INSERT INTO Templates (TemplateName, TemplateFilePath) VALUES (@TemplateName, @TemplateFilePath); SELECT SCOPE_IDENTITY();",
@@ -93,7 +93,7 @@ namespace TemplatedDAL
             if (templateId <= 0)
                 return "Invalid template ID.";
 
-            SqlConnection conn = new SqlConnection("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True");
+            SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True");
             
                 string query = "DELETE FROM Templates WHERE TemplateID = @TemplateID";
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -110,3 +110,4 @@ namespace TemplatedDAL
         }
     }
 }
+

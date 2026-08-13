@@ -294,10 +294,10 @@
                     <ul class="navbar-nav">
                         <asp:PlaceHolder ID="AnonymousMenu" runat="server">
                             <li class="nav-item">
-                                <a class="nav-link" href="RegisterSelector.aspx"><i class="bi bi-person-plus"></i> Register</a>
+                                <a class="nav-link" href="Register.aspx"><i class="bi bi-person-plus"></i> Register</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="LoginSelector.aspx"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                                <a class="nav-link" href="Login.aspx"><i class="bi bi-box-arrow-in-right"></i> Login</a>
                             </li>
                         </asp:PlaceHolder>
                         <asp:PlaceHolder ID="AdminMenu" runat="server" Visible="false">

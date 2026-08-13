@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -15,13 +15,25 @@ namespace VP_Project_Automated_Resume_Generator
         {
             if (!IsPostBack)
             {
-
-                if (Session["RememberedUsername"] != null)
+                if (Request.Cookies["RememberedUsername"] != null)
                 {
-                    txtUsername.Text = Session["RememberedUsername"].ToString();
+                    txtUsername.Text = Request.Cookies["RememberedUsername"].Value;
                     chkRemember.Checked = true;
                 }
+            }
+        }
 
+        private string HashPassword(string password)
+        {
+            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                System.Text.StringBuilder builder = new System.Text.StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
             }
         }
 
@@ -36,52 +48,64 @@ namespace VP_Project_Automated_Resume_Generator
                 return;
             }
 
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
-            SqlConnection con = new SqlConnection(connectionString);
-            con.Open();
-
-            string query = "SELECT UserId, Username, Password, FullName FROM Users WHERE Username = @Username";
-            SqlCommand cmd = new SqlCommand(query, con);
-            cmd.Parameters.AddWithValue("@Username", username);
-
-            SqlDataReader reader = cmd.ExecuteReader();
-
-            if (reader.Read())
+            using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string storedPassword = reader["Password"].ToString();
+                string query = "SELECT UserId, Username, Password, FullName, Role FROM Users WHERE Username = @Username";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@Username", username);
+                con.Open();
 
-                if (storedPassword == password)
+                using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                   
-                    Session["UserId"] = reader["UserId"];
-                    Session["Username"] = reader["Username"];
-                    Session["FullName"] = reader["FullName"];
-                    if (chkRemember.Checked)
+                    if (reader.Read())
                     {
-                        Session["RememberedUsername"] = username;
+                        string storedPassword = reader["Password"].ToString();
+                        string role = reader["Role"] == DBNull.Value ? "User" : reader["Role"].ToString();
+
+                        // Match either the hashed password or the old plaintext password (for backward compatibility during transition)
+                        if (storedPassword == HashPassword(password) || storedPassword == password)
+                        {
+                            Session["UserId"] = reader["UserId"];
+                            Session["Username"] = reader["Username"];
+                            Session["FullName"] = reader["FullName"];
+                            Session["Role"] = role;
+
+                            if (chkRemember.Checked)
+                            {
+                                HttpCookie cookie = new HttpCookie("RememberedUsername", username);
+                                cookie.Expires = DateTime.Now.AddDays(30);
+                                Response.Cookies.Add(cookie);
+                            }
+                            else
+                            {
+                                if (Request.Cookies["RememberedUsername"] != null)
+                                {
+                                    HttpCookie cookie = new HttpCookie("RememberedUsername");
+                                    cookie.Expires = DateTime.Now.AddDays(-1);
+                                    Response.Cookies.Add(cookie);
+                                }
+                            }
+
+                            reader.Close();
+
+                            if (role == "Admin")
+                                Response.Redirect("AdminDashboard.aspx");
+                            else
+                                Response.Redirect("UserProfile.aspx");
+
+                            return;
+                        }
+                        Response.Write("<script>alert('Incorrect password.');</script>");
                     }
                     else
                     {
-                        Session["RememberedUsername"] = null;
+                        Response.Write("<script>alert('Username not found.');</script>");
                     }
-                    reader.Close();
-                    con.Close();
-                    Response.Redirect("UserProfile.aspx");
                 }
-                else
-                {
-                    reader.Close();
-                    con.Close();
-                    Response.Write("<script>alert('Incorrect password.');</script>");
-                }
-            }
-            else
-            {
-                reader.Close();
-                con.Close();
-                Response.Write("<script>alert('Username not found.');</script>");
             }
         }
     }
 }
+

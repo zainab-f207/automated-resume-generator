@@ -69,7 +69,7 @@ namespace VP_Project_Automated_Resume_Generator
             Session.Abandon();
 
             
-            Response.Redirect("LoginSelector.aspx");
+            Response.Redirect("Login.aspx");
         }
        protected void btnDeleteAccount_Click(object sender, EventArgs e)
         {
@@ -83,13 +83,13 @@ namespace VP_Project_Automated_Resume_Generator
                 // Clear session and redirect
                 Session.Clear();
                 Session.Abandon();
-                Response.Redirect("RegisterSelector.aspx");
+                Response.Redirect("Register.aspx");
             }
         }
 
         private void DeleteUserAccount(int userId)
         {
-            SqlConnection conn = new SqlConnection("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+            SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
 
             conn.Open();
 
@@ -117,3 +117,4 @@ namespace VP_Project_Automated_Resume_Generator
 
     }
 }
+

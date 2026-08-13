@@ -22,7 +22,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         private void LoadTemplates()
         {
-            SqlConnection conn = new SqlConnection("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+            SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
             SqlDataAdapter da = new SqlDataAdapter("SELECT TemplateID, TemplateName, TemplateFilePath, DateCreated FROM Templates", conn);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -36,7 +36,7 @@ namespace VP_Project_Automated_Resume_Generator
             {
                 int templateId = Convert.ToInt32(e.CommandArgument);
 
-                SqlConnection conn = new SqlConnection("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+                SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
 
                 conn.Open();
                 SqlCommand cmd = new SqlCommand("DELETE FROM Templates WHERE TemplateID = @TemplateID", conn);

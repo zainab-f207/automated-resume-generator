@@ -22,7 +22,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         private void LoadUsers()
         {
-            SqlConnection conn = new SqlConnection("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+            SqlConnection conn = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
             SqlDataAdapter da = new SqlDataAdapter("SELECT UserId, Username, Email, Role FROM Users", conn);
                 DataTable dt = new DataTable();
                 da.Fill(dt);

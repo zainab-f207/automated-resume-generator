@@ -26,7 +26,7 @@ namespace VP_Project_Automated_Resume_Generator
         }
         private void LoadUserResumes(int userId)
         {
-            string connStr = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
+            string connStr = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
             using (SqlConnection con = new SqlConnection(connStr))
             {
                 string query = @"SELECT r.ResumeID, r.FirstName, r.LastName, r.JobTitle, r.CreatedAt, ur.TemplateID
@@ -46,7 +46,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         private void LoadDraftResumes(int userId)
         {
-            string connStr = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
+            string connStr = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
             using (SqlConnection con = new SqlConnection(connStr))
             {
                 string query = @"SELECT r.FormattedResumeID, r.FirstName, r.LastName, r.JobTitle, r.CreatedAt, ur.TemplateID

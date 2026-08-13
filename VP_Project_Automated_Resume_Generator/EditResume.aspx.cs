@@ -56,7 +56,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         private void LoadResumeData(int resumeId)
         {
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -91,7 +91,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         private void LoadSkills(int resumeId)
         {
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -129,7 +129,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         private void LoadEducation(int resumeId)
         {
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -166,7 +166,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         private void LoadWorkExperience(int resumeId)
         {
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -204,7 +204,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         private void LoadReferences(int resumeId)
         {
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -521,7 +521,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         private int InsertResume()
         {
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -557,7 +557,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         private void UpdateResume(int resumeId)
         {
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -601,7 +601,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         private void UpdateSkills(int resumeId)
         {
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -654,7 +654,7 @@ namespace VP_Project_Automated_Resume_Generator
 
             string query = "UPDATE Resumes SET Education = @Education WHERE ResumeID = @ResumeID";
 
-            using (SqlConnection con = new SqlConnection("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True"))
+            using (SqlConnection con = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True"))
             {
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
@@ -693,7 +693,7 @@ namespace VP_Project_Automated_Resume_Generator
             }
             string query = "UPDATE Resumes SET WorkExperience = @WorkExperience WHERE ResumeID = @ResumeID";
 
-            using (SqlConnection con = new SqlConnection("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True"))
+            using (SqlConnection con = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True"))
             {
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
@@ -733,7 +733,7 @@ namespace VP_Project_Automated_Resume_Generator
             }
             string query = "UPDATE Resumes SET ReferenceDetails = @ReferenceDetails WHERE ResumeID = @ResumeID";
 
-            using (SqlConnection con = new SqlConnection("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True"))
+            using (SqlConnection con = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True"))
             {
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {

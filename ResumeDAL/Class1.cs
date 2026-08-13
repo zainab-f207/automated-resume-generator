@@ -20,7 +20,7 @@ namespace ResumeDAL
 {
     public class ResumeDAL
     {
-        private static string connStr = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+        private static string connStr = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
         public static string CreateResume(int userId, int templateId, Dictionary<string, string> resumeData)
         {
@@ -321,4 +321,5 @@ SELECT SCOPE_IDENTITY();";  // <-- This returns the generated ResumeID
 
     }
 }
+
 

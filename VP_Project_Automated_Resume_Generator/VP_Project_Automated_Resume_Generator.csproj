@@ -201,7 +201,7 @@
     <Content Include="About.aspx" />
     <Content Include="AddTemplate.aspx" />
     <Content Include="AdminDashboard.aspx" />
-    <Content Include="AdminLogin.aspx" />
+    
     <Content Include="AdminPreview.aspx" />
     <Content Include="AdminResumes.aspx" />
     <Content Include="AdminTemplates.aspx" />
@@ -236,12 +236,12 @@
     <Content Include="Global.asax" />
     <Content Include="Instructions.aspx" />
     <Content Include="Login.aspx" />
-    <Content Include="LoginSelector.aspx" />
+    
     <Content Include="MyResumes.aspx" />
     <Content Include="PreviewTemplate.aspx" />
     <Content Include="PrivacyPolicy.aspx" />
     <Content Include="Register.aspx" />
-    <Content Include="RegisterSelector.aspx" />
+    
     <Content Include="ResetPassword.aspx" />
     <Content Include="ResumeBuilder.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -349,13 +349,8 @@
     <Compile Include="AdminDashboard.aspx.designer.cs">
       <DependentUpon>AdminDashboard.aspx</DependentUpon>
     </Compile>
-    <Compile Include="AdminLogin.aspx.cs">
-      <DependentUpon>AdminLogin.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="AdminLogin.aspx.designer.cs">
-      <DependentUpon>AdminLogin.aspx</DependentUpon>
-    </Compile>
+    
+    
     <Compile Include="AdminPreview.aspx.cs">
       <DependentUpon>AdminPreview.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -473,13 +468,8 @@
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="LoginSelector.aspx.cs">
-      <DependentUpon>LoginSelector.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="LoginSelector.aspx.designer.cs">
-      <DependentUpon>LoginSelector.aspx</DependentUpon>
-    </Compile>
+    
+    
     <Compile Include="MyResumes.aspx.cs">
       <DependentUpon>MyResumes.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -509,13 +499,8 @@
     <Compile Include="Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
-    <Compile Include="RegisterSelector.aspx.cs">
-      <DependentUpon>RegisterSelector.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="RegisterSelector.aspx.designer.cs">
-      <DependentUpon>RegisterSelector.aspx</DependentUpon>
-    </Compile>
+    
+    
     <Compile Include="ResetPassword.aspx.cs">
       <DependentUpon>ResetPassword.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -664,3 +649,4 @@
   </Target>
   -->
 </Project>
+

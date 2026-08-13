@@ -25,7 +25,7 @@ namespace VP_Project_Automated_Resume_Generator
         private void LoadUserProfile()
         {
 
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
             int userId = Convert.ToInt32(Session["UserId"]);
 
             SqlConnection con = new SqlConnection(connectionString);
@@ -48,7 +48,7 @@ namespace VP_Project_Automated_Resume_Generator
                 txtPhone.Text = reader["Phone"].ToString();
                 txtCity.Text = reader["City"].ToString();
                 txtCountry.Text = reader["Country"].ToString();
-                lblMessage.Text = Convert.ToDateTime(reader["DateCreated"]).ToString("MMMM yyyy");
+                lblMessage.Text = reader["DateCreated"] != DBNull.Value ? Convert.ToDateTime(reader["DateCreated"]).ToString("MMMM yyyy") : "Member";
                 imgProfile.ImageUrl = "https://ui-avatars.com/api/?name=" + HttpUtility.UrlEncode(reader["FullName"].ToString()) + "&background=random&color=fff&size=120";
 
 
@@ -61,7 +61,7 @@ namespace VP_Project_Automated_Resume_Generator
         protected void btnUpdate_Click(object sender, EventArgs e)
         {
             int userId = Convert.ToInt32(Session["UserId"]);
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            string connectionString = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
             SqlConnection con = new SqlConnection(connectionString);
             con.Open();
 
@@ -112,3 +112,5 @@ namespace VP_Project_Automated_Resume_Generator
     }
 }
     
+
+
