@@ -98,3 +98,10 @@ $RECYCLE.BIN/
 _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
+
+# -----------------------------------------------
+# Generated resume HTML files (user content)
+# -----------------------------------------------
+resumes/
+*.html.bak
+
