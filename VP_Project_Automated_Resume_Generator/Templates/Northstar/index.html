@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            --accent: #164e63;
+            --font: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font);
+            font-size: 10.8pt;
+            color: #17202a;
+            max-width: 800px;
+            margin: 28px auto;
+            line-height: 1.45;
+        }
+
+        header {
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 24pt;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .job-title {
+            font-size: 12pt;
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .contact {
+            font-size: 9.5pt;
+            margin-top: 7px;
+            color: #444;
+        }
+
+        h2 {
+            font-size: 11.5pt;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin: 18px 0 7px;
+            letter-spacing: .8px;
+        }
+
+            h2::after {
+                content: "";
+                display: block;
+                border-bottom: 1px solid #bbb;
+                margin-top: 3px;
+            }
+
+        p {
+            margin: 4px 0 8px;
+        }
+
+        ul {
+            margin: 4px 0 8px 20px;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 3px;
+        }
+
+        .job-block,
+        .edu-block {
+            margin-bottom: 11px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>{{FirstName}} {{LastName}}</h1>
+        <div class="job-title">{{JobTitle}}</div>
+        <div class="contact">{{Email}} | {{Phone}} | {{Address}} | {{Website}}</div>
+    </header>
+
+    <h2>Summary</h2>
+    <p>{{AboutMe}}</p>
+
+    <h2>Technical Skills</h2>
+    <ul>{{SkillsList}}</ul>
+
+    <h2>Experience</h2>
+    <div>{{WorkExperienceSection}}</div>
+
+    <h2>Education</h2>
+    <div>{{EducationSection}}</div>
+
+    {{OptionalSections}}
+
+    <h2>References</h2>
+    <div>{{ReferencesSection}}</div>
+
+</body>
+</html>

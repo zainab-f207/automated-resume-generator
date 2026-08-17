@@ -127,6 +127,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -199,9 +200,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About.aspx" />
+    <Content Include="AtsCheck.aspx" />
     <Content Include="AddTemplate.aspx" />
     <Content Include="AdminDashboard.aspx" />
-    
     <Content Include="AdminPreview.aspx" />
     <Content Include="AdminResumes.aspx" />
     <Content Include="AdminTemplates.aspx" />
@@ -236,12 +237,10 @@
     <Content Include="Global.asax" />
     <Content Include="Instructions.aspx" />
     <Content Include="Login.aspx" />
-    
     <Content Include="MyResumes.aspx" />
     <Content Include="PreviewTemplate.aspx" />
     <Content Include="PrivacyPolicy.aspx" />
     <Content Include="Register.aspx" />
-    
     <Content Include="ResetPassword.aspx" />
     <Content Include="ResumeBuilder.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -349,8 +348,6 @@
     <Compile Include="AdminDashboard.aspx.designer.cs">
       <DependentUpon>AdminDashboard.aspx</DependentUpon>
     </Compile>
-    
-    
     <Compile Include="AdminPreview.aspx.cs">
       <DependentUpon>AdminPreview.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -380,9 +377,18 @@
       <DependentUpon>AdminUsers.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="AtsScorer.cs" />
+    <Compile Include="ConfigTemplateRenderer.cs" />
     <Compile Include="About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AtsCheck.aspx.cs">
+      <DependentUpon>AtsCheck.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AtsCheck.aspx.designer.cs">
+      <DependentUpon>AtsCheck.aspx</DependentUpon>
     </Compile>
     <Compile Include="About.aspx.designer.cs">
       <DependentUpon>About.aspx</DependentUpon>
@@ -468,8 +474,6 @@
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
-    
-    
     <Compile Include="MyResumes.aspx.cs">
       <DependentUpon>MyResumes.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -499,8 +503,6 @@
     <Compile Include="Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
-    
-    
     <Compile Include="ResetPassword.aspx.cs">
       <DependentUpon>ResetPassword.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -649,4 +651,3 @@
   </Target>
   -->
 </Project>
-

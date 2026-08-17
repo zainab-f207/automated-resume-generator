@@ -2,12 +2,11 @@
 <html>
 <head>
     <style>
-        /* ===== VARIANT KNOBS — only change these 2 lines per template ===== */
         :root {
+            --accent: #222222;
             --font: Arial, Helvetica, sans-serif;
-            --accent: #2a2a2a;
         }
-        /* ==================================================================== */
+
         body {
             font-family: var(--font);
             font-size: 11pt;
@@ -18,61 +17,67 @@
         }
 
         h1 {
-            font-size: 20pt;
-            margin-bottom: 2px;
+            font-size: 22pt;
+            margin: 0;
             color: #000;
         }
 
         .job-title {
             font-size: 12pt;
             color: var(--accent);
+            margin: 2px 0 8px;
             font-weight: 600;
-            margin-bottom: 10px;
         }
 
         .contact {
-            font-size: 10pt;
-            color: #333;
-            margin-bottom: 16px;
+            font-size: 9.5pt;
+            color: #444;
+            margin-bottom: 18px;
         }
 
         h2 {
-            font-size: 12.5pt;
+            font-size: 12pt;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1.5px solid var(--accent);
-            padding-bottom: 3px;
-            margin-top: 20px;
-            margin-bottom: 8px;
-            color: #000;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 4px;
+            margin: 18px 0 8px;
+        }
+
+        p {
+            margin: 4px 0 8px;
         }
 
         ul {
-            margin: 4px 0 4px 20px;
+            margin: 4px 0 8px 20px;
             padding: 0;
         }
 
-        .job-block, .edu-block {
-            margin-bottom: 10px;
+        .job-block,
+        .edu-block {
+            margin-bottom: 12px;
         }
 
-            .job-block strong, .edu-block strong {
+            .job-block strong,
+            .edu-block strong {
                 font-size: 11pt;
             }
     </style>
 </head>
+
 <body>
+
     <h1>{{FirstName}} {{LastName}}</h1>
     <div class="job-title">{{JobTitle}}</div>
-    <div class="contact">{{Email}} &nbsp;|&nbsp; {{Phone}} &nbsp;|&nbsp; {{Address}} &nbsp;|&nbsp; {{Website}}</div>
+    <div class="contact">{{Email}} | {{Phone}} | {{Address}} | {{Website}}</div>
 
-    <h2>Summary</h2>
+    <h2>Professional Summary</h2>
     <p>{{AboutMe}}</p>
 
-    <h2>Skills</h2>
+    <h2>Core Skills</h2>
     <ul>{{SkillsList}}</ul>
 
-    <h2>Work Experience</h2>
+    <h2>Professional Experience</h2>
     <div>{{WorkExperienceSection}}</div>
 
     <h2>Education</h2>
@@ -82,5 +87,6 @@
 
     <h2>References</h2>
     <div>{{ReferencesSection}}</div>
+
 </body>
 </html>

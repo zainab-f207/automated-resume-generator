@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace VP_Project_Automated_Resume_Generator
 {
@@ -15,40 +18,23 @@ namespace VP_Project_Automated_Resume_Generator
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            try
+            string selectedSections = string.Join(",", cblSections.Items.Cast<ListItem>()
+                                        .Where(i => i.Selected).Select(i => i.Value));
+
+            string connStr = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            using (SqlConnection con = new SqlConnection(connStr))
             {
-                if (string.IsNullOrWhiteSpace(txtTemplateName.Text))
-                {
-                    ShowMessage("Please enter a template name", false);
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(txtTemplatePath.Text))
-                {
-                    ShowMessage("Please enter the template file path", false);
-                    return;
-                }
-
-                string templateName = txtTemplateName.Text.Trim();
-                string templatePath = txtTemplatePath.Text.Trim();
-
-                string resultMessage = TemplateBAL.TemplateBAL.AddNewTemplate(
-                    templateName,
-                    templatePath);
-
-                if (resultMessage.StartsWith("Template added successfully"))
-                {
-                    Response.Redirect("AdminTemplates.aspx?success=true");
-                }
-                else
-                {
-                    ShowMessage(resultMessage, false);
-                }
+                string query = @"INSERT INTO Templates (TemplateName, IsConfigBased, FontChoice, AccentColor, SectionOrder, DateCreated)
+                          VALUES (@Name, 1, @Font, @Accent, @Order, GETDATE())";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@Name", txtTemplateName.Text.Trim());
+                cmd.Parameters.AddWithValue("@Font", ddlFont.SelectedValue);
+                cmd.Parameters.AddWithValue("@Accent", ddlAccent.SelectedValue);
+                cmd.Parameters.AddWithValue("@Order", selectedSections);
+                con.Open();
+                cmd.ExecuteNonQuery();
             }
-            catch (Exception ex)
-            {
-                ShowMessage($"An error occurred: {ex.Message}", false);
-            }
+            Response.Redirect("AdminTemplates.aspx?success=true");
         }
 
         protected void btnCancel_Click(object sender, EventArgs e)

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ResumeBuilder.aspx.cs" Inherits="VP_Project_Automated_Resume_Generator.ResumeBuilder" %>
+<%@ Page Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ResumeBuilder.aspx.cs" Inherits="VP_Project_Automated_Resume_Generator.ResumeBuilder" %>
 
 <asp:Content ID="HeadContent" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
@@ -12,6 +12,40 @@
             --light: #e2e2e2;
             --lighter: #f5f5f5;
             --accent: #f8a5c2;
+        }
+
+        /* Optional section toggle labels */
+        .optional-toggle-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border: 1px solid rgba(108,92,231,0.35);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.87rem;
+            color: var(--light);
+            background: rgba(108,92,231,0.08);
+            transition: all 0.25s ease;
+            user-select: none;
+        }
+        .optional-toggle-label:hover {
+            background: rgba(108,92,231,0.2);
+            border-color: var(--primary);
+        }
+        .optional-toggle-label input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 15px; height: 15px;
+            cursor: pointer;
+        }
+        .optional-field {
+            margin-top: 14px;
+            animation: fadeIn 0.35s ease;
+        }
+        .optional-field label {
+            font-size: 0.88rem;
+            color: var(--primary-light);
+            margin-bottom: 5px;
         }
 
         /* Main container styling */
@@ -501,7 +535,12 @@
     <label><i class="bi bi-file-text-fill mr-2"></i>About Me</label>
     <asp:TextBox ID="txtAboutMe" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="4"
         placeholder="Write a brief professional summary about yourself..." />
-    <div class="invalid-feedback">About Me section is required.</div>
+        <div class="invalid-feedback">About Me section is required.</div>
+    <button type="button" class="btn btn-add-item mt-2" id="btnImproveAbout"
+            title="Rewrite with Gemini AI for ATS optimisation">
+        ? Improve with AI
+    </button>
+    <small id="aiAboutStatus" class="ml-2 text-muted" style="display:none;">Improving...</small>
 </div>
 
 <!-- Skills -->
@@ -555,11 +594,16 @@
     </div>
     <div class="form-group col-md-4">
         <asp:TextBox ID="txtDuration" runat="server" CssClass="form-control" placeholder="Duration (e.g., 2019 - 2021)" />
-        <div class="invalid-feedback">Invalid duration format. Use e.g. 2019 - 2021.</div>
+        <div class="invalid-feedback">Duration is required.</div>
     </div>
     <div class="form-group col-md-12">
         <asp:TextBox ID="txtDescription" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3" placeholder="Describe your responsibilities and achievements" />
-        <div class="invalid-feedback">Description of work is required.</div>
+                <div class="invalid-feedback">Description of work is required.</div>
+        <button type="button" class="btn btn-add-item mt-2" id="btnImproveDesc"
+                title="Rewrite with Gemini AI for ATS optimisation">
+            ? Improve with AI
+        </button>
+        <small id="aiDescStatus" class="ml-2 text-muted" style="display:none;">Improving...</small>
     </div>
 </div>
 
@@ -595,6 +639,76 @@
                     <div id="referencesContainer"></div>
                 </div>
 
+                <!-- -- Phase 5: Optional Sections -- -->
+                <div class="ats-card optional-sections-card" style="border-radius:14px;
+                     background:rgba(22,33,62,0.7);backdrop-filter:blur(10px);
+                     border:1px solid rgba(108,92,231,0.2);padding:1.4rem;margin-bottom:22px;position:relative;">
+                    <div style="position:absolute;top:0;left:0;right:0;height:4px;
+                                background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:14px 14px 0 0;"></div>
+                    <label style="font-size:1rem;font-weight:600;color:var(--primary-light);margin-bottom:14px;display:block;">
+                        <i class="bi bi-plus-circle-fill mr-2"></i>Add More Sections (Optional)
+                    </label>
+                    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;">
+                        <label class="optional-toggle-label">
+                            <input type="checkbox" class="optional-toggle" data-target="certSection" />
+                            <i class="bi bi-award-fill"></i> Certificates
+                        </label>
+                        <label class="optional-toggle-label">
+                            <input type="checkbox" class="optional-toggle" data-target="linkedinSection" />
+                            <i class="bi bi-linkedin"></i> LinkedIn
+                        </label>
+                        <label class="optional-toggle-label">
+                            <input type="checkbox" class="optional-toggle" data-target="githubSection" />
+                            <i class="bi bi-github"></i> GitHub
+                        </label>
+                        <label class="optional-toggle-label">
+                            <input type="checkbox" class="optional-toggle" data-target="achieveSection" />
+                            <i class="bi bi-trophy-fill"></i> Achievements
+                        </label>
+                        <label class="optional-toggle-label">
+                            <input type="checkbox" class="optional-toggle" data-target="projectSection" />
+                            <i class="bi bi-kanban-fill"></i> Projects
+                        </label>
+                        <label class="optional-toggle-label">
+                            <input type="checkbox" class="optional-toggle" data-target="langSection" />
+                            <i class="bi bi-translate"></i> Languages
+                        </label>
+                    </div>
+
+                    <div id="certSection" class="optional-field" style="display:none;">
+                        <label>Certificates</label>
+                        <input type="text" class="form-control" name="extra_Certificates"
+                               placeholder="e.g. AWS Certified Developer (2024), Google Cloud Associate" />
+                    </div>
+                    <div id="linkedinSection" class="optional-field" style="display:none;">
+                        <label>LinkedIn Profile</label>
+                        <input type="text" class="form-control" name="extra_LinkedIn"
+                               placeholder="linkedin.com/in/yourname" />
+                    </div>
+                    <div id="githubSection" class="optional-field" style="display:none;">
+                        <label>GitHub Profile</label>
+                        <input type="text" class="form-control" name="extra_GitHub"
+                               placeholder="github.com/yourname" />
+                    </div>
+                    <div id="achieveSection" class="optional-field" style="display:none;">
+                        <label>Achievements</label>
+                        <textarea class="form-control" name="extra_Achievements" rows="3"
+                                  placeholder="e.g. Won XYZ Hackathon 2023, Dean's List 2022-2024"></textarea>
+                    </div>
+                    <div id="projectSection" class="optional-field" style="display:none;">
+                        <label>Projects</label>
+                        <textarea class="form-control" name="extra_Projects" rows="3"
+                                  placeholder="Project name � short description (tech stack, impact)"></textarea>
+                    </div>
+                    <div id="langSection" class="optional-field" style="display:none;">
+                        <label>Languages</label>
+                        <input type="text" class="form-control" name="extra_Languages"
+                               placeholder="English (Fluent), Urdu (Native), Arabic (Basic)" />
+                    </div>
+                </div>
+
+                <asp:HiddenField ID="hiddenExtraSections" runat="server" ClientIDMode="Static" />
+
                 <asp:HiddenField ID="hiddenSkills" runat="server" ClientIDMode="Static" />
                 <asp:HiddenField ID="hiddenEducation" runat="server" ClientIDMode="Static" />
                 <asp:HiddenField ID="hiddenWorkExperience" runat="server" ClientIDMode="Static" />
@@ -603,9 +717,9 @@
                 <!-- Action Buttons -->
                 <div class="form-group mt-5 text-center">
                     <asp:Button ID="btnGenerate" runat="server" Text="Generate Resume" 
-                        CssClass="btn btn-primary mr-3 px-5" OnClick="btnGenerate_Click" OnClientClick="collectData() && validateDynamicFields();"/>
+                        CssClass="btn btn-primary mr-3 px-5" OnClick="btnGenerate_Click" OnClientClick="return collectData() &amp;&amp; collectExtraSections() &amp;&amp; validateDynamicFields();"/>
                     <asp:Button ID="btnSaveDraft" runat="server" Text="Save Draft" 
-                        CssClass="btn btn-outline-secondary px-5" OnClick="btnSaveDraft_Click" OnClientClick="collectData()  && validateDynamicFields();" />
+                        CssClass="btn btn-outline-secondary px-5" OnClick="btnSaveDraft_Click" OnClientClick="return collectData() &amp;&amp; collectExtraSections() &amp;&amp; validateDynamicFields();" />
                     <asp:HyperLink ID="lnkGeneratedResume" runat="server" Visible="false" Target="_blank" 
                         CssClass="btn btn-success ml-3 px-5">
                         <i class="bi bi-file-earmark-pdf-fill mr-2"></i>View Resume
@@ -686,8 +800,8 @@
     <div class="invalid-feedback">Company is required.</div>
 </div>
 <div class="form-group col-md-4">
-    <input type="text" class="form-control" name="duration" placeholder="Duration (e.g., 2015 - 2020)" pattern="^\d{4}\s*-\s*\d{4}$" required />
-    <div class="invalid-feedback">Invalid duration format. Use: YYYY - YYYY</div>
+    <input type="text" class="form-control" name="duration" placeholder="Duration (e.g., 2015 - 2020)"  required />
+    <div class="invalid-feedback">Duration is required.</div>
 </div>
 <div class="form-group col-md-12">
     <textarea class="form-control" name="description" placeholder="Description" required></textarea>
@@ -755,4 +869,97 @@
             document.head.appendChild(style);
         });
     </script>
+    <%-- Phase 5: Optional section toggles & data collection --%>
+    <script>
+        // Show/hide optional section fields when checkbox is toggled
+        document.querySelectorAll('.optional-toggle').forEach(function (cb) {
+            cb.addEventListener('change', function () {
+                var target = document.getElementById(this.dataset.target);
+                if (target) {
+                    target.style.display = this.checked ? 'block' : 'none';
+                    // Clear value when hidden
+                    if (!this.checked) {
+                        var inp = target.querySelector('input, textarea');
+                        if (inp) inp.value = '';
+                    }
+                }
+            });
+        });
+
+        // Serialise visible, filled optional fields ? hiddenExtraSections
+        function collectExtraSections() {
+            var extras = [];
+            document.querySelectorAll('[name^="extra_"]').forEach(function (input) {
+                var container = input.closest('[id$="Section"]');
+                if (container && container.style.display !== 'none' && input.value.trim()) {
+                    var name = input.name.replace('extra_', '');
+                    extras.push(name + '::' + input.value.trim());
+                }
+            });
+            document.getElementById('hiddenExtraSections').value = extras.join('||');
+            return true; // always allow submit to proceed
+        }
+    </script>
+
+    <%-- Phase 3: Gemini AI Improve buttons --%>
+    <script>
+        (function () {
+            // Helper: call the WebMethod and update a textarea
+            function improveWithAI(textareaId, btnId, statusId) {
+                var btn    = document.getElementById(btnId);
+                var status = document.getElementById(statusId);
+                if (!btn) return;
+
+                btn.addEventListener('click', function () {
+                    var textarea = document.getElementById(textareaId);
+                    if (!textarea) return;
+
+                    var rawText = textarea.value.trim();
+                    if (!rawText) { alert('Please enter some text first.'); return; }
+
+                    btn.disabled    = true;
+                    status.style.display = 'inline';
+                    status.textContent   = 'Improving\u2026';
+
+                    fetch('ResumeBuilder.aspx/ImproveText', {
+                        method : 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body   : JSON.stringify({ rawText: rawText })
+                    })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        var improved = d.d || '';
+                        if (improved.indexOf('Error') === 0) {
+                            status.textContent = improved;
+                            status.style.color = '#e74c3c';
+                        } else {
+                            textarea.value         = improved;
+                            status.textContent     = '\u2713 Done!';
+                            status.style.color     = '#00b894';
+                            setTimeout(function () {
+                                status.style.display = 'none';
+                                status.style.color   = '';
+                            }, 2500);
+                        }
+                    })
+                    .catch(function (err) {
+                        status.textContent = 'Request failed: ' + err.message;
+                        status.style.color = '#e74c3c';
+                    })
+                    .finally(function () { btn.disabled = false; });
+                });
+            }
+
+            // Wire up About Me button
+            improveWithAI('<%= txtAboutMe.ClientID %>', 'btnImproveAbout', 'aiAboutStatus');
+
+            // Wire up Work Experience Description button
+            improveWithAI('<%= txtDescription.ClientID %>', 'btnImproveDesc', 'aiDescStatus');
+        })();
+    </script>
 </asp:Content>
+
+
+
+
+

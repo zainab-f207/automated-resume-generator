@@ -1,360 +1,86 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>{{FirstName}} {{LastName}} - Professional Resume</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        
-        @page {
-            size: A4;
-            margin: 0;
+        /* ===== VARIANT KNOBS — only change these 2 lines per template ===== */
+        :root {
+            --font: Garamond, Georgia, serif;
+            --accent: #633974;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-        }
-
+        /* ==================================================================== */
         body {
-            width: 210mm;
-            height: 297mm;
-            margin: 0 auto;
-            background-color: white;
-            position: relative;
+            font-family: var(--font);
+            font-size: 11pt;
+            color: #111;
+            max-width: 800px;
+            margin: 30px auto;
+            line-height: 1.5;
         }
 
-        .resume-container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        /* Left Column (Green Box) */
-        .left-column {
-            width: 35%;
-            background-color: #959987;
-            padding: 130px 25px 60px; /* Added bottom padding for contact strip */
-            color: white;
-            position: relative;
-        }
-
-        /* Right Column */
-        .right-column {
-            width: 65%;
-            padding: 130px 30px 60px; /* Added bottom padding */
-        }
-
-        /* Name and Title Section */
-        .name-title-box {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            background-color: #b2b6a4;
-            padding: 15px 25px;
-            text-align: right;
-            z-index: 2;
-            width: auto;
-            max-width: 60%;
-        }
-
-        .profile-text h1 {
-            font-weight: 600;
-            font-size: 24px;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-            white-space: nowrap;
+        h1 {
+            font-size: 20pt;
+            margin-bottom: 2px;
+            color: #000;
         }
 
         .job-title {
-            font-weight: 500;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Section Headings */
-        .left-column h3 {
-            font-size: 18px;
+            font-size: 12pt;
+            color: var(--accent);
             font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .contact {
+            font-size: 10pt;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            font-size: 12.5pt;
             text-transform: uppercase;
-            margin: 30px 0 15px 0;
-            color: white;
-            position: relative;
-            padding-bottom: 5px;
-        }
-
-            .left-column h3::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 40px;
-                height: 2px;
-                background-color: white;
-            }
-
-        .right-column h3 {
-            font-size: 18px;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin: 30px 0 15px 0;
-            color: #757969;
-            position: relative;
-            padding-bottom: 5px;
-        }
-
-            .right-column h3::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 40px;
-                height: 2px;
-                background-color: #757969;
-            }
-
-        /* Improved Text Containment */
-        .about-section p, .job-description, .details, .reference {
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            word-wrap: break-word; /* Breaks long words */
-            overflow-wrap: break-word; /* Alternative to word-wrap */
-            hyphens: auto; /* Adds hyphens when breaking words */
-            text-align: justify; /* Creates even edges */
-            max-width: 100%; /* Ensures text stays within bounds */
-        }
-
-        .skills-list {
-            list-style-type: none;
-        }
-
-            .skills-list li {
-                margin-bottom: 10px;
-                position: relative;
-                padding-left: 20px;
-                font-size: 14px;
-            }
-
-                .skills-list li::before {
-                    content: '•';
-                    position: absolute;
-                    left: 0;
-                    font-weight: bold;
-                }
-
-        .job {
-            margin-bottom: 25px;
-            page-break-inside: avoid;
-        }
-
-        .position {
-            font-weight: 600;
-            font-size: 16px;
-            color: #444440;
-            margin-bottom: 3px;
-        }
-
-        .company {
-            font-style: italic;
-            font-size: 14px;
-            color: #444440;
+            letter-spacing: 0.5px;
+            border-bottom: 1.5px solid var(--accent);
+            padding-bottom: 3px;
+            margin-top: 20px;
             margin-bottom: 8px;
+            color: #000;
         }
 
-        .date {
-            font-size: 14px;
-            color: #444440;
-            margin-bottom: 8px;
+        ul {
+            margin: 4px 0 4px 20px;
+            padding: 0;
         }
 
-        .job-description {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #444440;
+        .job-block, .edu-block {
+            margin-bottom: 10px;
         }
 
-        .education-item {
-            margin-bottom: 20px;
-            page-break-inside: avoid;
-        }
-
-        .institution {
-            font-weight: 600;
-            font-size: 16px;
-            color: #444440;
-            margin-bottom: 3px;
-        }
-
-        .degree {
-            font-size: 14px;
-            color: #444440;
-            margin-bottom: 3px;
-        }
-
-        .details {
-            font-size: 14px;
-            color: #444440;
-            line-height: 1.6;
-        }
-
-        .reference {
-            font-size: 14px;
-            color: #444440;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        /* Contact Strip (Fixed at bottom) */
-        .contact-strip {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #e8bcbc;
-            padding: 10px 0;
-            display: flex;
-            justify-content: center;
-            border-radius: 0;
-        }
-
-        .contact-info {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-            .contact-info div {
-                display: flex;
-                align-items: center;
-                font-size: 12px;
-                white-space: nowrap;
+            .job-block strong, .edu-block strong {
+                font-size: 11pt;
             }
-
-            .contact-info span {
-                margin-right: 8px;
-                color: #757969;
-            }
-
-        /* Print-specific adjustments */
-        @media print {
-            body {
-                width: 210mm;
-                height: 297mm;
-                margin: 0;
-                padding: 0;
-                background-color: white;
-            }
-
-            .resume-container {
-                display: flex !important;
-                height: 100%;
-            }
-
-            .left-column, .right-column {
-                page-break-inside: avoid;
-                height: auto;
-            }
-
-            .name-title-box {
-                position: absolute;
-                top: 15mm;
-                right: 15mm;
-            }
-
-            .contact-strip {
-                position: fixed;
-                bottom: 0;
-            }
-
-            .about-section p, .job-description, .details, .reference {
-                word-break: break-word;
-                hyphens: auto;
-            }
-
-            /* Prevent sections from breaking across pages */
-            h3 {
-                page-break-after: avoid;
-            }
-
-            .job, .education-item {
-                page-break-inside: avoid;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="resume-container">
-        <!-- Name and Title Box (Top Right) -->
-        <div class="name-title-box">
-            <div class="profile-text">
-                <h1>
-                    <span class="first-name">{{FirstName}}</span>
-                    <span class="last-name">{{LastName}}</span>
-                </h1>
-                <div class="job-title">{{JobTitle}}</div>
-            </div>
-        </div>
+    <h1>{{FirstName}} {{LastName}}</h1>
+    <div class="job-title">{{JobTitle}}</div>
+    <div class="contact">{{Email}} &nbsp;|&nbsp; {{Phone}} &nbsp;|&nbsp; {{Address}} &nbsp;|&nbsp; {{Website}}</div>
 
-        <!-- Left Column (Green Box) -->
-        <div class="left-column">
-            <!-- About Me -->
-            <div class="about-section">
-                <h3>About Me</h3>
-                <p>{{AboutMe}}</p>
-            </div>
+    <h2>Summary</h2>
+    <p>{{AboutMe}}</p>
 
-            <!-- Skills -->
-            <div class="skills-section">
-                <h3>Skills</h3>
-                <ul class="skills-list">
-                    {{SkillsList}}
-                </ul>
-            </div>
-        </div>
+    <h2>Skills</h2>
+    <ul>{{SkillsList}}</ul>
 
-        <!-- Right Column -->
-        <div class="right-column">
-            <!-- Work Experience -->
-            <section class="experience-section">
-                <h3>Work Experience</h3>
-                <div class="job">
-                    {{WorkExperienceSection}}
-                </div>
-            </section>
+    <h2>Work Experience</h2>
+    <div>{{WorkExperienceSection}}</div>
 
-            <!-- Education -->
-            <div class="education-section">
-                <h3>Educational History</h3>
-                <div class="education-item">
-                    {{EducationSection}}
-                </div>
-            </div>
+    <h2>Education</h2>
+    <div>{{EducationSection}}</div>
 
-            <!-- References -->
-            <section class="references-section">
-                <h3>References</h3>
-                <div class="reference">
-                    {{ReferencesSection}}
-                </div>
-            </section>
-        </div>
+    {{OptionalSections}}
 
-        <!-- Contact Strip (Bottom) -->
-        <div class="contact-strip">
-            <div class="contact-info">
-                <div><span>📞</span>{{Phone}}</div>
-                <div><span>✉</span>{{Email}}</div>
-                <div><span>📍</span>{{Address}}</div>
-                <div><span>🌐</span>{{Website}}</div>
-            </div>
-        </div>
-    </div>
+    <h2>References</h2>
+    <div>{{ReferencesSection}}</div>
 </body>
 </html>

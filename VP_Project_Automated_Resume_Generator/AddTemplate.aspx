@@ -297,12 +297,29 @@
                    
                 </div>
                 
-                <div class="form-group">
-                    <asp:Label runat="server" AssociatedControlID="txtTemplatePath" CssClass="form-label">Template File Path</asp:Label>
-                    <asp:TextBox ID="txtTemplatePath" runat="server" CssClass="form-control" 
-                        placeholder="Enter the full path to the template file" required="true"></asp:TextBox>
-                     
-                    <small class="form-text" style="color: rgba(255,255,255,0.5);">Example: ~/Templates/Template1/index.html</small>
+               <asp:Label runat="server" CssClass="form-label">Font</asp:Label>
+<asp:DropDownList ID="ddlFont" runat="server" CssClass="form-control">
+    <asp:ListItem Text="Arial (Clean)" Value="Arial, Helvetica, sans-serif" />
+    <asp:ListItem Text="Calibri (Modern)" Value="Calibri, 'Segoe UI', sans-serif" />
+    <asp:ListItem Text="Georgia (Executive)" Value="Georgia, 'Times New Roman', serif" />
+</asp:DropDownList>
+
+<asp:Label runat="server" CssClass="form-label">Accent Color</asp:Label>
+<asp:DropDownList ID="ddlAccent" runat="server" CssClass="form-control">
+    <asp:ListItem Text="Navy" Value="#1a5276" />
+    <asp:ListItem Text="Charcoal" Value="#2a2a2a" />
+    <asp:ListItem Text="Maroon" Value="#4a2c2a" />
+    <asp:ListItem Text="Forest" Value="#1e5631" />
+</asp:DropDownList>
+
+<asp:Label runat="server" CssClass="form-label">Section Order</asp:Label>
+<asp:CheckBoxList ID="cblSections" runat="server">
+    <asp:ListItem Text="Summary" Value="Summary" Selected="True" />
+    <asp:ListItem Text="Skills" Value="Skills" Selected="True" />
+    <asp:ListItem Text="Work Experience" Value="Experience" Selected="True" />
+    <asp:ListItem Text="Education" Value="Education" Selected="True" />
+    <asp:ListItem Text="References" Value="References" Selected="True" />
+</asp:CheckBoxList>
                                      <asp:RequiredFieldValidator ID="rfvTemplatePath" runat="server"
     ControlToValidate="txtTemplatePath"
     ErrorMessage="Template file path is required"

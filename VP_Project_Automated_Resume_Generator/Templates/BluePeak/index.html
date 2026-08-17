@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            --accent: #155e9e;
+            --font: 'Trebuchet MS', Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font);
+            font-size: 10.8pt;
+            color: #1c2833;
+            max-width: 800px;
+            margin: 27px auto;
+            line-height: 1.45;
+        }
+
+        h1 {
+            font-size: 23pt;
+            margin: 0;
+            color: #102a43;
+        }
+
+        .job-title {
+            display: block;
+            font-size: 12pt;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 2px;
+        }
+
+        .contact {
+            font-size: 9.5pt;
+            margin-top: 7px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        h2 {
+            font-size: 12pt;
+            color: var(--accent);
+            margin: 17px 0 7px;
+            letter-spacing: .5px;
+        }
+
+            h2::after {
+                content: "";
+                display: block;
+                width: 100%;
+                border-bottom: 2px solid var(--accent);
+                margin-top: 3px;
+            }
+
+        p {
+            margin: 4px 0 8px;
+        }
+
+        ul {
+            margin: 4px 0 8px 20px;
+            padding: 0;
+        }
+
+        .job-block,
+        .edu-block {
+            margin-bottom: 11px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>{{FirstName}} {{LastName}}</h1>
+    <div class="job-title">{{JobTitle}}</div>
+    <div class="contact">{{Email}} | {{Phone}} | {{Address}} | {{Website}}</div>
+
+    <h2>Career Overview</h2>
+    <p>{{AboutMe}}</p>
+
+    <h2>Core Competencies</h2>
+    <ul>{{SkillsList}}</ul>
+
+    <h2>Professional Experience</h2>
+    <div>{{WorkExperienceSection}}</div>
+
+    <h2>Academic Background</h2>
+    <div>{{EducationSection}}</div>
+
+    {{OptionalSections}}
+
+    <h2>References</h2>
+    <div>{{ReferencesSection}}</div>
+
+</body>
+</html>

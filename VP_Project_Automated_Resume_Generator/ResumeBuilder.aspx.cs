@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -148,7 +148,8 @@ namespace VP_Project_Automated_Resume_Generator
             
             if (data != null)
             {
-                Session["ResumeID"] = data.ResumeID; 
+                Session["ResumeID"] = data.ResumeID;
+                SaveExtraSections(data.ResumeID, hiddenExtraSections.Value);
             }
             
             htmlContent = htmlContent.Replace("{{FirstName}}", txtFirstName.Text)
@@ -162,7 +163,8 @@ namespace VP_Project_Automated_Resume_Generator
                                          .Replace("{{SkillsList}}", data.Skills)
                                          .Replace("{{EducationSection}}", data.Education)
                                          .Replace("{{WorkExperienceSection}}", data.WorkExperience)
-                                         .Replace("{{ReferencesSection}}", data.ReferenceDetails);
+                                         .Replace("{{ReferencesSection}}", data.ReferenceDetails)
+                                         .Replace("{{OptionalSections}}", BuildOptionalSectionsHtml(data.ResumeID));
 
 
 
@@ -300,7 +302,8 @@ namespace VP_Project_Automated_Resume_Generator
                                          .Replace("{{SkillsList}}", data.Skills)
                                          .Replace("{{EducationSection}}", data.Education)
                                          .Replace("{{WorkExperienceSection}}", data.WorkExperience)
-                                         .Replace("{{ReferencesSection}}", data.ReferenceDetails);
+                                         .Replace("{{ReferencesSection}}", data.ReferenceDetails)
+                                         .Replace("{{OptionalSections}}", BuildOptionalSectionsHtml(data.ResumeID));
 
 
 
@@ -355,5 +358,119 @@ namespace VP_Project_Automated_Resume_Generator
         {
             SaveResume();
         }
-    }
+            // ================================================================
+        //  Phase 3 - "Improve with AI" (Google Gemini free tier)
+        //  Called from JS via AJAX PageMethod
+        // ================================================================
+        [System.Web.Services.WebMethod]
+        public static string ImproveText(string rawText)
+        {
+            string apiKey = System.Configuration.ConfigurationManager.AppSettings["GEMINI_API_KEY"];
+
+            if (string.IsNullOrWhiteSpace(apiKey) || apiKey == "YOUR_API_KEY_HERE")
+                return "Error: GEMINI_API_KEY not configured in Web.config.";
+
+            string url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+
+            var payload = new
+            {
+                contents = new[]
+                {
+                    new
+                    {
+                        parts = new[]
+                        {
+                            new
+                            {
+                                text = "Rewrite this resume text to be concise, professional, and ATS-keyword friendly. Return only the rewritten text, no explanation:\n\n" + rawText
+                            }
+                        }
+                    }
+                }
+            };
+
+            try
+            {
+                using (var client = new System.Net.Http.HttpClient())
+                {
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    string json    = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+                    var contentReq = new System.Net.Http.StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                    var response   = client.PostAsync(url, contentReq).Result;
+                    string result  = response.Content.ReadAsStringAsync().Result;
+
+                    dynamic parsed = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
+
+                    if (parsed.error != null)
+                        return "API Error: " + parsed.error.message;
+
+                    return parsed.candidates[0].content.parts[0].text.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                return "Error calling Gemini API: " + ex.Message;
+            }
+        }
+
+        // ================================================================
+        //  Phase 5 - Optional sections persistence & rendering
+        // ================================================================
+        private const string ConnStr = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+
+        private void SaveExtraSections(int resumeId, string hiddenValue)
+        {
+            if (string.IsNullOrWhiteSpace(hiddenValue) || resumeId <= 0) return;
+            try {
+                using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(ConnStr))
+                {
+                    con.Open();
+                    System.Data.SqlClient.SqlCommand del = new System.Data.SqlClient.SqlCommand(
+                        "DELETE FROM ResumeExtraSections WHERE ResumeID = @RID", con);
+                    del.Parameters.AddWithValue("@RID", resumeId);
+                    del.ExecuteNonQuery();
+
+                    foreach (var pair in hiddenValue.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        var parts = pair.Split(new[] { "::" }, 2, StringSplitOptions.None);
+                        if (parts.Length != 2) continue;
+
+                        System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(
+                            "INSERT INTO ResumeExtraSections (ResumeID, SectionName, SectionContent) " +
+                            "VALUES (@RID, @Name, @Content)", con);
+                        cmd.Parameters.AddWithValue("@RID",     resumeId);
+                        cmd.Parameters.AddWithValue("@Name",    parts[0].Trim());
+                        cmd.Parameters.AddWithValue("@Content", parts[1].Trim());
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            } catch (System.Data.SqlClient.SqlException) { }
+        }
+
+        private string BuildOptionalSectionsHtml(int resumeId)
+        {
+            try {
+                var sb = new System.Text.StringBuilder();
+                using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(ConnStr))
+                {
+                    con.Open();
+                    System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(
+                        "SELECT SectionName, SectionContent FROM ResumeExtraSections WHERE ResumeID = @RID ORDER BY Id", con);
+                    cmd.Parameters.AddWithValue("@RID", resumeId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string name    = System.Web.HttpUtility.HtmlEncode(reader["SectionName"].ToString());
+                            string content = System.Web.HttpUtility.HtmlEncode(reader["SectionContent"].ToString());
+                            sb.Append("<h2>" + name + "</h2><p style='margin:4px 0;'>" + content + "</p>");
+                        }
+                    }
+                }
+                return sb.ToString();
+            } catch (System.Data.SqlClient.SqlException) { return string.Empty; }
+        }
+
+
+}
 }

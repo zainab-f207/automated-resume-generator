@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            --accent: #4b5563;
+            --font: 'Arial Narrow', Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font);
+            font-size: 10.5pt;
+            color: #111827;
+            max-width: 780px;
+            margin: 25px auto;
+            line-height: 1.4;
+        }
+
+        h1 {
+            font-size: 21pt;
+            margin: 0;
+        }
+
+        .job-title {
+            font-size: 11pt;
+            color: var(--accent);
+            font-weight: bold;
+            margin: 2px 0 5px;
+        }
+
+        .contact {
+            font-size: 9pt;
+            color: #555;
+            margin-bottom: 13px;
+        }
+
+        h2 {
+            font-size: 11pt;
+            text-transform: uppercase;
+            background: #f2f2f2;
+            border-bottom: 1px solid var(--accent);
+            padding: 4px 6px;
+            margin: 15px 0 7px;
+            letter-spacing: .5px;
+        }
+
+        p {
+            margin: 3px 0 7px;
+        }
+
+        ul {
+            margin: 3px 0 7px 19px;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 2px;
+        }
+
+        .job-block,
+        .edu-block {
+            margin-bottom: 9px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>{{FirstName}} {{LastName}}</h1>
+    <div class="job-title">{{JobTitle}}</div>
+    <div class="contact">{{Email}} | {{Phone}} | {{Address}} | {{Website}}</div>
+
+    <h2>Summary</h2>
+    <p>{{AboutMe}}</p>
+
+    <h2>Skills</h2>
+    <ul>{{SkillsList}}</ul>
+
+    <h2>Experience</h2>
+    <div>{{WorkExperienceSection}}</div>
+
+    <h2>Education</h2>
+    <div>{{EducationSection}}</div>
+
+    {{OptionalSections}}
+
+    <h2>References</h2>
+    <div>{{ReferencesSection}}</div>
+
+</body>
+</html>

@@ -60,13 +60,31 @@ namespace VP_Project_Automated_Resume_Generator
         protected global::System.Web.UI.WebControls.RegularExpressionValidator revTemplateName;
 
         /// <summary>
-        /// txtTemplatePath control.
+        /// ddlFont control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtTemplatePath;
+        protected global::System.Web.UI.WebControls.DropDownList ddlFont;
+
+        /// <summary>
+        /// ddlAccent control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlAccent;
+
+        /// <summary>
+        /// cblSections control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList cblSections;
 
         /// <summary>
         /// rfvTemplatePath control.

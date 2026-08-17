@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            --accent: #333333;
+            --font: 'Times New Roman', Times, serif;
+        }
+
+        body {
+            font-family: var(--font);
+            font-size: 11pt;
+            color: #202020;
+            max-width: 790px;
+            margin: 32px auto;
+            line-height: 1.55;
+        }
+
+        h1 {
+            font-size: 24pt;
+            margin: 0;
+            text-align: center;
+        }
+
+        .job-title {
+            text-align: center;
+            font-size: 12pt;
+            margin-top: 3px;
+        }
+
+        .contact {
+            text-align: center;
+            font-size: 9.5pt;
+            margin: 7px 0 20px;
+        }
+
+        h2 {
+            font-size: 12pt;
+            text-transform: uppercase;
+            border-bottom: 1px solid #333;
+            padding-bottom: 3px;
+            margin: 19px 0 8px;
+        }
+
+        p {
+            margin: 4px 0 8px;
+        }
+
+        ul {
+            margin: 4px 0 8px 22px;
+        }
+
+        .job-block,
+        .edu-block {
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>{{FirstName}} {{LastName}}</h1>
+    <div class="job-title">{{JobTitle}}</div>
+    <div class="contact">{{Email}} | {{Phone}} | {{Address}} | {{Website}}</div>
+
+    <h2>Professional Profile</h2>
+    <p>{{AboutMe}}</p>
+
+    <h2>Skills & Competencies</h2>
+    <ul>{{SkillsList}}</ul>
+
+    <h2>Professional Experience</h2>
+    <div>{{WorkExperienceSection}}</div>
+
+    <h2>Education & Academic Background</h2>
+    <div>{{EducationSection}}</div>
+
+    {{OptionalSections}}
+
+    <h2>References</h2>
+    <div>{{ReferencesSection}}</div>
+
+</body>
+</html>
