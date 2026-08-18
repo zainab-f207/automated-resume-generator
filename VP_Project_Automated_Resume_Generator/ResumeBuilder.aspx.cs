@@ -358,64 +358,7 @@ namespace VP_Project_Automated_Resume_Generator
         {
             SaveResume();
         }
-            // ================================================================
-        //  Phase 3 - "Improve with AI" (Google Gemini free tier)
-        //  Called from JS via AJAX PageMethod
-        // ================================================================
-        [System.Web.Services.WebMethod]
-        public static string ImproveText(string rawText)
-        {
-            string apiKey = System.Configuration.ConfigurationManager.AppSettings["GEMINI_API_KEY"];
-
-            if (string.IsNullOrWhiteSpace(apiKey) || apiKey == "YOUR_API_KEY_HERE")
-                return "Error: GEMINI_API_KEY not configured in Web.config.";
-
-            string url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
-
-            var payload = new
-            {
-                contents = new[]
-                {
-                    new
-                    {
-                        parts = new[]
-                        {
-                            new
-                            {
-                                text = "Rewrite this resume text to be concise, professional, and ATS-keyword friendly. Return only the rewritten text, no explanation:\n\n" + rawText
-                            }
-                        }
-                    }
-                }
-            };
-
-            try
-            {
-                using (var client = new System.Net.Http.HttpClient())
-                {
-                    client.Timeout = TimeSpan.FromSeconds(30);
-                    string json    = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
-                    var contentReq = new System.Net.Http.StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                    var response   = client.PostAsync(url, contentReq).Result;
-                    string result  = response.Content.ReadAsStringAsync().Result;
-
-                    dynamic parsed = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
-
-                    if (parsed.error != null)
-                        return "API Error: " + parsed.error.message;
-
-                    return parsed.candidates[0].content.parts[0].text.ToString();
-                }
-            }
-            catch (Exception ex)
-            {
-                return "Error calling Gemini API: " + ex.Message;
-            }
-        }
-
-        // ================================================================
-        //  Phase 5 - Optional sections persistence & rendering
-        // ================================================================
+       
         private const string ConnStr = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
 
         private void SaveExtraSections(int resumeId, string hiddenValue)

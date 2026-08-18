@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.IO;
 using iText.Html2pdf;
@@ -45,11 +45,11 @@ namespace VP_Project_Automated_Resume_Generator
 
                     if (format == "pdf")
                     {
-                        ExportToPDF(resume);
+                        ExportToPDF(resume, 0);
                     }
                     else if (format == "doc")
                     {
-                        ExportToDOC(resume);
+                        ExportToDOC(resume, 0);
                     }
                 }
                 else
@@ -84,11 +84,11 @@ namespace VP_Project_Automated_Resume_Generator
 
             if (format == "pdf")
             {
-                ExportToPDF(resumeData);
+                ExportToPDF(resumeData, 0);
             }
             else if (format == "doc")
             {
-                ExportToDOC(resumeData);
+                ExportToDOC(resumeData, 0);
             }
         }
         private DraftResumeData GetResumeData(string resumeId)
@@ -130,7 +130,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         }
 
-        protected void ExportToPDF(DraftResumeData resume)
+        protected void ExportToPDF(DraftResumeData resume, int resumeId)
         {
             try
             {
@@ -163,7 +163,7 @@ namespace VP_Project_Automated_Resume_Generator
                     properties.SetCssApplierFactory(new DefaultCssApplierFactory());
 
 
-                    string htmlContent = GetProcessedHtml(resume);
+                    string htmlContent = GetProcessedHtml(resume, resumeId);
 
                     HtmlConverter.ConvertToPdf(htmlContent, stream, properties);
 
@@ -182,12 +182,12 @@ namespace VP_Project_Automated_Resume_Generator
 
 
 
-        private void ExportToDOC(DraftResumeData resume)
+        private void ExportToDOC(DraftResumeData resume, int resumeId)
         {
             try
             {
 
-                string htmlContent = GetProcessedHtml(resume);
+                string htmlContent = GetProcessedHtml(resume, resumeId);
 
                 // Build Word-compatible HTML
                 StringBuilder strHTML = new StringBuilder();
@@ -217,7 +217,7 @@ namespace VP_Project_Automated_Resume_Generator
                 Response.Write($"Error generating DOC: {ex.Message}");
             }
         }
-        private string GetProcessedHtml(DraftResumeData resume)
+        private string GetProcessedHtml(DraftResumeData resume, int resumeId = 0)
         {
             if (Session["SelectedTemplate"] == null) throw new Exception("Template not selected");
 
@@ -229,10 +229,10 @@ namespace VP_Project_Automated_Resume_Generator
             string htmlContent = File.ReadAllText(templatePath);
 
 
-            return ReplacePlaceholders(htmlContent, resume);
+            return ReplacePlaceholders(htmlContent, resume, resumeId);
         }
 
-        private string ReplacePlaceholders(string htmlContent, DraftResumeData resume)
+        private string ReplacePlaceholders(string htmlContent, DraftResumeData resume, int resumeId = 0)
         {
             var replacements = new Dictionary<string, string>
     {
@@ -248,11 +248,43 @@ namespace VP_Project_Automated_Resume_Generator
         {"{{SkillsList}}", resume.Skills ?? ""},
         {"{{EducationSection}}", resume.Education ?? ""},
         {"{{WorkExperienceSection}}", resume.WorkExperience ?? ""},
-        {"{{ReferencesSection}}", resume.ReferenceDetails ?? ""}
+        {"{{{ReferencesSection}}}", resume.ReferenceDetails ?? ""},
+        {"{{{OptionalSections}}}", BuildOptionalSectionsHtml(resumeId)}
     };
 
             return replacements.Aggregate(htmlContent,
                 (current, replacement) => current.Replace(replacement.Key, replacement.Value));
+        }
+
+        private string BuildOptionalSectionsHtml(int resumeId)
+        {
+            if (resumeId <= 0) return string.Empty;
+            var sb = new StringBuilder();
+            string connStr = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            try
+            {
+                using (var con = new SqlConnection(connStr))
+                {
+                    con.Open();
+                    var cmd = new SqlCommand(
+                        "SELECT SectionName, SectionContent FROM ResumeExtraSections WHERE ResumeID = @RID ORDER BY Id", con);
+                    cmd.Parameters.AddWithValue("@RID", resumeId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string name    = System.Web.HttpUtility.HtmlEncode(reader["SectionName"].ToString());
+                            string section = System.Web.HttpUtility.HtmlEncode(reader["SectionContent"].ToString());
+                            sb.Append($"<h2>{name}</h2><p>{section}</p>");
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("ResumeExtraSections (draft) error: " + ex.Message);
+            }
+            return sb.ToString();
         }
     }
 }

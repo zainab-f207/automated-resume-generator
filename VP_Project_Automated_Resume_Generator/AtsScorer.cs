@@ -12,7 +12,7 @@ namespace VP_Project_Automated_Resume_Generator
     /// </summary>
     public static class AtsScorer
     {
-        private static readonly HashSet<string> StopWords = new HashSet<string>
+        public static readonly HashSet<string> StopWords = new HashSet<string>
         {
             "the","and","a","to","of","in","for","on","with","is","are",
             "as","at","by","an","or","be","was","were","has","have","had",

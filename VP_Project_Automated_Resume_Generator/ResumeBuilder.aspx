@@ -904,56 +904,42 @@
     <%-- Phase 3: Gemini AI Improve buttons --%>
     <script>
         (function () {
-            // Helper: call the WebMethod and update a textarea
             function improveWithAI(textareaId, btnId, statusId) {
-                var btn    = document.getElementById(btnId);
+                var btn = document.getElementById(btnId);
                 var status = document.getElementById(statusId);
                 if (!btn) return;
 
                 btn.addEventListener('click', function () {
                     var textarea = document.getElementById(textareaId);
-                    if (!textarea) return;
-
                     var rawText = textarea.value.trim();
                     if (!rawText) { alert('Please enter some text first.'); return; }
 
-                    btn.disabled    = true;
+                    btn.disabled = true;
                     status.style.display = 'inline';
-                    status.textContent   = 'Improving\u2026';
+                    status.textContent = 'Improving…';
 
-                    fetch('ResumeBuilder.aspx/ImproveText', {
-                        method : 'POST',
+                    fetch('ImproveText.ashx', {
+                        method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body   : JSON.stringify({ rawText: rawText })
+                        body: JSON.stringify({ rawText: rawText })
                     })
-                    .then(function (r) { return r.json(); })
-                    .then(function (d) {
-                        var improved = d.d || '';
-                        if (improved.indexOf('Error') === 0) {
-                            status.textContent = improved;
-                            status.style.color = '#e74c3c';
-                        } else {
-                            textarea.value         = improved;
-                            status.textContent     = '\u2713 Done!';
-                            status.style.color     = '#00b894';
-                            setTimeout(function () {
-                                status.style.display = 'none';
-                                status.style.color   = '';
-                            }, 2500);
-                        }
-                    })
-                    .catch(function (err) {
-                        status.textContent = 'Request failed: ' + err.message;
-                        status.style.color = '#e74c3c';
-                    })
-                    .finally(function () { btn.disabled = false; });
+                        .then(r => r.json())
+                        .then(d => {
+                            if (d.success) {
+                                textarea.value = d.text;
+                                status.textContent = '✓ Done!';
+                                status.style.color = '#00b894';
+                                setTimeout(() => { status.style.display = 'none'; status.style.color = ''; }, 2500);
+                            } else {
+                                status.textContent = d.message;
+                                status.style.color = '#e74c3c';
+                            }
+                        })
+                        .catch(err => { status.textContent = 'Request failed: ' + err.message; status.style.color = '#e74c3c'; })
+                        .finally(() => { btn.disabled = false; });
                 });
             }
-
-            // Wire up About Me button
             improveWithAI('<%= txtAboutMe.ClientID %>', 'btnImproveAbout', 'aiAboutStatus');
-
-            // Wire up Work Experience Description button
             improveWithAI('<%= txtDescription.ClientID %>', 'btnImproveDesc', 'aiDescStatus');
         })();
     </script>

@@ -276,6 +276,7 @@
     <Content Include="Fonts\Roboto-Black.ttf" />
     <Content Include="Fonts\Roboto_SemiCondensed-Light.ttf" />
     <Content Include="Fonts\OpenSans-VariableFont.ttf" />
+    <Content Include="ImproveText.ashx" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -459,6 +460,9 @@
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="ImproveText.ashx.cs">
+      <DependentUpon>ImproveText.ashx</DependentUpon>
     </Compile>
     <Compile Include="Instructions.aspx.cs">
       <DependentUpon>Instructions.aspx</DependentUpon>

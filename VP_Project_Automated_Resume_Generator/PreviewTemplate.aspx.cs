@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,7 +45,8 @@ namespace VP_Project_Automated_Resume_Generator
                                          .Replace("{{SkillsList}}", "<li>HTML</li><li>CSS</li><li>JavaScript</li>")
                                          .Replace("{{EducationSection}}", "<div class='education-item'><div class='institution'>University of Tech</div><div class='degree'>BSc Computer Science</div><div class='details'>2017-2021</div></div>")
                                          .Replace("{{WorkExperienceSection}}", "<div class='job'><div class='company'>TechCorp</div><div class='position'>Frontend Developer</div><div class='date'>2021 - Present</div><ul class='job-duties'><li>Built responsive web pages</li><li>Improved UI/UX</li></ul></div>")
-                                         .Replace("{{ReferencesSection}}", "<div class='reference'><div class='ref-name'>Jane Doe</div><div class='ref-contact'>jane@example.com</div></div>");
+                                         .Replace("{{ReferencesSection}}", "<div class='reference'><div class='ref-name'>Jane Doe</div><div class='ref-contact'>jane@example.com</div></div>")
+                                         .Replace("{{OptionalSections}}", "");
 
                     TemplateContent.Text = htmlContent;
                     string style = @"

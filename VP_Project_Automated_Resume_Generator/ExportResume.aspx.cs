@@ -1,17 +1,18 @@
-﻿using System;
+using DocumentFormat.OpenXml.Spreadsheet;
+using iText.Html2pdf;
+using iText.Html2pdf.Css.Apply.Impl;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
+using iText.Layout.Font;
+using Microsoft.AspNet.FriendlyUrls;
+using ResumeData;
+using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
-using iText.Html2pdf;
-using ResumeData;
-using System.Text;
-using iText.Layout.Font;
-using System.Collections.Generic;
-using iText.Kernel.Pdf;
-using iText.Kernel.Geom;
-using iText.Html2pdf.Css.Apply.Impl;
 using System.Linq;
-using Microsoft.AspNet.FriendlyUrls;
-using DocumentFormat.OpenXml.Spreadsheet;
+using System.Text;
+using System.Web;
 
 
 namespace VP_Project_Automated_Resume_Generator
@@ -45,13 +46,10 @@ namespace VP_Project_Automated_Resume_Generator
                 Resume resume = GetResumeData(resumeId);
                 
                 if (format == "pdf")
-                {
-                    
-                    ExportToPDF(resume);
+                {                    ExportToPDF(resume, resumeId);
                 }
                 else if (format == "doc")
-                {
-                    ExportToDOC(resume);
+                {                    ExportToDOC(resume, resumeId);
                 }
             }
 
@@ -82,11 +80,11 @@ namespace VP_Project_Automated_Resume_Generator
 
             if (format == "pdf")
             {
-                ExportToPDF(resumeData);
+                ExportToPDF(resumeData, resumeId);
             }
             else if (format == "doc")
             {
-                ExportToDOC(resumeData);
+                ExportToDOC(resumeData, resumeId);
             }
         }
         private Resume GetResumeData(int resumeId)
@@ -127,7 +125,7 @@ namespace VP_Project_Automated_Resume_Generator
 
         }
        
-        protected void ExportToPDF(Resume resume)
+        protected void ExportToPDF(Resume resume, int resumeId)
         {
             try
             {
@@ -160,7 +158,7 @@ namespace VP_Project_Automated_Resume_Generator
                     properties.SetCssApplierFactory(new DefaultCssApplierFactory());
                     
 
-                    string htmlContent = GetProcessedHtml(resume);
+                    string htmlContent = GetProcessedHtml(resume, resumeId);
 
                     HtmlConverter.ConvertToPdf(htmlContent, stream, properties);
 
@@ -179,12 +177,12 @@ namespace VP_Project_Automated_Resume_Generator
 
         
 
-        private void ExportToDOC(Resume resume)
+        private void ExportToDOC(Resume resume, int resumeId)
         {
             try
             {
                
-                string htmlContent = GetProcessedHtml(resume);
+                string htmlContent = GetProcessedHtml(resume, resumeId);
 
                 // Build Word-compatible HTML
                 StringBuilder strHTML = new StringBuilder();
@@ -251,5 +249,67 @@ namespace VP_Project_Automated_Resume_Generator
             return replacements.Aggregate(htmlContent,
                 (current, replacement) => current.Replace(replacement.Key, replacement.Value));
         }
+
+        private string GetProcessedHtml(Resume resume, int resumeId)
+        {
+            if (Session["SelectedTemplate"] == null) throw new Exception("Template not selected");
+            int templateId = Convert.ToInt32(Session["SelectedTemplate"]);
+            var template = TemplateBAL.TemplateBAL.GetTemplateById(templateId);
+            string templatePath = Server.MapPath(template.TemplateFilePath);
+            string htmlContent = File.ReadAllText(templatePath);
+            return ReplacePlaceholders(htmlContent, resume, resumeId);
+        }
+
+        private string ReplacePlaceholders(string htmlContent, Resume resume, int resumeId)
+        {
+            var replacements = new Dictionary<string, string>
+    {
+        {"{{FirstName}}", resume.FirstName ?? ""},
+        {"{{LastName}}", resume.LastName ?? ""},
+        {"{{JobTitle}}", resume.JobTitle ?? ""},
+        {"{{Email}}", resume.Email ?? ""},
+        {"{{Phone}}", resume.Phone ?? ""},
+        {"{{Website}}", resume.Website ?? ""},
+        {"{{Address}}", resume.Address ?? ""},
+        {"{{AboutMe}}", resume.AboutMe ?? ""},
+        {"{{SkillsList}}", resume.Skills ?? ""},
+        {"{{EducationSection}}", resume.Education ?? ""},
+        {"{{WorkExperienceSection}}", resume.WorkExperience ?? ""},
+        {"{{ReferencesSection}}", resume.ReferenceDetails ?? ""},
+        {"{{OptionalSections}}", BuildOptionalSectionsHtml(resumeId)}
+    };
+            return replacements.Aggregate(htmlContent, (current, r) => current.Replace(r.Key, r.Value));
+        }
+
+        private string BuildOptionalSectionsHtml(int resumeId)
+        {
+            var sb = new StringBuilder();
+            string connStr = "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connStr))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand(
+                        "SELECT SectionName, SectionContent FROM ResumeExtraSections WHERE ResumeID = @RID ORDER BY Id", con);
+                    cmd.Parameters.AddWithValue("@RID", resumeId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string name = HttpUtility.HtmlEncode(reader["SectionName"].ToString());
+                            string content = HttpUtility.HtmlEncode(reader["SectionContent"].ToString());
+                            sb.Append($"<h2>{name}</h2><p>{content}</p>");
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("ResumeExtraSections error: " + ex.Message); // at least visible in Output window now
+            }
+            return sb.ToString();
+        }
     }
 }
+
