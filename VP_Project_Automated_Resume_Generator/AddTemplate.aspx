@@ -320,16 +320,17 @@
     <asp:ListItem Text="Education" Value="Education" Selected="True" />
     <asp:ListItem Text="References" Value="References" Selected="True" />
 </asp:CheckBoxList>
-                                     <asp:RequiredFieldValidator ID="rfvTemplatePath" runat="server"
-    ControlToValidate="txtTemplatePath"
-    ErrorMessage="Template file path is required"
-    CssClass="text-danger" Display="Dynamic" ValidationGroup="templateGroup" />
+                                     <asp:TextBox ID="txtTemplatePath" runat="server" CssClass="form-control" placeholder="~/Templates/Template1/index.html" />
+                                                         <asp:RequiredFieldValidator ID="rfvTemplatePath" runat="server"
+                                         ControlToValidate="txtTemplatePath"
+                                         ErrorMessage="Template file path is required"
+                                         CssClass="text-danger" Display="Dynamic" ValidationGroup="templateGroup" />
 
-<asp:RegularExpressionValidator ID="revTemplatePath" runat="server"
-    ControlToValidate="txtTemplatePath"
-    ValidationExpression="^~\/Templates\/[A-Za-z0-9_\-]+\/[A-Za-z0-9_\-]+\.html$"
-    ErrorMessage="Path must follow this format: ~/Templates/Template1/index.html"
-    CssClass="text-danger" Display="Dynamic" ValidationGroup="templateGroup"/>
+                                     <asp:RegularExpressionValidator ID="revTemplatePath" runat="server"
+                                         ControlToValidate="txtTemplatePath"
+                                         ValidationExpression="^~\/Templates\/[A-Za-z0-9_\-]+\/[A-Za-z0-9_\-]+\.html$"
+                                         ErrorMessage="Path must follow this format: ~/Templates/Template1/index.html"
+                                         CssClass="text-danger" Display="Dynamic" ValidationGroup="templateGroup"/>
                 </div>
                 
                 <div class="form-group mt-4 d-flex">

@@ -266,7 +266,7 @@ h3 {
 /* Fallback Fonts */
 @font-face {
     font-family: 'Montserrat';
-    src: url('Fonts/Montserrat-Regular.ttf') format('truetype');
+    src: url('/Fonts/Montserrat-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }

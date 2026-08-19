@@ -5,7 +5,7 @@
 
 @font-face {
     font-family: 'Montserrat';
-    src: url('Fonts/Montserrat-Regular.ttf') format('truetype');
+    src: url('/Fonts/Montserrat-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -13,7 +13,7 @@
 
 @font-face {
     font-family: 'Playfair Display';
-    src: url('fonts/PlayfairDisplay-Bold.ttf') format('truetype');
+    src: url('/Fonts/PlayfairDisplay-Bold.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }

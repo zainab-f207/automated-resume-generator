@@ -470,7 +470,7 @@ namespace VP_Project_Automated_Resume_Generator
             string resumePath = CreateResume(userId, templateId, resumeData);
             string fileName = $"resume_{userId}_{DateTime.Now.Ticks}.html";
             string savePath = Server.MapPath($"~/resumes/{fileName}");
-            File.WriteAllText(savePath, htmlContent);
+            File.WriteAllText(savePath, htmlContent, System.Text.Encoding.UTF8);
 
             Response.Redirect($"/resumes/{fileName}");
         }
@@ -507,7 +507,7 @@ namespace VP_Project_Automated_Resume_Generator
                 string outputPath = Path.Combine(resumeFolder, fileName);
                 string virtualPath = "/resumes/" + fileName;
 
-                File.WriteAllText(outputPath, htmlTemplate);
+                File.WriteAllText(outputPath, htmlTemplate, System.Text.Encoding.UTF8);
 
                 return "Resume Edit successfully";
             }

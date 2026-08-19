@@ -237,6 +237,7 @@
     <Content Include="Global.asax" />
     <Content Include="Instructions.aspx" />
     <Content Include="Login.aspx" />
+    <Content Include="MigrateResumes.aspx" />
     <Content Include="MyResumes.aspx" />
     <Content Include="PreviewTemplate.aspx" />
     <Content Include="PrivacyPolicy.aspx" />
@@ -379,6 +380,11 @@
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="AtsScorer.cs" />
+    <Compile Include="JobDescriptionAnalyzer.cs" />
+    <Compile Include="AtsQualityChecker.cs" />
+    <Compile Include="ResumeMatcher.cs" />
+    <Compile Include="ResumeDataModel.cs" />
+    <Compile Include="DocxResumeBuilder.cs" />
     <Compile Include="ConfigTemplateRenderer.cs" />
     <Compile Include="About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>
@@ -478,6 +484,10 @@
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
+    <Compile Include="MigrateResumes.aspx.cs">
+      <DependentUpon>MigrateResumes.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="MyResumes.aspx.cs">
       <DependentUpon>MyResumes.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -516,7 +526,6 @@
     </Compile>
     <Compile Include="ResumeBuilder.aspx.cs">
       <DependentUpon>ResumeBuilder.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ResumeBuilder.aspx.designer.cs">
       <DependentUpon>ResumeBuilder.aspx</DependentUpon>

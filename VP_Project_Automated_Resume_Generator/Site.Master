@@ -255,7 +255,7 @@
     </asp:ContentPlaceHolder>
 </head>
 <body>
-    <form runat="server">
+    <form runat="server" novalidate="novalidate">
         <asp:ScriptManager runat="server">
             <Scripts>
                 <%-- Framework Scripts --%>

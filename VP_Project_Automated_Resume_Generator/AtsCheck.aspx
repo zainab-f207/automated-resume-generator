@@ -1,5 +1,5 @@
-<%@ Page Title="ATS Match Score" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true"
-    CodeBehind="AtsCheck.aspx.cs" Inherits="VP_Project_Automated_Resume_Generator.AtsCheck" %>
+ï»¿<%@ Page Title="ATS Match Score" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true"
+    CodeBehind="AtsCheck.aspx.cs" Inherits="VP_Project_Automated_Resume_Generator.AtsCheck" ValidateRequest="false" %>
 
 <asp:Content ID="HeadContent" ContentPlaceHolderID="HeadContent" runat="server">
 <style>
@@ -117,7 +117,7 @@
                    -webkit-background-clip:text;background-clip:text;color:transparent;">
             <i class="bi bi-clipboard2-pulse-fill" style="color:var(--primary)"></i> ATS Match Score
         </h2>
-        <p class="text-muted">Paste your resume text and job description — see instantly how well they match.</p>
+        <p class="text-muted">Paste your resume text and job description â€” see instantly how well they match.</p>
     </div>
 
     <!-- Input Card -->
@@ -193,10 +193,10 @@
                             <h6 style="color:var(--primary-light);margin-bottom:8px;">
                                 <i class="bi bi-lightbulb-fill mr-1"></i> Quick ATS Tips
                             </h6>
-                            <div class="tip-item"><i class="bi bi-check2-circle"></i> Use exact keywords from the job posting — avoid paraphrasing.</div>
+                            <div class="tip-item"><i class="bi bi-check2-circle"></i> Use exact keywords from the job posting â€” avoid paraphrasing.</div>
                             <div class="tip-item"><i class="bi bi-check2-circle"></i> Include both acronyms and full forms (e.g. "ML" and "Machine Learning").</div>
                             <div class="tip-item"><i class="bi bi-check2-circle"></i> Match job title wording exactly at least once.</div>
-                            <div class="tip-item"><i class="bi bi-check2-circle"></i> Avoid tables and images — ATS bots can't read them.</div>
+                            <div class="tip-item"><i class="bi bi-check2-circle"></i> Avoid tables and images â€” ATS bots can't read them.</div>
                         </div>
                     </div>
                 </div>
@@ -213,6 +213,39 @@
         </div>
     </asp:Panel>
 
+
+    <!-- ===== Generated Resume Output Panel ===== -->
+    <asp:Panel ID="pnlGeneratedResume" runat="server" Visible="false">
+        <div class="ats-card" style="border:1px solid rgba(0,184,148,0.4);margin-top:28px;">
+            <div class="card-header" style="color:#00b894;">
+                <i class="bi bi-file-earmark-word-fill"></i> Your Resume is Ready
+            </div>
+            <div class="card-body text-center" style="padding:30px;">
+                <p style="color:#e2e2e2;font-size:1rem;margin-bottom:24px;">
+                    Your ATS-optimised resume has been generated. Download the editable DOCX or print as PDF.
+                </p>
+                <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+                    <asp:HyperLink ID="lnkDownloadDocx" runat="server"
+                        CssClass="btn btn-lg px-5"
+                        style="background:linear-gradient(135deg,#00b894,#00cec9);color:#fff;font-weight:700;box-shadow:0 4px 18px rgba(0,184,148,0.4);border-radius:10px;">
+                        <i class="bi bi-file-word-fill mr-2"></i> Download Editable DOCX
+                    </asp:HyperLink>
+                    <button type="button" class="btn btn-lg px-5" onclick="printResumePreview()"
+                        style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;font-weight:700;box-shadow:0 4px 18px rgba(108,92,231,0.4);border-radius:10px;">
+                        <i class="bi bi-printer-fill mr-2"></i> Save as PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="ats-card mt-4">
+            <div class="card-header"><i class="bi bi-eye-fill"></i> Resume Preview</div>
+            <div class="card-body" style="padding:0;">
+                <div id="resumePreviewFrame" style="background:#fff;border-radius:0 0 16px 16px;padding:40px 50px;font-family:Arial,sans-serif;color:#111;line-height:1.55;">
+                    <asp:Literal ID="litResumePreview" runat="server" />
+                </div>
+            </div>
+        </div>
+    </asp:Panel>
 </div>
 
 <script>
@@ -226,5 +259,16 @@
             scoreLabel.style.setProperty('--pct', scoreNum + '%');
         }
     })();
+    function printResumePreview() {
+        var content = document.getElementById('resumePreviewFrame');
+        if (!content) { window.print(); return; }
+        var win = window.open('', '_blank', 'width=900,height=700');
+        win.document.write('<html><head><title>Resume</title><style>body{font-family:Arial,sans-serif;margin:0.6in;color:#111;line-height:1.5}h1{font-size:22pt;margin:0 0 4px}h2{font-size:12pt;text-transform:uppercase;border-bottom:1px solid #1a5276;color:#1a5276;padding-bottom:2px;margin:16px 0 6px}ul{margin:6px 0 10px 18px}p{margin:4px 0}</style></head><body>');
+        win.document.write(content.innerHTML);
+        win.document.write('</body></html>');
+        win.document.close();
+        setTimeout(function(){ win.print(); }, 500);
+    }
 </script>
 </asp:Content>
+

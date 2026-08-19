@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -15,6 +15,10 @@ using ResumeModel;
 
 namespace VP_Project_Automated_Resume_Generator
 {
+    public class ResumeSectionData { public string JobTitle, Company, Duration; public System.Collections.Generic.List<string> Bullets = new System.Collections.Generic.List<string>(); }
+    public class ProjectData { public string Name, TechStack; public System.Collections.Generic.List<string> Bullets = new System.Collections.Generic.List<string>(); }
+    public class EducationData { public string Degree, Institution, Year; }
+
     public partial class ResumeBuilder : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
@@ -30,7 +34,8 @@ namespace VP_Project_Automated_Resume_Generator
                 txtPhone.Attributes.Add("required", "true");
                 txtPhone.Attributes.Add("pattern", @"^0\d{10}$");
 
-                txtWebsite.Attributes.Add("pattern", @"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$");
+                // Keep website free-form to avoid invalid client-side regex issues
+                // txtWebsite.Attributes.Add("pattern", @"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$");
 
                 txtAddress.Attributes.Add("required", "true");
                 txtAboutMe.Attributes.Add("required", "true");
@@ -39,43 +44,23 @@ namespace VP_Project_Automated_Resume_Generator
                 TextBox1.Attributes.Add("required", "true");
                 txtCompany.Attributes.Add("required", "true");
 
-                // Duration pattern: 4 digits - 4 digits
-                txtDuration.Attributes.Add("pattern", @"^\d{4}\s*-\s*\d{4}$");
+                // Duration is free-text (supports "July 2025 - October 2025")
+                // txtDuration.Attributes.Add("pattern", @"^\d{4}\s*-\s*\d{4}$");
 
                 txtDescription.Attributes.Add("required", "true");
-                txtName.Attributes.Add("required", "true");
-                txtRelation.Attributes.Add("required", "true");
+                // References optional - do not add required attributes
 
-                // Contact: must start with 0 followed by 10 digits
+                // Contact: keep pattern but field optional
                 txtContact.Attributes.Add("pattern", @"^0\d{10}$");
                 txtInstitute.Attributes.Add("required", "true");
                 txtDegree.Attributes.Add("required", "true");
                 txtYear.Attributes.Add("required", "true");
-                txtYear.Attributes.Add("pattern", @"^\d{4}\s*-\s*\d{4}$");
-                
-
-                if (Session["SelectedTemplate"] == null ||
-                    !int.TryParse(Session["SelectedTemplate"].ToString(), out int templateId))
-                {
-                    Response.Redirect("TemplateList.aspx");
-                    return;
-                }
+                // txtYear.Attributes.Add("pattern", @"^\d{4}\s*-\s*\d{4}$");
 
 
-                var template = TemplateBAL.TemplateBAL.GetTemplateById(templateId);
-                templateId = template.TemplateID;
-                if (template != null)
-                {
-                    
-                    lblTemplateName.Text = template.TemplateName;
-                    lnkTemplatePreview.NavigateUrl = $"~/PreviewTemplate.aspx?templateId={templateId}";
 
-                }
-                else
-                {
-                    lblError.Text = "Template not found. Please select a valid template.";
-                    pnlError.Visible = true;
-                }
+
+
             }
         }
 
@@ -84,161 +69,152 @@ namespace VP_Project_Automated_Resume_Generator
             Response.Redirect("TemplateList.aspx");
         }
 
-        protected void btnGenerate_Click(object sender, EventArgs e)
+                protected void btnGenerate_Click(object sender, EventArgs e)
         {
-        int userId = Convert.ToInt32(Session["UserID"]);
-        string userName = Session["UserName"]?.ToString();
-            int templateId = Convert.ToInt32(Session["SelectedTemplate"]);
-            var template = TemplateBAL.TemplateBAL.GetTemplateById(templateId);
-            string templatePath = Server.MapPath(template.TemplateFilePath);
-            string htmlContent = File.ReadAllText(templatePath);
-            string templateFolderRelativePath = Path.GetDirectoryName(template.TemplateFilePath).Replace("\\", "/");
-            string cssPath = Server.MapPath($"{templateFolderRelativePath}/styles.css");
-            string cssContent = File.ReadAllText(cssPath);
-            string cssStyleTag = $"<style>{cssContent}</style>";
-            htmlContent = htmlContent.Replace("</head>", cssStyleTag + "\n</head>");
-           
+            int userId = Convert.ToInt32(Session["UserID"]);
+            string userName = Session["UserName"]?.ToString();
+            int templateId = Convert.ToInt32(Request.Form["selectedTemplateId"] ?? "1");
 
+            // 1. Build Canonical Data Model for Phase 7
+            var dataModel = new ResumeDataModel();
+            dataModel.Personal.Name = (txtFirstName.Text + " " + txtLastName.Text).Trim();
+            dataModel.Personal.JobTitle = txtJobTitle.Text;
+            dataModel.Personal.Email = txtEmail.Text;
+            dataModel.Personal.Phone = txtPhone.Text;
+            dataModel.Personal.Location = txtAddress.Text;
+            dataModel.Personal.LinkedIn = txtWebsite.Text;
+            dataModel.Summary = txtAboutMe.Text;
+
+            var allSkills = (txtSkills.Text + "\n" + (Request.Form[hiddenSkills.UniqueID] ?? string.Empty))
+                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim())
+                .Where(s => s.Length > 0).ToList();
+            if (allSkills.Any()) dataModel.Skills.Add(new SkillCategory { CategoryName = "Technical Skills", Items = allSkills });
+
+            var jobTitles = Request.Form.GetValues("jobtitle");
+            var companies = Request.Form.GetValues("company");
+            var durations = Request.Form.GetValues("duration");
+            var descriptions = Request.Form.GetValues("description");
             
+            if (!string.IsNullOrWhiteSpace(TextBox1.Text) || !string.IsNullOrWhiteSpace(txtCompany.Text))
+            {
+                var bullets = txtDescription.Text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Select(l => l.Trim()).Where(l => l.Length > 0).ToList();
+                dataModel.Experience.Add(new ExperienceItem { JobTitle = TextBox1.Text.Trim(), Company = txtCompany.Text.Trim(), StartDate = txtDuration.Text.Trim(), Achievements = bullets });
+            }
+            if (jobTitles != null)
+            {
+                for (int i = 0; i < jobTitles.Length; i++)
+                {
+                    var bullets = (descriptions != null && i < descriptions.Length && !string.IsNullOrWhiteSpace(descriptions[i]))
+                        ? descriptions[i].Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Select(l => l.Trim()).Where(l => l.Length > 0).ToList()
+                        : new System.Collections.Generic.List<string>();
+                    dataModel.Experience.Add(new ExperienceItem { JobTitle = jobTitles[i].Trim(), Company = companies != null && i < companies.Length ? companies[i].Trim() : "", StartDate = durations != null && i < durations.Length ? durations[i].Trim() : "", Achievements = bullets });
+                }
+            }
+
+            var institutes = Request.Form.GetValues("institute");
+            var degrees = Request.Form.GetValues("degree");
+            var years = Request.Form.GetValues("year");
+
+            if (!string.IsNullOrWhiteSpace(txtDegree.Text) || !string.IsNullOrWhiteSpace(txtInstitute.Text))
+            {
+                dataModel.Education.Add(new EducationItem { Degree = txtDegree.Text.Trim(), Institution = txtInstitute.Text.Trim(), Year = txtYear.Text.Trim() });
+            }
+            if (institutes != null)
+            {
+                for (int i = 0; i < institutes.Length; i++)
+                {
+                    dataModel.Education.Add(new EducationItem { Institution = institutes[i]?.Trim(), Degree = degrees != null && i < degrees.Length ? degrees[i]?.Trim() : "", Year = years != null && i < years.Length ? years[i]?.Trim() : "" });
+                }
+            }
+
+            // 1b. Parse Projects from hidden field
+            string projHidden = Request.Form[hiddenProjects.UniqueID] ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(projHidden))
+            {
+                foreach (var rawP in projHidden.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var pp = rawP.Split(new[] { "::" }, StringSplitOptions.None);
+                    string pName = System.Web.HttpUtility.UrlDecode(pp.Length > 0 ? pp[0] : "");
+                    string pTech = pp.Length > 1 ? System.Web.HttpUtility.UrlDecode(pp[1]) : "";
+                    string pBullRaw = pp.Length > 2 ? System.Web.HttpUtility.UrlDecode(pp[2]) : "";
+                    var pBullets = string.IsNullOrWhiteSpace(pBullRaw)
+                        ? new System.Collections.Generic.List<string>()
+                        : pBullRaw.Split(new[] { "~~" }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+                    dataModel.Projects.Add(new ProjectItem { Name = pName, Technologies = pTech, Achievements = pBullets });
+                }
+            }
+
+            // 1c. Parse Optional/Extra sections from hidden field
+            string extraHidden = Request.Form[hiddenExtraSections.UniqueID] ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(extraHidden))
+            {
+                foreach (var rawE in extraHidden.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var ep = rawE.Split(new[] { "::" }, StringSplitOptions.None);
+                    string eTitle = ep.Length > 0 ? System.Web.HttpUtility.UrlDecode(ep[0]) : "";
+                    string eContent = ep.Length > 1 ? System.Web.HttpUtility.UrlDecode(ep[1]) : "";
+                    if (eTitle.ToLower().Contains("award")) dataModel.Optional.Awards.Add($"{eTitle}: {eContent}");
+                    else if (eTitle.ToLower().Contains("language")) dataModel.Optional.Languages.Add(eContent);
+                    else if (eTitle.ToLower().Contains("publication")) dataModel.Optional.Publications.Add(eContent);
+                    else dataModel.Optional.Awards.Add($"{eTitle}: {eContent}"); // catch-all
+                }
+            }
+
+            // 2. Generate Real DOCX File
+            byte[] docxBytes = DocxResumeBuilder.Build(dataModel);
+            string fileName = $"resume_{userId}_{DateTime.Now.Ticks}.docx";
+            string saveDir = Server.MapPath("~/resumes/");
+            if (!System.IO.Directory.Exists(saveDir)) System.IO.Directory.CreateDirectory(saveDir);
+            string savePath = System.IO.Path.Combine(saveDir, fileName);
+            System.IO.File.WriteAllBytes(savePath, docxBytes);
+
+            // 3. Save flat string model for database compatibility
             Resume data = new Resume
-        {
-            
-            UserID = userId,
-            UserName = userName,
-            FirstName = txtFirstName.Text,
-            LastName = txtLastName.Text,
-            JobTitle = txtJobTitle.Text,
-            Email = txtEmail.Text,
-            Phone = txtPhone.Text,
-                Website = txtWebsite.Text,
-                Address = txtAddress.Text,
-                AboutMe = txtAboutMe.Text,
-                Skills = txtSkills.Text + "<br/>" + hiddenSkills.Value.Replace("\n ", "<br/>"),
-                Education = "Institute: " + txtInstitute.Text + "<br/>" +
-                "Degree: " + txtDegree.Text + "<br/>" +
-                "Year: " + txtYear.Text + "<br/>" +
-                hiddenEducation.Value.Replace("\n ", "<br/>"),
-                WorkExperience = "Job Title: " + TextBox1.Text + "<br/>" +
-                     "Company: " + txtCompany.Text + "<br/>" +
-                     "Duration: " + txtDuration.Text + "<br/>" +
-                     "Description: " + txtDescription.Text + "<br/>" +
-                     hiddenWorkExperience.Value.Replace("\n ", "<br/>"),
-                ReferenceDetails = "Name: " + txtName.Text + "<br/>" +
-                 "Relation: " + txtRelation.Text + "<br/>" +
-                 "Contact: " + txtContact.Text + "<br/>" +
-                 hiddenReferences.Value.Replace("\n ", "<br/>"),
-               
-           
-        };
-
-            Session["FirstName"] = data.FirstName;
-            Session["LastName"] = data.LastName;
-            Session["JobTitle"] = data.JobTitle;
-            Session["Email"] = data.Email;
-            Session["Phone"] = data.Phone;
-            Session["Website"] = data.Website;
-            Session["Address"] = data.Address;
-            Session["AboutMe"] = data.AboutMe;
-            Session["SkillsList"] = data.Skills;
-            Session["EducationSection"] = data.Education;
-            Session["WorkExperienceSection"] = data.WorkExperience;
-            Session["ReferencesSection"] = data.ReferenceDetails;
-
-           ResumeBAL.ResumeBAL.SaveResumeData(data);
-            
+            {
+                UserID = userId, UserName = userName,
+                FirstName = txtFirstName.Text, LastName = txtLastName.Text,
+                JobTitle = txtJobTitle.Text, Email = txtEmail.Text, Phone = txtPhone.Text,
+                Website = txtWebsite.Text, Address = txtAddress.Text, AboutMe = txtAboutMe.Text,
+                Skills = string.Join("<br/>", allSkills),
+                Education = string.Join("<br/>", dataModel.Education.Select(x => $"{x.Degree} at {x.Institution}")),
+                WorkExperience = string.Join("<br/>", dataModel.Experience.Select(x => $"{x.JobTitle} at {x.Company}")),
+                ReferenceDetails = "Name: " + txtName.Text + "<br/>Relation: " + txtRelation.Text + "<br/>Contact: " + txtContact.Text
+            };
+            ResumeBAL.ResumeBAL.SaveResumeData(data);
             if (data != null)
             {
                 Session["ResumeID"] = data.ResumeID;
-                SaveExtraSections(data.ResumeID, hiddenExtraSections.Value);
+                SaveExtraSections(data.ResumeID, Request.Form[hiddenExtraSections.UniqueID]);
             }
-            
-            htmlContent = htmlContent.Replace("{{FirstName}}", txtFirstName.Text)
-                                         .Replace("{{LastName}}", txtLastName.Text)
-                                         .Replace("{{JobTitle}}", data.JobTitle)
-                                         .Replace("{{Email}}", data.Email)
-                                         .Replace("{{Phone}}", data.Phone)
-                                         .Replace("{{Website}}", data.Website)
-                                         .Replace("{{Address}}", data.Address)
-                                         .Replace("{{AboutMe}}", data.AboutMe)
-                                         .Replace("{{SkillsList}}", data.Skills)
-                                         .Replace("{{EducationSection}}", data.Education)
-                                         .Replace("{{WorkExperienceSection}}", data.WorkExperience)
-                                         .Replace("{{ReferencesSection}}", data.ReferenceDetails)
-                                         .Replace("{{OptionalSections}}", BuildOptionalSectionsHtml(data.ResumeID));
-
-
-
-            string exportButtonHtml = $@"
-<div style='padding: 15px; position: relative;'>
-    <a id='exportResume' href='/ExportResume.aspx?ResumeID={data.ResumeID}' 
-       style='padding: 10px 20px;
-              background-color: #6c5ce7; /* Your primary color */
-              color: white;
-              text-decoration: none;
-              border-radius: 4px;
-              font-family: 'Montserrat', sans-serif;
-              font-weight: 500;
-              display: inline-flex;
-              align-items: center;
-              gap: 8px;
-              box-shadow: 0 2px 5px rgba(108, 92, 231, 0.3);
-              transition: all 0.3s ease;'>
-        <i class='fas fa-download'></i> Export Resume
-    </a>
-</div>";
-
-            string editButtonHtml = $@"
-<div style='padding: 15px; position: fixed; bottom: 20px; right: 20px;'>
-    <a id='showEdit' href='/EditResume.aspx?ResumeID={data.ResumeID}' 
-       style='padding: 10px 20px;
-              background-color: #00b894; /* Your accent/success color */
-              color: white;
-              text-decoration: none;
-              border-radius: 4px;
-              font-family: 'Montserrat', sans-serif;
-              font-weight: 500;
-              display: inline-flex;
-              align-items: center;
-              gap: 8px;
-              box-shadow: 0 2px 5px rgba(0, 184, 148, 0.3);
-              transition: all 0.3s ease;'>
-        <i class='fas fa-edit'></i> Edit Resume
-    </a>
-</div>";
-
-
-
-            htmlContent = htmlContent.Replace("<body>", "<body>" + editButtonHtml);
-            htmlContent = htmlContent.Replace("<body>", "<body>" + exportButtonHtml);
-           
-
 
             Dictionary<string, string> resumeData = new Dictionary<string, string>
-{
-    { "FirstName", txtFirstName.Text },
-                    {"LastName" ,txtLastName.Text },
-    { "JobTitle", data.JobTitle },
-    { "Email", data.Email },
-    { "Phone", data.Phone },
-                    {"Website",data.Website },
-                    {"Address",data.Address},
-                    {"AboutMe",data.AboutMe},
-    { "SkillsList", data.Skills },
-    { "EducationSection", data.Education },
-    { "WorkExperienceSection", data.WorkExperience },
-    { "ReferencesSection", data.ReferenceDetails }
-};
+            {
+                { "FirstName", txtFirstName.Text }, {"LastName", txtLastName.Text },
+                { "JobTitle", data.JobTitle }, { "Email", data.Email }, { "Phone", data.Phone },
+                { "Website", data.Website }, { "Address", data.Address }, { "AboutMe", data.AboutMe },
+                { "SkillsList", data.Skills }, { "EducationSection", data.Education },
+                { "WorkExperienceSection", data.WorkExperience }, { "ReferencesSection", data.ReferenceDetails }
+            };
+            ResumeBAL.ResumeBAL.CreateResume(userId, templateId, resumeData);
 
-        string resumePath = ResumeBAL.ResumeBAL.CreateResume(userId, templateId, resumeData);
-            string fileName = $"resume_{userId}_{DateTime.Now.Ticks}.html";
-            string savePath = Server.MapPath($"~/resumes/{fileName}");
-
-           File.WriteAllText(savePath, htmlContent);
-            Session["ResumeHtmlContent"] = htmlContent;
-
-            Response.Redirect($"/resumes/{fileName}");
-            
-            
+            // 4. Set session data for AtsCheck.aspx pre-fill
+            Session["GeneratedDocxPath"] = $"/resumes/{fileName}";
+            Session["ResumeDataModel"] = dataModel;
+            Session["AboutMe"]              = txtAboutMe.Text;
+            Session["SkillsList"]           = string.Join(", ", allSkills);
+            Session["WorkExperienceSection"]= string.Join("\n", dataModel.Experience.Select(x => $"{x.JobTitle} at {x.Company}: {string.Join("; ", x.Achievements)}"));
+            Session["EducationSection"]     = string.Join("\n", dataModel.Education.Select(x => $"{x.Degree} at {x.Institution} {x.Year}"));
+            Session["FullName"]             = (txtFirstName.Text + " " + txtLastName.Text).Trim();
+            Session["Email"]               = txtEmail.Text;
+            Session["Phone"]               = txtPhone.Text;
+            Session["Address"]             = txtAddress.Text;
+            Session["Website"]             = txtWebsite.Text;
+            Session["JobTitle"]             = txtJobTitle.Text;
+            // JD was captured in wizard; save it so AtsCheck.aspx can pre-fill it
+            string wizardJD = Request.Form["wizardJD"] ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(wizardJD)) Session["WizardJobDescription"] = wizardJD;
+            Response.Redirect("AtsCheck.aspx");
         }
 
 
@@ -248,7 +224,7 @@ namespace VP_Project_Automated_Resume_Generator
             {
                 int userId = Convert.ToInt32(Session["UserId"]);
                 string userName = Session["UserName"]?.ToString();
-                int templateId = Convert.ToInt32(Session["SelectedTemplate"]);
+                int templateId = Convert.ToInt32(Request.Form["selectedTemplateId"] ?? "1");
                 var template = TemplateBAL.TemplateBAL.GetTemplateById(templateId);
                 string templatePath = Server.MapPath(template.TemplateFilePath);
                 string htmlContent = File.ReadAllText(templatePath);
@@ -270,20 +246,20 @@ namespace VP_Project_Automated_Resume_Generator
                     Website = txtWebsite.Text,
                     Address = txtAddress.Text,
                     AboutMe = txtAboutMe.Text,
-                    Skills = txtSkills.Text + "<br/>" + hiddenSkills.Value.Replace("\n ", "<br/>"),
+                    Skills = txtSkills.Text + "<br/>" + (Request.Form[hiddenSkills.UniqueID] ?? string.Empty).Replace("\n ", "<br/>"),
                     Education = "Institute: " + txtInstitute.Text + "<br/>" +
                 "Degree: " + txtDegree.Text + "<br/>" +
                 "Year: " + txtYear.Text + "<br/>" +
-                hiddenEducation.Value.Replace("\n ", "<br/>"),
+                (Request.Form[hiddenEducation.UniqueID] ?? string.Empty).Replace("\n ", "<br/>"),
                     WorkExperience = "Job Title: " + TextBox1.Text + "<br/>" +
                      "Company: " + txtCompany.Text + "<br/>" +
                      "Duration: " + txtDuration.Text + "<br/>" +
                      "Description: " + txtDescription.Text + "<br/>" +
-                     hiddenWorkExperience.Value.Replace("\n ", "<br/>"),
+                     (Request.Form[hiddenWorkExperience.UniqueID] ?? string.Empty).Replace("\n ", "<br/>"),
                     ReferenceDetails = "Name: " + txtName.Text + "<br/>" +
                  "Relation: " + txtRelation.Text + "<br/>" +
                  "Contact: " + txtContact.Text + "<br/>" +
-                 hiddenReferences.Value.Replace("\n ", "<br/>"),
+                 (Request.Form[hiddenReferences.UniqueID] ?? string.Empty).Replace("\n ", "<br/>"),
                     CreatedAt = DateTime.Now,
                     LastUpdatedAt = DateTime.Now
                 };
@@ -331,7 +307,21 @@ namespace VP_Project_Automated_Resume_Generator
 
 
 
-                File.WriteAllText(savePath, htmlContent);
+                // Final replacements for wrappers and placeholders using hidden fields if needed
+                 string referencesHtml = string.Empty;
+                 if (!string.IsNullOrWhiteSpace(txtName.Text) || !string.IsNullOrWhiteSpace(txtRelation.Text) || !string.IsNullOrWhiteSpace(txtContact.Text) || !string.IsNullOrWhiteSpace(Request.Form[hiddenReferences.UniqueID]))
+                 {
+                     referencesHtml = $"<h2>References</h2><p><strong>{HttpUtility.HtmlEncode(txtName.Text)}</strong> — {HttpUtility.HtmlEncode(txtRelation.Text)}<br/>{HttpUtility.HtmlEncode(txtContact.Text)}</p>";
+                 }
+
+                 htmlContent = htmlContent.Replace("<div>{{OptionalSections}}</div>", RenderOptionalSectionsFromHidden(Request.Form[hiddenExtraSections.UniqueID] ?? string.Empty))
+                                          .Replace("{{OptionalSections}}", RenderOptionalSectionsFromHidden(Request.Form[hiddenExtraSections.UniqueID] ?? string.Empty))
+                                          .Replace("<div>{{ProjectsSection}}</div>", RenderProjectsHtmlFromHidden(Request.Form[hiddenProjects.UniqueID] ?? string.Empty))
+                                          .Replace("{{ProjectsSection}}", RenderProjectsHtmlFromHidden(Request.Form[hiddenProjects.UniqueID] ?? string.Empty))
+                                          .Replace("<div>{{ReferencesSection}}</div>", referencesHtml)
+                                          .Replace("{{ReferencesSection}}", referencesHtml);
+
+                 File.WriteAllText(savePath, htmlContent, System.Text.Encoding.UTF8);
 
                 if (result.StartsWith("Error"))
                 {
@@ -414,6 +404,100 @@ namespace VP_Project_Automated_Resume_Generator
             } catch (System.Data.SqlClient.SqlException) { return string.Empty; }
         }
 
+        // Render optional sections directly from the hidden field (client-collected) for immediate output
+        private string RenderOptionalSectionsFromHidden(string hidden)
+        {
+            if (string.IsNullOrWhiteSpace(hidden)) return string.Empty;
+            var sb = new System.Text.StringBuilder();
+            foreach (var pair in hidden.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var parts = pair.Split(new[] { "::" }, 2, StringSplitOptions.None);
+                if (parts.Length != 2) continue;
+                string name = System.Web.HttpUtility.HtmlEncode(parts[0].Trim());
+                string content = System.Web.HttpUtility.HtmlEncode(parts[1].Trim());
+                sb.Append($"<h2>{name}</h2><p style='margin:4px 0;'>{content}</p>");
+            }
+            return sb.ToString();
+        }
 
-}
+        // Parse hiddenProjects (encoded) and render project HTML
+        private string RenderProjectsHtmlFromHidden(string hidden)
+        {
+            if (string.IsNullOrWhiteSpace(hidden)) return string.Empty;
+            var sb = new System.Text.StringBuilder();
+            var rawProjects = hidden.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
+            if (rawProjects.Length > 0) sb.Append("<h2>Projects</h2>");
+            foreach (var raw in rawProjects)
+            {
+                var parts = raw.Split(new[] { "::" }, StringSplitOptions.None);
+                string name = HttpUtility.UrlDecode(parts.Length > 0 ? parts[0] : "");
+                string tech = parts.Length > 1 ? HttpUtility.UrlDecode(parts[1]) : "";
+                string bulletsRaw = parts.Length > 2 ? HttpUtility.UrlDecode(parts[2]) : "";
+                var bullets = new System.Collections.Generic.List<string>();
+                if (!string.IsNullOrWhiteSpace(bulletsRaw)) bullets = bulletsRaw.Split(new[] { "~~" }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+                sb.Append("<div class='job-block'>");
+                sb.Append($"<p><strong>{HttpUtility.HtmlEncode(name)}</strong><br/>");
+                if (!string.IsNullOrWhiteSpace(tech)) sb.Append($"<em>{HttpUtility.HtmlEncode(tech)}</em></p>"); else sb.Append("</p>");
+                if (bullets.Count>0) { sb.Append("<ul>"); foreach (var b in bullets) sb.Append($"<li>{HttpUtility.HtmlEncode(b)}</li>"); sb.Append("</ul>"); }
+                sb.Append("</div>");
+            }
+            return sb.ToString();
+        }
+
+        // Render experiences into semantic HTML with bullets and bold titles
+        private string RenderExperienceHtml(System.Collections.Generic.List<ResumeSectionData> jobs)
+        {
+            var sb = new System.Text.StringBuilder();
+            foreach (var job in jobs)
+            {
+                sb.Append("<div class='job-block'>");
+                sb.Append($"<p><strong>{HttpUtility.HtmlEncode(job.JobTitle)}</strong><br/>");
+                sb.Append($"{HttpUtility.HtmlEncode(job.Company)} | {HttpUtility.HtmlEncode(job.Duration)}</p>");
+                if (job.Bullets != null && job.Bullets.Count > 0)
+                {
+                    sb.Append("<ul>");
+                    foreach (var b in job.Bullets) sb.Append($"<li>{HttpUtility.HtmlEncode(b.Replace("**", ""))}</li>");
+                    sb.Append("</ul>");
+                }
+                sb.Append("</div>");
+            }
+            return sb.ToString();
+        }
+
+        // Render education into semantic HTML
+        private string RenderEducationHtml(System.Collections.Generic.List<EducationData> eduList)
+        {
+            var sb = new System.Text.StringBuilder();
+            foreach (var edu in eduList.Where(e => !string.IsNullOrWhiteSpace(e.Degree)))
+            {
+                sb.Append("<div class='edu-block'>");
+                sb.Append($"<p><strong>{HttpUtility.HtmlEncode(edu.Degree)}</strong><br/>");
+                sb.Append($"{HttpUtility.HtmlEncode(edu.Institution)} | {HttpUtility.HtmlEncode(edu.Year)}</p></div>");
+            }
+            return sb.ToString();
+        }
+
+        // Render skills with categories: "Languages: C#, JavaScript"
+        private string RenderSkillsHtml(string raw)
+        {
+            var sb = new System.Text.StringBuilder();
+            string cleanedRaw = (raw ?? string.Empty).Replace("**", "");
+            foreach (var line in cleanedRaw.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                int colonIdx = line.IndexOf(':');
+                if (colonIdx > 0)
+                {
+                    string label = line.Substring(0, colonIdx).Trim();
+                    string rest = line.Substring(colonIdx + 1).Trim();
+                    sb.Append($"<p><strong>{HttpUtility.HtmlEncode(label)}:</strong> {HttpUtility.HtmlEncode(rest)}</p>");
+                }
+                else
+                {
+                    sb.Append($"<p>{HttpUtility.HtmlEncode(line)}</p>");
+                }
+            }
+            return sb.ToString();
+        }
+
+    }
 }
