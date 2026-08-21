@@ -379,10 +379,9 @@
       <DependentUpon>AdminUsers.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="ATSAnalyzer.cs" />
     <Compile Include="AtsScorer.cs" />
-    <Compile Include="JobDescriptionAnalyzer.cs" />
     <Compile Include="AtsQualityChecker.cs" />
-    <Compile Include="ResumeMatcher.cs" />
     <Compile Include="ResumeDataModel.cs" />
     <Compile Include="DocxResumeBuilder.cs" />
     <Compile Include="ConfigTemplateRenderer.cs" />

@@ -41,14 +41,10 @@ namespace VP_Project_Automated_Resume_Generator
             if (string.IsNullOrWhiteSpace(resumeText) || string.IsNullOrWhiteSpace(jobDesc))
             { pnlResults.Visible = false; return; }
 
-            var jdKeywords = JobDescriptionAnalyzer.ExtractKeywords(jobDesc, topN: 30);
-            var resumeWords = new HashSet<string>(
-                System.Text.RegularExpressions.Regex.Matches(resumeText.ToLowerInvariant(), @"[a-z0-9\+\#\.]{3,}")
-                .Cast<System.Text.RegularExpressions.Match>().Select(m => m.Value));
-
-            var matched = jdKeywords.Where(k => resumeWords.Contains(k)).ToList();
-            var missing = jdKeywords.Except(matched).ToList();
-            int score   = jdKeywords.Count == 0 ? 0 : (int)((double)matched.Count / jdKeywords.Count * 100);
+                        var analysis = AtsAnalyzer.Analyze(resumeText, jobDesc);
+            var summary = AtsScorer.Score(analysis);
+            var missing = analysis.Requirements.Where(r => r.MatchState == "Missing").Select(r => r.Requirement).ToList();
+            int score = summary.OverallScore;
 
             Session["MissingKeywords"] = string.Join(", ", missing.Take(15));
             ScoreValue = score;

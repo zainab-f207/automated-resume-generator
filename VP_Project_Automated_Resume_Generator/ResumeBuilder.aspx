@@ -829,7 +829,7 @@
                     </div>
                     <div class="alert mt-4" style="background:rgba(108,92,231,0.15);border:1px solid rgba(108,92,231,0.3);border-radius:10px;color:#e2e2e2;">
                         <i class="bi bi-lightbulb-fill mr-2" style="color:var(--primary-light);"></i>
-                        <strong>Next:</strong> Click <em>Next</em> to go to Step 6 where <span style="color:var(--secondary);font-weight:bold;">Improve with AI</span> buttons will be unlocked to weave missing keywords into your resume.
+                        <strong>Next:</strong> Click <em>Next</em> to go to Step 6 where <span style="color:var(--secondary);font-weight:bold;">Improve with AI</span> buttons will be unlocked to optimize your resume using relevant job requirements.
                     </div>
                 </div>
             </div>
@@ -840,7 +840,7 @@
             <div class="card resume-card">
                 <div class="card-header"><h4 class="mb-0"><i class="bi bi-magic mr-2"></i>Improve Resume Content with AI</h4></div>
                 <div class="card-body text-center">
-                    <p style="color:#e2e2e2;font-size:1rem;">The missing keywords have been loaded into the AI context. Return to your resume form and <strong style="color:var(--secondary);">click into then leave (blur) the About Me or Description fields</strong> - AI suggestions will appear automatically below each field as a diff.</p>
+                    <p style="color:#e2e2e2;font-size:1rem;">Your ATS analysis results have been loaded. Return to your resume form &mdash; AI suggestions will appear automatically below each text field. The AI will <strong style="color:var(--secondary);">only incorporate keywords that are genuinely supported</strong> by your existing experience. Unsupported technologies (like Azure, Docker, or CI/CD if you never used them) will remain as skill gaps &mdash; not fabrications.</p>
                     <p style="color:#b2bec3;font-size:0.9rem;">Unchanged text is shown in grey, additions in <span style="color:#00b894;font-weight:600;">green</span>. Accept or keep original with one click - no manual button needed.</p>
                     <div id="step6MissingKeywordsSummary" style="margin:16px auto;max-width:700px;text-align:center;"></div>
                     <button type="button" class="btn btn-primary btn-lg mt-3" onclick="returnToFormForAI()">
@@ -1230,10 +1230,7 @@ attachDynamicImprove(block);
                     fetch('ImproveText.ashx', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            rawText: rawText,
-                            jobKeywords: currentKeywords
-                        })
+                        body: JSON.stringify({ rawText: rawText, resumeText: (typeof _atsResumeText !== 'undefined' ? _atsResumeText : rawText), requirements: currentReqs })
                     })
                     .then(function(r) { return r.json(); })
                     .then(function(d) {
@@ -1267,6 +1264,35 @@ attachDynamicImprove(block);
                     .catch(function() { diffPanel.style.display = 'none'; });
                 }, 200); // small debounce after blur
             });
+        }
+
+        function runDiffNow(textarea, diffPanel, requirements, resumeText) {
+            var rawText = textarea.value.trim();
+            if (!rawText || !requirements || !requirements.length) { diffPanel.style.display = 'none'; return; }
+
+            diffPanel.style.display = 'block';
+            diffPanel.innerHTML = '<div class="diff-spinner"><span class="diff-spin-icon">&#9696;</span> Checking for keyword suggestions...</div>';
+
+            fetch('ImproveText.ashx', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rawText: rawText, resumeText: resumeText || _atsResumeText || rawText, requirements: requirements })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (!d.success || !d.text || d.text.trim() === rawText.trim()) { diffPanel.style.display = 'none'; return; }
+                var ops = wordDiff(rawText, d.text.trim());
+                if (!ops.some(function(o){ return o.type !== 'eq'; })) { diffPanel.style.display = 'none'; return; }
+                var suggested = d.text.trim();
+                diffPanel.innerHTML =
+                    '<div class="diff-header"><i class="bi bi-stars"></i> AI Suggestion:</div>' +
+                    '<div class="diff-body">' + renderDiff(ops) + '</div>' +
+                    '<div class="diff-actions"><button class="diff-accept" type="button">&#10003; Accept</button>' +
+                    '<button class="diff-keep" type="button">&#215; Keep original</button></div>';
+                diffPanel.querySelector('.diff-accept').onclick = function() { textarea.value = suggested; diffPanel.style.display = 'none'; };
+                diffPanel.querySelector('.diff-keep').onclick = function() { diffPanel.style.display = 'none'; };
+            })
+            .catch(function() { diffPanel.style.display = 'none'; });
         }
 
         /* ---------- Attach to static fields ---------- */
@@ -1303,7 +1329,9 @@ attachDynamicImprove(block);
         // WIZARD ENGINE — injected once at end
         // ------------------------------------------
         var _wizCurrentStep = 1;
-        var _atsMissingKws  = [];
+        var _atsMissingKws      = [];
+          var _atsAllRequirements = [];  // structured [{keyword,category,priority,state,evidence}]
+          var _atsResumeText      = "";  // full resume text for AI evidence checking
         var _stepTitles = [
             'Step 1: User Resume Data',
             'Step 2: Job Description',
@@ -1435,8 +1463,17 @@ attachDynamicImprove(block);
                                 '<td>' + stateHtml + '</td>' +
                                 '</tr>';
                         }).join('');
-                    }
-                    _atsMissingKws = d.keywords || [];
+         }
+         if (d.biggestGaps && d.biggestGaps.length > 0) {
+             var gapHtml = '<div class="alert mt-3" style="background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.35);border-radius:10px;color:#e2e2e2;">' +
+                 '<strong style="color:#ff7675;"><i class="bi bi-exclamation-triangle-fill mr-2"></i>Biggest gaps to address:</strong><ol class="mb-0 mt-2">' +
+                 d.biggestGaps.map(function(g){ return '<li>' + g + '</li>'; }).join('') + '</ol></div>';
+             document.getElementById('matchTableContainer').insertAdjacentHTML('afterend', gapHtml);
+         }
+         _atsMissingKws      = d.keywords || [];
+                      _atsAllRequirements = d.allRequirements || [];
+                      // Store the resume text that was sent to analysis for evidence checking
+                      _atsResumeText = resumeText || "";
                     var s6 = document.getElementById('step6MissingKeywordsSummary');
                     if (s6) s6.innerHTML = _atsMissingKws.slice(0, 15).map(function (kw) {
                         return '<span class="kw-chip-req">' + kw + '</span>';
@@ -1479,6 +1516,25 @@ attachDynamicImprove(block);
             });
             var titleEl = document.getElementById('wizardStepTitle');
             if (titleEl) titleEl.textContent = 'Step 6: Improve with AI - Blur fields to see suggestions';
+            var aiReqs = _atsAllRequirements.length > 0 ? _atsAllRequirements : _atsMissingKws.map(function(k){ return { keyword: k, state: 'Missing', category: 'Unknown', priority: 'Required', evidence: '' }; });
+            // Trigger runDiffNow on all textareas that have an associated diff panel
+            document.querySelectorAll('textarea').forEach(function(ta) {
+                var panel = null;
+                if (ta.id === '<%= txtAboutMe.ClientID %>') {
+                    panel = document.getElementById('diffPanelAbout');
+                } else if (ta.id === '<%= txtDescription.ClientID %>') {
+                    panel = document.getElementById('diffPanelDesc');
+                } else {
+                    // For dynamic textareas in projects or work blocks
+                    var container = ta.closest('.project-block, .work-block');
+                    if (container) {
+                        panel = container.querySelector('.dynamic-diff-panel, .ai-diff-panel');
+                    }
+                }
+                if (panel) {
+                    runDiffNow(ta, panel, aiReqs, _atsResumeText);
+                }
+            });
             // Show Next (goes to step 7), hide Prev
             var btnNext = document.getElementById('btnNextStep');
             var btnPrev = document.getElementById('btnPrevStep');
@@ -1505,6 +1561,11 @@ attachDynamicImprove(block);
 
     </script>
 </asp:Content>
+
+
+
+
+
 
 
 

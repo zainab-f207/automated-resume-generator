@@ -41,39 +41,50 @@ namespace VP_Project_Automated_Resume_Generator
 
             try
             {
-                var atsResult = AtsScorer.ScoreSmart(rawText, jobDesc);
+                var analysis = AtsAnalyzer.Analyze(rawText, jobDesc);
+                var summary  = AtsScorer.Score(analysis);
 
-                var missingMatches = atsResult.Matches.Where(m => m.State == MatchState.Missing).ToList();
-
-                // Store missing keywords in Session for AI improvement buttons
-                var missingKeywords = missingMatches
-                    .Select(m => m.Requirement.Name)
+                var missingKeywords = analysis.Requirements
+                    .Where(r => r.MatchState == "Missing")
+                    .Select(r => r.Requirement)
                     .ToList();
 
                 context.Session["MissingKeywords"] = string.Join(", ", missingKeywords.Take(20));
 
-                var responseMatches = atsResult.Matches.Select(m => new {
-                    keyword = m.Requirement.Name,
-                    category = m.Requirement.Category.ToString(),
-                    required = m.Requirement.IsRequired,
-                    state = m.State.ToString(),
-                    matchedText = m.MatchedText,
-                    alternatives = m.Requirement.Alternatives
-                }).ToList();
-
                 context.Response.Write(JsonConvert.SerializeObject(new
                 {
-                    success          = true,
-                    score            = atsResult.Score,
-                    requiredScore    = atsResult.RequiredScore,
-                    preferredScore   = atsResult.PreferredScore,
-                    keywords         = missingKeywords.Take(20),   // Legacy flat list for AI buttons
-                    matches          = responseMatches
+                    success = true,
+                    score = summary.OverallScore,
+                    requiredScore = summary.RequiredScore,
+                    preferredScore = summary.PreferredScore,
+                    strongMatches = summary.ExactMatches,
+                    relatedMatches = summary.RelatedMatches,
+                    missingRequired = summary.MissingRequired,
+                    missingPreferred = summary.MissingPreferred,
+                    biggestGaps = summary.BiggestGaps,
+                    keywords = missingKeywords.Take(20),
+                    // Full structured requirements sent to frontend so it can
+                    // pass evidence-aware data to the AI improvement step.
+                    allRequirements = analysis.Requirements.Select(r => new {
+                        keyword  = r.Requirement,
+                        category = r.Category,
+                        priority = r.Priority,
+                        state    = r.MatchState,
+                        evidence = r.Evidence ?? ""
+                    }),
+                    matches = analysis.Requirements.Select(r => new {
+                        keyword = r.Requirement,
+                        category = r.Category,
+                        required = r.Priority == "Required",
+                        state = r.MatchState,
+                        matchedText = r.MatchedText,
+                        evidence = r.Evidence
+                    })
                 }));
             }
             catch (Exception ex)
             {
-                context.Response.Write(JsonConvert.SerializeObject(new { success = false, message = "Scoring Error: " + ex.Message }));
+                context.Response.Write(JsonConvert.SerializeObject(new { success = false, message = "Analysis error: " + ex.Message }));
             }
         }
 
