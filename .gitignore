@@ -108,3 +108,4 @@ resumes/
 
 # Secure configuration
 secrets.config
+apikeys.config

@@ -278,6 +278,8 @@
     <Content Include="Fonts\Roboto_SemiCondensed-Light.ttf" />
     <Content Include="Fonts\OpenSans-VariableFont.ttf" />
     <Content Include="ImproveText.ashx" />
+    <Content Include="apikeys.config.example" />
+    <Content Include="apikeys.config" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />

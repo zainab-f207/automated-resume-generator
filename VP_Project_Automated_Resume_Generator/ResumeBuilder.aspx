@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ResumeBuilder.aspx.cs" Inherits="VP_Project_Automated_Resume_Generator.ResumeBuilder" %>
+<%@ Page Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ResumeBuilder.aspx.cs" Inherits="VP_Project_Automated_Resume_Generator.ResumeBuilder" %>
 
 <asp:Content ID="HeadContent" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
@@ -1207,17 +1207,19 @@ attachDynamicImprove(block);
 
             var _timer = null;
 
-            textarea.addEventListener('blur', function() {
+            textarea.addEventListener('blur', function () {
                 var rawText = textarea.value.trim();
-                // Trigger AI diff if in AI mode (step >= 6) AND we have keywords
                 var inAiMode = (typeof _wizCurrentStep !== 'undefined' && _wizCurrentStep >= 6);
-                var sessionKws = '<%= Session["MissingKeywords"] ?? "" %>';
-                var currentKeywords = (typeof _atsMissingKws !== 'undefined' && _atsMissingKws.length > 0)
-                    ? _atsMissingKws.join(', ')
-                    : sessionKws;
                 if (!inAiMode) { diffPanel.style.display = 'none'; return; }
 
-                if (!currentKeywords || !rawText) { diffPanel.style.display = 'none'; return; }
+                // Build a proper structured requirements array (same shape ImproveText.ashx expects)
+                var currentReqs = (typeof _atsAllRequirements !== 'undefined' && _atsAllRequirements.length > 0)
+                    ? _atsAllRequirements
+                    : (typeof _atsMissingKws !== 'undefined' ? _atsMissingKws.map(function (k) {
+                        return { keyword: k, state: 'Missing', category: 'Unknown', priority: 'Required', evidence: '' };
+                    }) : []);
+
+                if (!currentReqs.length || !rawText) { diffPanel.style.display = 'none'; return; }
 
                 // Show spinner
                 diffPanel.style.display = 'block';
@@ -1226,43 +1228,61 @@ attachDynamicImprove(block);
                     '<span class="diff-spin-icon">&#9696;</span> Checking for keyword suggestions...</div>';
 
                 clearTimeout(_timer);
-                _timer = setTimeout(function() {
+                _timer = setTimeout(function () {
                     fetch('ImproveText.ashx', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ rawText: rawText, resumeText: (typeof _atsResumeText !== 'undefined' ? _atsResumeText : rawText), requirements: currentReqs })
+                        body: JSON.stringify({
+                            rawText: rawText,
+                            resumeText: (typeof _atsResumeText !== 'undefined' ? _atsResumeText : rawText),
+                            requirements: currentReqs
+                        })
                     })
-                    .then(function(r) { return r.json(); })
-                    .then(function(d) {
-                        if (!d.success || !d.text || d.text.trim() === rawText.trim()) {
-                            diffPanel.style.display = 'none';
-                            return;
-                        }
-                        var ops = wordDiff(rawText, d.text.trim());
-                        var hasChanges = ops.some(function(o) { return o.type !== 'eq'; });
-                        if (!hasChanges) { diffPanel.style.display = 'none'; return; }
+                                                  .then(function (r) { return r.json(); })
+                          .then(function (d) {
+                              if (!d.success) {
+                                  diffPanel.innerHTML = '<div style="color: #ff7675; padding: 10px;">&#10008; AI Error: ' + (d.message || 'Unknown error occurred') + '</div>';
+                                  setTimeout(function() { diffPanel.style.display = 'none'; }, 6000);
+                                  return;
+                              }
+                              if (!d.text || d.text.trim() === rawText.trim()) {
+                                  diffPanel.innerHTML = '<div style="color: #00b894; padding: 10px;"><i class="bi bi-stars"></i> AI Suggestion: Your text is already optimal. No changes needed.</div>';
+                                  setTimeout(function() { diffPanel.style.display = 'none'; }, 4000);
+                                  return;
+                              }
+                              var ops = wordDiff(rawText, d.text.trim());
+                              var hasChanges = ops.some(function (o) { return o.type !== 'eq'; });
+                              if (!hasChanges) { 
+                                  diffPanel.innerHTML = '<div style="color: #00b894; padding: 10px;"><i class="bi bi-stars"></i> AI Suggestion: Your text is already optimal. No changes needed.</div>'; 
+                                  setTimeout(function() { diffPanel.style.display = 'none'; }, 4000); 
+                                  return; 
+                              }
 
-                        var suggested = d.text.trim();
-                        diffPanel.innerHTML =
-                            '<div class="diff-header">' +
-                            '<i class="bi bi-stars"></i> AI Suggestion — keywords woven in where relevant:' +
-                            '</div>' +
-                            '<div class="diff-body">' + renderDiff(ops) + '</div>' +
-                            '<div class="diff-actions">' +
-                            '<button class="diff-accept" type="button">&#10003; Accept</button>' +
-                            '<button class="diff-keep"   type="button">&#215; Keep original</button>' +
-                            '</div>';
+                              var suggested = d.text.trim();
+                              diffPanel.innerHTML =
+                                  '<div class="diff-header">' +
+                                  '<i class="bi bi-stars"></i> AI Suggestion - keywords woven in where relevant:' +
+                                  '</div>' +
+                                  '<div class="diff-body">' + renderDiff(ops) + '</div>' +
+                                  '<div class="diff-actions">' +
+                                  '<button class="diff-accept" type="button">&#10003; Accept</button>' +
+                                  '<button class="diff-keep"   type="button">&#215; Keep original</button>' +
+                                  '</div>';
 
-                        diffPanel.querySelector('.diff-accept').onclick = function() {
-                            textarea.value = suggested;
-                            diffPanel.style.display = 'none';
-                        };
-                        diffPanel.querySelector('.diff-keep').onclick = function() {
-                            diffPanel.style.display = 'none';
-                        };
-                    })
-                    .catch(function() { diffPanel.style.display = 'none'; });
-                }, 200); // small debounce after blur
+                              diffPanel.querySelector('.diff-accept').onclick = function () {
+                                  textarea.value = suggested;
+                                  diffPanel.style.display = 'none';
+                              };
+                              diffPanel.querySelector('.diff-keep').onclick = function () {
+                                  diffPanel.style.display = 'none';
+                              };
+                          })
+                          .catch(function (err) {
+                              console.error('ImproveText fetch failed:', err);
+                              diffPanel.innerHTML = '<div style="color: #ff7675; padding: 10px;">&#10008; Network Error: Failed to contact AI suggestion server.</div>';
+                              setTimeout(function() { diffPanel.style.display = 'none'; }, 6000);
+                          });
+                }, 200);
             });
         }
 
@@ -1278,21 +1298,37 @@ attachDynamicImprove(block);
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ rawText: rawText, resumeText: resumeText || _atsResumeText || rawText, requirements: requirements })
             })
-            .then(function(r) { return r.json(); })
-            .then(function(d) {
-                if (!d.success || !d.text || d.text.trim() === rawText.trim()) { diffPanel.style.display = 'none'; return; }
-                var ops = wordDiff(rawText, d.text.trim());
-                if (!ops.some(function(o){ return o.type !== 'eq'; })) { diffPanel.style.display = 'none'; return; }
-                var suggested = d.text.trim();
-                diffPanel.innerHTML =
-                    '<div class="diff-header"><i class="bi bi-stars"></i> AI Suggestion:</div>' +
-                    '<div class="diff-body">' + renderDiff(ops) + '</div>' +
-                    '<div class="diff-actions"><button class="diff-accept" type="button">&#10003; Accept</button>' +
-                    '<button class="diff-keep" type="button">&#215; Keep original</button></div>';
-                diffPanel.querySelector('.diff-accept').onclick = function() { textarea.value = suggested; diffPanel.style.display = 'none'; };
-                diffPanel.querySelector('.diff-keep').onclick = function() { diffPanel.style.display = 'none'; };
-            })
-            .catch(function() { diffPanel.style.display = 'none'; });
+                          .then(function(r) { return r.json(); })
+              .then(function(d) {
+                  if (!d.success) { 
+                      diffPanel.innerHTML = '<div style="color: #ff7675; padding: 10px;">&#10008; AI Error: ' + (d.message || 'Unknown error occurred') + '</div>';
+                      setTimeout(function() { diffPanel.style.display = 'none'; }, 6000);
+                      return; 
+                  }
+                  if (!d.text || d.text.trim() === rawText.trim()) { 
+                      diffPanel.innerHTML = '<div style="color: #00b894; padding: 10px;"><i class="bi bi-stars"></i> AI Suggestion: Your text is already optimal. No changes needed.</div>';
+                      setTimeout(function() { diffPanel.style.display = 'none'; }, 4000);
+                      return; 
+                  }
+                  var ops = wordDiff(rawText, d.text.trim());
+                  if (!ops.some(function(o){ return o.type !== 'eq'; })) { 
+                      diffPanel.innerHTML = '<div style="color: #00b894; padding: 10px;"><i class="bi bi-stars"></i> AI Suggestion: Your text is already optimal. No changes needed.</div>'; 
+                      setTimeout(function() { diffPanel.style.display = 'none'; }, 4000); 
+                      return; 
+                  }
+                  var suggested = d.text.trim();
+                  diffPanel.innerHTML =
+                      '<div class="diff-header"><i class="bi bi-stars"></i> AI Suggestion:</div>' +
+                      '<div class="diff-body">' + renderDiff(ops) + '</div>' +
+                      '<div class="diff-actions"><button class="diff-accept" type="button">&#10003; Accept</button>' +
+                      '<button class="diff-keep" type="button">&#215; Keep original</button></div>';
+                  diffPanel.querySelector('.diff-accept').onclick = function() { textarea.value = suggested; diffPanel.style.display = 'none'; };
+                  diffPanel.querySelector('.diff-keep').onclick = function() { diffPanel.style.display = 'none'; };
+              })
+              .catch(function(err) { 
+                  diffPanel.innerHTML = '<div style="color: #ff7675; padding: 10px;">&#10008; Network Error: Failed to contact AI suggestion server.</div>';
+                  setTimeout(function() { diffPanel.style.display = 'none'; }, 6000);
+              });
         }
 
         /* ---------- Attach to static fields ---------- */
@@ -1326,7 +1362,7 @@ attachDynamicImprove(block);
         });
 
         // ------------------------------------------
-        // WIZARD ENGINE — injected once at end
+        // WIZARD ENGINE � injected once at end
         // ------------------------------------------
         var _wizCurrentStep = 1;
         var _atsMissingKws      = [];
@@ -1561,6 +1597,9 @@ attachDynamicImprove(block);
 
     </script>
 </asp:Content>
+
+
+
 
 
 

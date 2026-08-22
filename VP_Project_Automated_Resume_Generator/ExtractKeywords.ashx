@@ -25,8 +25,8 @@ namespace VP_Project_Automated_Resume_Generator
                         return;
                     }
                     dynamic input = JsonConvert.DeserializeObject(inputJson);
-                    rawText  = (string)(input?.rawText  ?? "");
-                    jobDesc  = (string)(input?.jobDesc  ?? "");
+                    rawText = (string)(input?.rawText ?? "");
+                    jobDesc = (string)(input?.jobDesc ?? "");
                 }
             } catch (Exception ex) {
                 context.Response.Write(JsonConvert.SerializeObject(new { success = false, message = "JSON parse error: " + ex.Message }));
@@ -46,6 +46,8 @@ namespace VP_Project_Automated_Resume_Generator
 
                 var missingKeywords = analysis.Requirements
                     .Where(r => r.MatchState == "Missing")
+                    .OrderByDescending(r => r.Priority == "Required")
+                    .ThenByDescending(r => r.Weight)
                     .Select(r => r.Requirement)
                     .ToList();
 
@@ -53,32 +55,35 @@ namespace VP_Project_Automated_Resume_Generator
 
                 context.Response.Write(JsonConvert.SerializeObject(new
                 {
-                    success = true,
-                    score = summary.OverallScore,
-                    requiredScore = summary.RequiredScore,
-                    preferredScore = summary.PreferredScore,
-                    strongMatches = summary.ExactMatches,
-                    relatedMatches = summary.RelatedMatches,
-                    missingRequired = summary.MissingRequired,
+                    success          = true,
+                    score            = summary.OverallScore,
+                    requiredScore    = summary.RequiredScore,
+                    preferredScore   = summary.PreferredScore,
+                    strongMatches    = summary.ExactMatches,
+                    relatedMatches   = summary.RelatedMatches,
+                    missingRequired  = summary.MissingRequired,
                     missingPreferred = summary.MissingPreferred,
-                    biggestGaps = summary.BiggestGaps,
-                    keywords = missingKeywords.Take(20),
-                    // Full structured requirements sent to frontend so it can
-                    // pass evidence-aware data to the AI improvement step.
-                    allRequirements = analysis.Requirements.Select(r => new {
-                        keyword  = r.Requirement,
-                        category = r.Category,
-                        priority = r.Priority,
-                        state    = r.MatchState,
-                        evidence = r.Evidence ?? ""
+                    biggestGaps      = summary.BiggestGaps,
+                    keywords         = missingKeywords.Take(20),
+                    // Full structured requirements sent to the frontend.
+                    // canImprove signals whether the AI may reword this field
+                    // to incorporate the keyword (evidence exists) or must leave
+                    // it as a genuine gap (no evidence).
+                    allRequirements  = analysis.Requirements.Select(r => new {
+                        keyword    = r.Requirement,
+                        category   = r.Category,
+                        priority   = r.Priority,
+                        state      = r.MatchState,
+                        evidence   = r.Evidence ?? "",
+                        canImprove = r.CanImprove
                     }),
                     matches = analysis.Requirements.Select(r => new {
-                        keyword = r.Requirement,
-                        category = r.Category,
-                        required = r.Priority == "Required",
-                        state = r.MatchState,
+                        keyword     = r.Requirement,
+                        category    = r.Category,
+                        required    = r.Priority == "Required",
+                        state       = r.MatchState,
                         matchedText = r.MatchedText,
-                        evidence = r.Evidence
+                        evidence    = r.Evidence
                     })
                 }));
             }

@@ -11,13 +11,16 @@ namespace VP_Project_Automated_Resume_Generator
 {
     public class AtsRequirementResult
     {
-        public string Requirement { get; set; }
-        public string Category { get; set; }     // free text, AI decides — no fixed enum needed
-        public string Priority { get; set; }      // "Required" | "Preferred"
-        public int Weight { get; set; }           // 1-10, AI-assigned per role context
-        public string MatchState { get; set; }    // "Exact" | "Related" | "Missing"
-        public string MatchedText { get; set; }
-        public string Evidence { get; set; }       // which resume section it came from
+        public string Requirement  { get; set; }
+        public string Category     { get; set; }   // free text, AI decides
+        public string Priority     { get; set; }   // "Required" | "Preferred"
+        public int    Weight       { get; set; }   // 1-10
+        public string MatchState   { get; set; }   // "Exact" | "Related" | "Missing"
+        public string MatchedText  { get; set; }
+        public string Evidence     { get; set; }   // resume section where match was found
+        // True when the resume already contains evidence supporting this keyword.
+        // Only Exact/Related requirements should be passed to the AI improvement step.
+        public bool   CanImprove   { get; set; }
     }
 
     public class AtsAnalysisResult
@@ -27,66 +30,163 @@ namespace VP_Project_Automated_Resume_Generator
 
     public static class AtsAnalyzer
     {
+        // Mistral.ai fallback key for ATS keyword extraction (loaded from configuration)
+        private static string MistralApiKey => ConfigurationManager.AppSettings["MISTRAL_API_KEY_ATS"];
+        private const string MistralModel  = "mistral-large-latest";
+        private const string MistralUrl    = "https://api.mistral.ai/v1/chat/completions";
+
         public static AtsAnalysisResult Analyze(string resumeText, string jobDescription)
         {
-            string apiKey = ConfigurationManager.AppSettings["GEMINI_API_KEY"];
-            string url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=" + apiKey;
+            string geminiKey = ConfigurationManager.AppSettings["GEMINI_API_KEY"];
+            string prompt    = BuildPrompt(jobDescription, resumeText);
 
-            string prompt = @"You are an ATS analysis engine that works for ANY job field
-(software, nursing, marketing, accounting, teaching, sales, etc.) - never assume a technical role
-unless the job description is technical.
+            string resultText = null;
+
+            // Try Gemini first; fall back to Mistral.ai on any failure
+            try
+            {
+                resultText = CallGemini(prompt, geminiKey);
+            }
+            catch
+            {
+                // Mistral.ai has a smaller context window - truncate inputs to fit
+                string shortResume = resumeText.Length > 3000 ? resumeText.Substring(0, 3000) + "\n[truncated]" : resumeText;
+                string shortJobDesc = jobDescription.Length > 2000 ? jobDescription.Substring(0, 2000) + "\n[truncated]" : jobDescription;
+                string mistralPrompt = BuildPrompt(shortJobDesc, shortResume);
+                try { resultText = CallMistral(mistralPrompt); }
+                catch (Exception mistralEx)
+                {
+                    throw new Exception("Both Gemini and Mistral.ai failed. Last error: " + mistralEx.Message);
+                }
+            }
+
+            return ParseResult(resultText);
+        }
+
+        // -------------------------------------------------------
+        private static string BuildPrompt(string jobDescription, string resumeText)
+        {
+            return @"You are a precise ATS analysis engine for ANY job field
+(software, nursing, marketing, accounting, teaching, finance, sales, engineering, etc.).
+Never assume a technical role unless the job description is technical.
 
 TASK:
-1. Read the JOB DESCRIPTION and extract only genuine skill/qualification/tool/certification
-   requirements. IGNORE meta info like city, employment type, or a bare years-of-experience number.
-2. Group alternatives (e.g. 'React, Angular or Blazor') into ONE requirement entry, with the
-   chosen alternative named in Requirement, e.g. 'React (or Angular/Blazor)'. Do not create three
-   separate entries for one either/or requirement.
-3. Classify each requirement's Priority as ""Required"" or ""Preferred"" based on which heading
-   it fell under in the JD (required/must-have vs nice-to-have/preferred/bonus). If unclear,
-   default to ""Required"" only when it's clearly core to the role, else ""Preferred"".
-4. Assign Weight 1-10: core requirements central to the role = 8-10, secondary skills/practices
-   = 4-7, generic soft skills = 2-4, minor nice-to-haves = 1-3.
-5. Search the RESUME text for each requirement and set MatchState:
-   - ""Exact"" - the requirement (or a direct synonym, like BS CS for Bachelor's degree in CS) appears explicitly in the resume.
-   - ""Related"" - the resume shows adjacent evidence (e.g. 'HTML/CSS/JS' matching HTML5, CSS3, JS).
-   - ""Missing"" - no explicit or specific evidence is found.
-6. For Exact/Related, set MatchedText to the short phrase actually found in the resume, and
-   Evidence to which resume section it came from. For Missing, leave both empty. NEVER invent evidence.
+1. Read the JOB DESCRIPTION and extract genuine skill/qualification/tool/certification
+   requirements. IGNORE meta info: city, employment type, bare years-of-experience numbers.
+2. Group alternatives ('React, Angular or Blazor') into ONE entry: 'React (or Angular/Blazor)'.
+   Do not create three separate entries for one either/or requirement.
+3. Classify Priority as ""Required"" or ""Preferred"" based on the JD section heading.
+   Default to ""Preferred"" when unclear.
+4. Assign Weight 1-10: core role requirements = 8-10, secondary = 4-7, soft skills = 2-4,
+   minor nice-to-haves = 1-3.
+5. For each requirement search the RESUME and set MatchState:
+   - ""Exact"" : the requirement or a direct synonym appears explicitly in the resume.
+   - ""Related"": the resume contains clear, adjacent evidence that the person performs work
+     that DIRECTLY AND SPECIFICALLY demonstrates this skill (see CONSERVATIVE RULES below).
+   - ""Missing"": no explicit or clearly specific evidence found.
+6. For Exact/Related set MatchedText = short phrase found; Evidence = resume section name.
+   For Missing leave both empty. NEVER invent evidence.
 
-STRICT EVIDENCE MATCHING RULES:
-1. Do NOT infer specific technical/subject skills (like 'OOP', 'Data Structures', 'Algorithms', 'Software Engineering') from a general degree description (like 'Computer Science graduate' or 'BS Computer Science'). If 'OOP' or 'Data Structures' is not explicitly listed or demonstrated in the resume text, it must be classified as ""Missing"".
-2. Do NOT match specific technologies (like 'GitHub Actions', 'Azure DevOps', 'CI/CD') with general tools (like 'GitHub', 'Git'). GitHub is a hosting service; GitHub Actions is a CI/CD tool. If 'GitHub Actions' is not explicitly in the resume, it is ""Missing"".
-3. Do NOT match specific architectural patterns (like 'Clean Architecture', 'DDD', 'CQRS') with general code quality claims (like 'writing clean and scalable code'). These must be classified as ""Missing"" unless explicitly named in the resume.
-4. Direct degree matches (e.g., 'Bachelor's degree in CS' vs 'BS Computer Science') must be classified as ""Exact"", not ""Related"".
-5. When a requirement contains multiple components (like 'Basic HTML, CSS and JavaScript'), all components must be found in the resume to be classified as ""Exact"" or ""Related"". Do not let a single component (like HTML5) satisfy the entire grouped requirement.
+CONSERVATIVE MATCHING RULES (apply to every field, not just tech):
+1. DEGREE != SPECIFIC SKILL.
+   A degree title alone (""BS Computer Science"", ""BSN Nursing"", ""BCom"", ""MBA"") does NOT prove
+   specific practical skills like OOP, Data Structures, Patient Assessment, Financial Modelling,
+   or any other skill. Mark those skills Missing unless they are explicitly listed or clearly
+   demonstrated in project/work experience sections.
+2. TOOL SPECIFICITY. Never match a general tool to a specific one.
+   - Git != CI/CD pipelines != GitHub Actions != Azure DevOps.
+   - Cloud experience != Azure / AWS / GCP (must be named).
+   - GitHub (hosting) != GitHub Actions (automation/CI/CD).
+3. PARTIAL MATCH = Related, NOT Exact.
+   If a requirement contains multiple components (""Unit AND Integration Testing"") and the resume
+   only shows one component (""Unit Testing""), that is Related, not Exact.
+4. NAMED METHODOLOGIES & ARCHITECTURES must be named explicitly to be Exact/Related.
+   ""Clean Architecture"", ""DDD"", ""CQRS"", ""Six Sigma"", ""SAP"", ""Scrum"" etc. are NOT implied by
+   general descriptions like ""well-structured code"" or ""iterative releases"".
+5. DOMAIN INFERENCE. Use contextual reasoning appropriate to the field:
+   - If a nurse's resume describes administering medications, monitoring vitals, and coordinating
+     with physicians, and the JD requires ""patient care"", that is Related.
+   - If an accountant's resume describes preparing financial statements and the JD requires
+     ""financial reporting"", that is Related.
+   - Apply domain-appropriate inference. Never invent specific skill evidence.
+6. DEGREE SYNONYMS are Exact matches:
+   ""BS Computer Science"" == ""Computer Science graduate"" == ""BSc CS"" -> Exact.
+   ""BCom"" == ""Commerce graduate"" -> Exact. Apply to any field.
 
 Return ONLY valid JSON (no markdown fences, no commentary) in exactly this shape:
 {""requirements"":[{""requirement"":""ASP.NET Core"",""category"":""TechnicalSkill"",""priority"":""Required"",""weight"":10,""matchState"":""Exact"",""matchedText"":""ASP.NET Core"",""evidence"":""Technical Skills""}]}
+JOB DESCRIPTION:
 " + jobDescription + @"
 
 RESUME:
 " + resumeText;
+        }
 
-            var payload = new { contents = new[] { new { parts = new[] { new { text = prompt } } } } };
+        // -------------------------------------------------------
+        private static string CallGemini(string prompt, string apiKey)
+        {
+            string url     = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=" + apiKey;
+            var    payload = new { contents = new[] { new { parts = new[] { new { text = prompt } } } } };
 
             using (var client = new HttpClient())
             {
                 client.Timeout = TimeSpan.FromSeconds(60);
-                var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-                var response = client.PostAsync(url, content).Result;
-                string raw = response.Content.ReadAsStringAsync().Result;
+                var    reqBody  = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+                var    response = client.PostAsync(url, reqBody).Result;
+                string raw      = response.Content.ReadAsStringAsync().Result;
 
                 if (!response.IsSuccessStatusCode)
-                    throw new Exception("Gemini error: " + raw);
+                    throw new Exception("Gemini HTTP " + response.StatusCode + ": " + raw);
 
                 dynamic parsed = JsonConvert.DeserializeObject(raw);
-                string text = parsed.candidates[0].content.parts[0].text.ToString();
-                text = text.Replace("```json", "").Replace("```", "").Trim();
-
-                var result = JsonConvert.DeserializeObject<AtsAnalysisResult>(text);
-                return result ?? new AtsAnalysisResult();
+                return parsed.candidates[0].content.parts[0].text.ToString();
             }
+        }
+
+        // -------------------------------------------------------
+        private static string CallMistral(string prompt)
+        {
+            var payload = new
+            {
+                model       = MistralModel,
+                messages    = new[] { new { role = "user", content = prompt } },
+                temperature = 0.1
+            };
+
+            using (var client = new HttpClient())
+            {
+                client.Timeout = TimeSpan.FromSeconds(60);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + MistralApiKey);
+                var    reqBody  = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+                var    response = client.PostAsync(MistralUrl, reqBody).Result;
+                string raw      = response.Content.ReadAsStringAsync().Result;
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Mistral.ai HTTP " + response.StatusCode + ": " + raw);
+
+                dynamic parsed = JsonConvert.DeserializeObject(raw);
+                return parsed.choices[0].message.content.ToString();
+            }
+        }
+
+        // -------------------------------------------------------
+        private static AtsAnalysisResult ParseResult(string text)
+        {
+            text = text.Replace("```json", "").Replace("```", "").Trim();
+            var result = JsonConvert.DeserializeObject<AtsAnalysisResult>(text);
+            if (result == null) return new AtsAnalysisResult();
+
+            // CanImprove = true only when the resume already has supporting evidence.
+            // Missing requirements are genuine skill gaps; the AI must NOT invent them.
+            foreach (var r in result.Requirements)
+            {
+                r.CanImprove = string.Equals(r.MatchState, "Exact",   StringComparison.OrdinalIgnoreCase)
+                            || string.Equals(r.MatchState, "Related", StringComparison.OrdinalIgnoreCase);
+            }
+
+            return result;
         }
     }
 }
+
+

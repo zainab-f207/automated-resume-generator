@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <appSettings>
+	<!-- Google Gemini API Key (for text improvement and ATS analysis) -->
+	<add key="GEMINI_API_KEY" value="YOUR_GEMINI_API_KEY_HERE" />
+
+	<!-- Mistral AI API Key (for text improvement) -->
+	<add key="MISTRAL_API_KEY_IMPROVE" value="YOUR_MISTRAL_API_KEY_HERE" />
+
+	<!-- Mistral AI API Key (for ATS analysis fallback) -->
+	<add key="MISTRAL_API_KEY_ATS" value="YOUR_MISTRAL_API_KEY_HERE" />
+  </appSettings>
+</configuration>
