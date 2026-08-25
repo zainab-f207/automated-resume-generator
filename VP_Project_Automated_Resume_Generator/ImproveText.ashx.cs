@@ -14,7 +14,7 @@ namespace VP_Project_Automated_Resume_Generator
     {
         private const string MistralModel    = "mistral-large-latest";
         private const string MistralUrl      = "https://api.mistral.ai/v1/chat/completions";
-        private const string GeminiUrl    = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=";
+        private const string GeminiUrl    = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent?key=";
 
         // Load API keys from configuration
         private static string GeminiApiKey => ConfigurationManager.AppSettings["GEMINI_API_KEY"];

@@ -38,18 +38,16 @@ namespace VP_Project_Automated_Resume_Generator
         public static AtsAnalysisResult Analyze(string resumeText, string jobDescription)
         {
             string geminiKey = ConfigurationManager.AppSettings["GEMINI_API_KEY"];
-            string prompt    = BuildPrompt(jobDescription, resumeText);
+            string prompt = BuildPrompt(jobDescription, resumeText);
 
             string resultText = null;
 
-            // Try Gemini first; fall back to Mistral.ai on any failure
             try
             {
                 resultText = CallGemini(prompt, geminiKey);
             }
             catch
             {
-                // Mistral.ai has a smaller context window - truncate inputs to fit
                 string shortResume = resumeText.Length > 3000 ? resumeText.Substring(0, 3000) + "\n[truncated]" : resumeText;
                 string shortJobDesc = jobDescription.Length > 2000 ? jobDescription.Substring(0, 2000) + "\n[truncated]" : jobDescription;
                 string mistralPrompt = BuildPrompt(shortJobDesc, shortResume);
@@ -60,7 +58,9 @@ namespace VP_Project_Automated_Resume_Generator
                 }
             }
 
-            return ParseResult(resultText);
+            var analysis = ParseResult(resultText);
+            ApplyDegreeSafetyNet(analysis, resumeText);   // <-- ADD THIS LINE
+            return analysis;
         }
 
         // -------------------------------------------------------
@@ -149,7 +149,7 @@ RESUME:
         // -------------------------------------------------------
         private static string CallGemini(string prompt, string apiKey)
         {
-            string url     = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=" + apiKey;
+            string url     = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent?key=" + apiKey;
             var payload = new
             {
                 contents = new[]
@@ -209,6 +209,59 @@ RESUME:
             }
         }
 
+        private static void ApplyDegreeSafetyNet(AtsAnalysisResult analysis, string resumeText)
+        {
+            if (analysis?.Requirements == null || string.IsNullOrWhiteSpace(resumeText)) return;
+
+            // Matches things like "BS Computer Science", "Bachelor of Science in Nursing",
+            // "MBA", "BSN", "Bachelor's degree in Marketing", etc.
+            var degreeLineRegex = new System.Text.RegularExpressions.Regex(
+                @"\b(Bachelor|Master|BS|BSc|BA|BSN|BCom|BBA|MBA|MS|MSc|MA|PhD|Associate)\b[^\n\r]{0,80}",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+            var resumeDegreeLines = degreeLineRegex.Matches(resumeText)
+                .Cast<System.Text.RegularExpressions.Match>()
+                .Select(m => m.Value.ToLowerInvariant())
+                .ToList();
+
+            if (!resumeDegreeLines.Any()) return; // no degree info in resume at all — leave as-is
+
+            foreach (var r in analysis.Requirements)
+            {
+                if (r == null || string.IsNullOrWhiteSpace(r.Requirement)) continue;
+                if (!string.Equals(r.MatchState, "Missing", StringComparison.OrdinalIgnoreCase)) continue;
+
+                string reqLower = r.Requirement.ToLowerInvariant();
+                bool isDegreeRequirement = reqLower.Contains("degree") || reqLower.Contains("bachelor")
+                                         || reqLower.Contains("master") || reqLower.Contains("phd");
+                if (!isDegreeRequirement) continue;
+
+                // Extract subject words from the requirement (strip generic degree words)
+                var stop = new HashSet<string> { "bachelor", "bachelors", "master", "masters", "degree",
+            "in", "or", "a", "related", "field", "of", "phd", "science", "s" };
+                var reqSubjectWords = System.Text.RegularExpressions.Regex.Matches(reqLower, @"[a-z]{3,}")
+                    .Cast<System.Text.RegularExpressions.Match>()
+                    .Select(m => m.Value)
+                    .Where(w => !stop.Contains(w))
+                    .ToList();
+
+                // If the resume has ANY degree line, and either:
+                //   (a) the requirement has no specific subject words left (generic "a degree" ask), or
+                //   (b) at least one subject word overlaps with a resume degree line
+                // then treat it as a match instead of Missing.
+                bool subjectOverlap = !reqSubjectWords.Any()
+                    || resumeDegreeLines.Any(line => reqSubjectWords.Any(w => line.Contains(w)));
+
+                if (subjectOverlap)
+                {
+                    r.MatchState = "Exact";
+                    r.MatchedText = resumeDegreeLines.First();
+                    r.Evidence = "Education";
+                    r.CanImprove = true;
+                }
+            }
+        }
+
         // -------------------------------------------------------
         private static AtsAnalysisResult ParseResult(string text)
         {
@@ -216,11 +269,9 @@ RESUME:
             var result = JsonConvert.DeserializeObject<AtsAnalysisResult>(text);
             if (result == null) return new AtsAnalysisResult();
 
-            // CanImprove = true only when the resume already has supporting evidence.
-            // Missing requirements are genuine skill gaps; the AI must NOT invent them.
             foreach (var r in result.Requirements)
             {
-                r.CanImprove = string.Equals(r.MatchState, "Exact",   StringComparison.OrdinalIgnoreCase)
+                r.CanImprove = string.Equals(r.MatchState, "Exact", StringComparison.OrdinalIgnoreCase)
                             || string.Equals(r.MatchState, "Related", StringComparison.OrdinalIgnoreCase);
             }
 
