@@ -105,8 +105,60 @@ namespace VP_Project_Automated_Resume_Generator
                 }
             }
 
+            improved = CleanupDuplicatePhrases(improved);
+
             context.Response.Write(JsonConvert.SerializeObject(
-                new { success = true, text = improved.Trim(), engine = usedEngine }));
+                new
+                {
+                    success = true,
+                    text = improved,
+                    engine = usedEngine
+                }));
+        }
+
+        private static string CleanupDuplicatePhrases(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+
+            // -------------------------------------------------------
+            // 1. Collapse duplicated consecutive words
+            // Example:
+            // "Agile Agile/Scrum" -> "Agile/Scrum"
+            // "citizens citizens" -> "citizens"
+            // -------------------------------------------------------
+            text = System.Text.RegularExpressions.Regex.Replace(
+                text,
+                @"\b(\w+)(\s+\1\b)+",
+                "$1",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase
+            );
+
+            // -------------------------------------------------------
+            // 2. Collapse duplicated short phrases
+            // Example:
+            // "built and built" -> "built"
+            // "improved resume improved resume" -> "improved resume"
+            //
+            // Keep this limited to short back-to-back repetitions.
+            // -------------------------------------------------------
+            text = System.Text.RegularExpressions.Regex.Replace(
+                text,
+                @"\b((?:\w+(?:\s+|$)){1,5}\w+)\s+\1\b",
+                "$1",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase
+            );
+
+            // -------------------------------------------------------
+            // 3. Clean up whitespace created by the replacements
+            // -------------------------------------------------------
+            text = System.Text.RegularExpressions.Regex.Replace(
+                text,
+                @"[ \t]{2,}",
+                " "
+            );
+
+            return text.Trim();
         }
 
         // -------------------------------------------------------
@@ -114,16 +166,31 @@ namespace VP_Project_Automated_Resume_Generator
         {
             if (!requirements.Any())
             {
-                // No requirements: plain polish pass
                 return
                     "You are a professional resume writer.\n" +
                     "Lightly polish the FIELD TEXT below for clarity and impact.\n" +
                     "CRITICAL: Do NOT invent new facts, tools, achievements, or numbers.\n" +
-                    "Keep the same meaning and approximate length.\n" +
-                    "CRITICAL: Before returning, read the output word-by-word and remove any " +
-                    "duplicate consecutive words (e.g. 'integrity integrity' -> 'integrity').\n" +
-                    "Return ONLY plain text. No markdown, no bullets, no labels.\n\n" +
-                    "FIELD TEXT:\n" + rawText;
+                    "Keep the same meaning and approximate length.\n\n" +
+
+                    "RULE 1 - NO DUPLICATE WORDS\n" +
+                    "Before returning, remove any duplicate consecutive words " +
+                    "(e.g. 'integrity integrity' -> 'integrity').\n\n" +
+
+                    "RULE 2 - NO PARTIAL REWRITES OR DUPLICATED CLAUSES\n" +
+                    "Never leave fragments of the original sentence next to a rewritten " +
+                    "version of the same clause. When editing a clause, fully replace " +
+                    "the original wording instead of keeping the old fragment and " +
+                    "appending the new wording after it.\n" +
+                    "Do not repeat the same idea, phrase, clause, or sentence twice.\n" +
+                    "Re-read the entire output before returning it and verify that no " +
+                    "idea, fact, phrase, clause, or wording appears duplicated.\n\n" +
+
+                    "RULE 3 - OUTPUT FORMAT\n" +
+                    "Return ONLY plain text. No markdown, no bullets, no labels, " +
+                    "no explanations.\n\n" +
+
+                    "FIELD TEXT:\n" +
+                    rawText;
             }
 
             // Split requirements by canImprove
@@ -182,15 +249,38 @@ namespace VP_Project_Automated_Resume_Generator
                 "consecutively (e.g. 'integrity integrity', 'environment environment', 'PDFs PDFs'), " +
                 "remove the duplicate. Fix any grammar issues introduced by your edits.\n\n" +
 
-                "RULE 6 - OUTPUT FORMAT\n" +
-                "Return ONLY the improved FIELD TEXT as plain text. " +
-                "No markdown, no bullets, no section labels, no explanations.";
+               "RULE 6 - OUTPUT FORMAT\n" +
+"Return ONLY the improved FIELD TEXT as plain text. " +
+"No markdown, no bullets, no section labels, no explanations.\n\n" +
+
+"RULE 7 - NO PARTIAL REWRITES OR DUPLICATED CLAUSES\n" +
+"Never leave fragments of the original sentence next to a rewritten version of the same clause. " +
+"When editing a clause, fully replace the original wording instead of keeping the old fragment " +
+"and appending the new wording after it. Do not repeat the same idea, phrase, clause, or sentence " +
+"twice. Before returning the final answer, re-read the entire output and verify that no idea, " +
+"fact, phrase, clause, or wording appears duplicated.";
         }
 
         // -------------------------------------------------------
         private static string CallGemini(string prompt)
         {
-            var payload = new { contents = new[] { new { parts = new[] { new { text = prompt } } } } };
+            var payload = new
+            {
+                contents = new[]
+    {
+        new
+        {
+            parts = new[]
+            {
+                new { text = prompt }
+            }
+        }
+    },
+                generationConfig = new
+                {
+                    temperature = 0.2
+                }
+            };
             using (var client = new HttpClient())
             {
                 client.Timeout = TimeSpan.FromSeconds(60);

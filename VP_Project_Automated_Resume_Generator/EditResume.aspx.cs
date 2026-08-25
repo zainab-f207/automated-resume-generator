@@ -300,25 +300,43 @@ namespace VP_Project_Automated_Resume_Generator
 
             List<string> refEntries = new List<string>();
 
-            
-            string[] refLines = txtReferences.Text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] refLines = txtReferences.Text.Split(
+                new[] { '\r', '\n' },
+                StringSplitOptions.RemoveEmptyEntries
+            );
+
             foreach (string line in refLines)
             {
                 string trimmedLine = line.Trim();
+
                 if (!string.IsNullOrEmpty(trimmedLine))
                 {
                     refEntries.Add(trimmedLine);
                 }
             }
+
             string hiddenrefValue = hiddenReferences.Value;
+
             if (!string.IsNullOrWhiteSpace(hiddenrefValue))
             {
-              
-                refEntries.AddRange(hiddenrefValue.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries));
+                refEntries.AddRange(
+                    hiddenrefValue.Split(
+                        new[] { '\n' },
+                        StringSplitOptions.RemoveEmptyEntries
+                    )
+                );
             }
 
-           
-            string updatedreferences = string.Join("<br/>", refEntries);
+            string updatedreferences = "";
+
+            if (refEntries.Count > 0)
+            {
+                string referenceContent = string.Join("<br/>", refEntries);
+
+                updatedreferences =
+                    "<h2>References</h2>" +
+                    "<p>" + referenceContent + "</p>";
+            }
 
 
 
@@ -717,23 +735,54 @@ namespace VP_Project_Automated_Resume_Generator
         {
             if (resumeId <= 0) return;
 
-            // Combine education from textbox and hidden field
-            string refText = txtReferences.Text.Trim();
-            string hiddenrefText = hiddenReferences.Value.Trim();
+            List<string> referenceEntries = new List<string>();
 
-            string updatedReferences = refText;
+            string referenceText = txtReferences.Text.Trim();
 
-            if (!string.IsNullOrEmpty(hiddenrefText))
+            if (!string.IsNullOrWhiteSpace(referenceText))
             {
-                if (!string.IsNullOrEmpty(updatedReferences))
-                {
-                    updatedReferences += "<br/>";
-                }
-                updatedReferences += hiddenrefText.Replace("\n", "<br/>");
+                referenceEntries.AddRange(
+                    referenceText.Split(
+                        new[] { '\r', '\n' },
+                        StringSplitOptions.RemoveEmptyEntries
+                    )
+                    .Select(x => x.Trim())
+                    .Where(x => !string.IsNullOrEmpty(x))
+                );
             }
-            string query = "UPDATE Resumes SET ReferenceDetails = @ReferenceDetails WHERE ResumeID = @ResumeID";
 
-            using (SqlConnection con = new SqlConnection("Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True"))
+            string hiddenReferenceText = hiddenReferences.Value.Trim();
+
+            if (!string.IsNullOrWhiteSpace(hiddenReferenceText))
+            {
+                referenceEntries.AddRange(
+                    hiddenReferenceText.Split(
+                        new[] { '\n' },
+                        StringSplitOptions.RemoveEmptyEntries
+                    )
+                    .Select(x => x.Trim())
+                    .Where(x => !string.IsNullOrEmpty(x))
+                );
+            }
+
+            string updatedReferences = "";
+
+            if (referenceEntries.Count > 0)
+            {
+                string referenceContent = string.Join("<br/>", referenceEntries);
+
+                updatedReferences =
+                    "<h2>References</h2>" +
+                    "<p>" + referenceContent + "</p>";
+            }
+
+            string query =
+                "UPDATE Resumes " +
+                "SET ReferenceDetails = @ReferenceDetails " +
+                "WHERE ResumeID = @ResumeID";
+
+            using (SqlConnection con = new SqlConnection(
+                "Data Source=localhost;Initial Catalog=Resume_Generator;Integrated Security=True;TrustServerCertificate=True"))
             {
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
@@ -747,12 +796,14 @@ namespace VP_Project_Automated_Resume_Generator
                     }
                     catch (Exception ex)
                     {
-                        ShowMessage("Error updating references: " + ex.Message, false);
+                        ShowMessage(
+                            "Error updating references: " + ex.Message,
+                            false
+                        );
                     }
                 }
             }
         }
-
         private void ShowMessage(string message, bool success)
         {
             lblMessage.Text = message;

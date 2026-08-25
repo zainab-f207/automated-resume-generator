@@ -109,9 +109,33 @@ CONSERVATIVE MATCHING RULES (apply to every field, not just tech):
    - If an accountant's resume describes preparing financial statements and the JD requires
      ""financial reporting"", that is Related.
    - Apply domain-appropriate inference. Never invent specific skill evidence.
-6. DEGREE SYNONYMS are Exact matches:
-   ""BS Computer Science"" == ""Computer Science graduate"" == ""BSc CS"" -> Exact.
-   ""BCom"" == ""Commerce graduate"" -> Exact. Apply to any field.
+6. DEGREE EQUIVALENCE — APPLY STRICTLY:
+   Treat standard degree abbreviations and equivalent degree wording as EXACT matches.
+
+   Examples:
+   - ""BS Computer Science"" == ""Bachelor of Science in Computer Science""
+   - ""BS Computer Science"" == ""Bachelor's degree in Computer Science""
+   - ""BSc Computer Science"" == ""Bachelor of Science in Computer Science""
+   - ""BSc CS"" == ""Bachelor's degree in Computer Science""
+   - ""Computer Science graduate"" == ""BS Computer Science""
+   - ""BCom"" == ""Bachelor of Commerce""
+   - ""MBA"" == ""Master of Business Administration""
+   - ""BSN"" == ""Bachelor of Science in Nursing""
+
+   If the JD requires a Bachelor's degree in a field and the resume explicitly
+   contains a bachelor's-level degree in the same field, classify it as EXACT.
+
+   Example:
+   JOB: ""Bachelor's degree in Computer Science or a related field""
+   RESUME: ""BS Computer Science""
+   RESULT: Exact
+   MatchedText: ""BS Computer Science""
+   Evidence: ""Education""
+
+   Do NOT classify it as Missing simply because the wording differs.
+
+   A degree does NOT prove unrelated practical skills. Skills must still be
+   explicitly listed or clearly demonstrated elsewhere in the resume.
 
 Return ONLY valid JSON (no markdown fences, no commentary) in exactly this shape:
 {""requirements"":[{""requirement"":""ASP.NET Core"",""category"":""TechnicalSkill"",""priority"":""Required"",""weight"":10,""matchState"":""Exact"",""matchedText"":""ASP.NET Core"",""evidence"":""Technical Skills""}]}
@@ -126,7 +150,23 @@ RESUME:
         private static string CallGemini(string prompt, string apiKey)
         {
             string url     = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=" + apiKey;
-            var    payload = new { contents = new[] { new { parts = new[] { new { text = prompt } } } } };
+            var payload = new
+            {
+                contents = new[]
+    {
+        new
+        {
+            parts = new[]
+            {
+                new { text = prompt }
+            }
+        }
+    },
+                generationConfig = new
+                {
+                    temperature = 0.1
+                }
+            };
 
             using (var client = new HttpClient())
             {
