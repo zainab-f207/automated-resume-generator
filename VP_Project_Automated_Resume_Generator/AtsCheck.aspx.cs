@@ -253,7 +253,9 @@ namespace VP_Project_Automated_Resume_Generator
                 if (!string.IsNullOrWhiteSpace(dm.Summary)) parts.Add(dm.Summary);
                 if (dm.Skills?.Any() == true) parts.Add(string.Join(", ", dm.Skills.SelectMany(s => s.Items ?? new List<string>())));
                 if (dm.Experience?.Any() == true) parts.AddRange(dm.Experience.Select(x => $"{x.JobTitle} {x.Company} {string.Join(" ", x.Achievements ?? new List<string>())}"));
-                if (dm.Projects?.Any() == true) parts.AddRange(dm.Projects.Select(x => $"{x.Name} {x.Description}"));
+                if (dm.Projects?.Any() == true)
+                    parts.AddRange(dm.Projects.Select(x =>
+                        $"{x.Name} {x.Technologies} {string.Join(" ", x.Achievements ?? new List<string>())} {x.Description}"));
                 if (dm.Education?.Any() == true) parts.AddRange(dm.Education.Select(x => $"{x.Degree} {x.Institution}"));
                 return string.Join("\n", parts.Where(s => !string.IsNullOrWhiteSpace(s)));
             }

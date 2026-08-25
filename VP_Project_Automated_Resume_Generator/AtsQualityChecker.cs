@@ -24,7 +24,9 @@ namespace VP_Project_Automated_Resume_Generator
             if (!string.IsNullOrWhiteSpace(resume.Summary)) parts.Add(resume.Summary);
             if (resume.Skills?.Any() == true) parts.Add(string.Join(", ", resume.Skills.SelectMany(s => s.Items ?? new List<string>())));
             if (resume.Experience?.Any() == true) parts.AddRange(resume.Experience.Select(x => x.JobTitle + " " + x.Company + " " + string.Join(" ", x.Achievements ?? new List<string>())));
-            if (resume.Projects?.Any() == true) parts.AddRange(resume.Projects.Select(x => x.Name + " " + x.Description));
+            if (resume.Projects?.Any() == true)
+                parts.AddRange(resume.Projects.Select(x =>
+                    x.Name + " " + x.Technologies + " " + string.Join(" ", x.Achievements ?? new List<string>()) + " " + x.Description));
             if (resume.Education?.Any() == true) parts.AddRange(resume.Education.Select(x => x.Degree + " " + x.Institution));
             
             string rawText = string.Join("\n", parts.Where(s => !string.IsNullOrWhiteSpace(s)));

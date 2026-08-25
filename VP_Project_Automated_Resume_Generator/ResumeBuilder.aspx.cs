@@ -137,11 +137,18 @@ namespace VP_Project_Automated_Resume_Generator
                     var pp = rawP.Split(new[] { "::" }, StringSplitOptions.None);
                     string pName = System.Web.HttpUtility.UrlDecode(pp.Length > 0 ? pp[0] : "");
                     string pTech = pp.Length > 1 ? System.Web.HttpUtility.UrlDecode(pp[1]) : "";
-                    string pBullRaw = pp.Length > 2 ? System.Web.HttpUtility.UrlDecode(pp[2]) : "";
+                    string pDescription = pp.Length > 2 ? System.Web.HttpUtility.UrlDecode(pp[2]) : "";
+                    string pBullRaw = pp.Length > 3 ? System.Web.HttpUtility.UrlDecode(pp[3]) : "";
                     var pBullets = string.IsNullOrWhiteSpace(pBullRaw)
                         ? new System.Collections.Generic.List<string>()
                         : pBullRaw.Split(new[] { "~~" }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
-                    dataModel.Projects.Add(new ProjectItem { Name = pName, Technologies = pTech, Achievements = pBullets });
+                    dataModel.Projects.Add(new ProjectItem
+                    {
+                        Name = pName,
+                        Technologies = pTech,
+                        Description = pDescription,
+                        Achievements = pBullets
+                    });
                 }
             }
 
