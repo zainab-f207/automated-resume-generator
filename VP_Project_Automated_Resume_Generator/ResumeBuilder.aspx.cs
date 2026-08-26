@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -123,6 +123,7 @@ namespace VP_Project_Automated_Resume_Generator
             )
             .Select(s => s.Trim())
             .Where(s => s.Length > 0)
+            .Distinct()
             .ToList();
 
             if (allSkills.Any())
@@ -362,6 +363,10 @@ namespace VP_Project_Automated_Resume_Generator
                     {
                         dataModel.Optional.Publications.Add(eContent);
                     }
+                    else if (eTitle.ToLower().Contains("linkedin"))
+                    {
+                        if (string.IsNullOrWhiteSpace(dataModel.Personal.LinkedIn)) dataModel.Personal.LinkedIn = eContent;
+                    }
                     else
                     {
                         dataModel.Optional.Awards.Add(
@@ -578,7 +583,7 @@ namespace VP_Project_Automated_Resume_Generator
                 "<h2>References</h2>" +
                 "<p><strong>" +
                 HttpUtility.HtmlEncode(txtName.Text) +
-                "</strong> — " +
+                "</strong> � " +
                 HttpUtility.HtmlEncode(txtRelation.Text) +
                 "<br/>" +
                 HttpUtility.HtmlEncode(txtContact.Text) +
@@ -1184,10 +1189,7 @@ namespace VP_Project_Automated_Resume_Generator
                         ? HttpUtility.UrlDecode(parts[1])
                         : "";
 
-                string bulletsRaw =
-                    parts.Length > 2
-                        ? HttpUtility.UrlDecode(parts[2])
-                        : "";
+                string bulletsRaw = parts.Length > 3 ? HttpUtility.UrlDecode(parts[3]) : (parts.Length > 2 ? HttpUtility.UrlDecode(parts[2]) : "");
 
                 var bullets =
                     new List<string>();

@@ -149,7 +149,7 @@ RESUME:
         // -------------------------------------------------------
         private static string CallGemini(string prompt, string apiKey)
         {
-            string url     = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent?key=" + apiKey;
+            string url     = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
             var payload = new
             {
                 contents = new[]
@@ -213,10 +213,11 @@ RESUME:
         {
             if (analysis?.Requirements == null || string.IsNullOrWhiteSpace(resumeText)) return;
 
-            // Matches things like "BS Computer Science", "Bachelor of Science in Nursing",
-            // "MBA", "BSN", "Bachelor's degree in Marketing", etc.
+            string resumeLower = resumeText.ToLowerInvariant();
+
+            // ── Step 1: Find explicit degree lines via abbreviations ──────────────────
             var degreeLineRegex = new System.Text.RegularExpressions.Regex(
-                @"\b(Bachelor|Master|BS|BSc|BA|BSN|BCom|BBA|MBA|MS|MSc|MA|PhD|Associate)\b[^\n\r]{0,80}",
+                @"\b(Bachelor|Master|BS|BSc|BA|BSN|BCom|BBA|MBA|MS|MSc|MA|PhD|Associate|Intermediate)\b[^\n\r]{0,100}",
                 System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
             var resumeDegreeLines = degreeLineRegex.Matches(resumeText)
@@ -224,7 +225,28 @@ RESUME:
                 .Select(m => m.Value.ToLowerInvariant())
                 .ToList();
 
-            if (!resumeDegreeLines.Any()) return; // no degree info in resume at all — leave as-is
+            // ── Step 2: Detect ANY education content (catches cases where rawText
+            //           does not include the education inputs directly) ───────────────
+            bool hasAnyEducation = resumeDegreeLines.Any()
+                || resumeLower.Contains("institution:")
+                || resumeLower.Contains("degree:")
+                || resumeLower.Contains("university")
+                || resumeLower.Contains("college")
+                || resumeLower.Contains("bachelor")
+                || resumeLower.Contains("master")
+                || resumeLower.Contains("graduated")
+                || resumeLower.Contains("intermediate");
+
+            if (!hasAnyEducation) return;   // resume has zero education content — leave as-is
+
+            // ── Step 3: Stop-words list — generic degree words ONLY ───────────────────
+            // Do NOT include subject/field words like "science", "engineering", "nursing".
+            var stop = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "bachelor", "bachelors", "master", "masters", "degree", "degrees",
+                "in", "or", "a", "an", "the", "related", "field", "fields",
+                "of", "phd", "and", "for", "with", "from", "s", "at"
+            };
 
             foreach (var r in analysis.Requirements)
             {
@@ -232,33 +254,44 @@ RESUME:
                 if (!string.Equals(r.MatchState, "Missing", StringComparison.OrdinalIgnoreCase)) continue;
 
                 string reqLower = r.Requirement.ToLowerInvariant();
-                bool isDegreeRequirement = reqLower.Contains("degree") || reqLower.Contains("bachelor")
-                                         || reqLower.Contains("master") || reqLower.Contains("phd");
-                if (!isDegreeRequirement) continue;
 
-                // Extract subject words from the requirement (strip generic degree words)
-                var stop = new HashSet<string> { "bachelor", "bachelors", "master", "masters", "degree",
-            "in", "or", "a", "related", "field", "of", "phd", "science", "s" };
+                // ── Trigger condition A: AI explicitly classified this as "Education" ──
+                bool isEducationCategory = string.Equals(r.Category, "Education",
+                    StringComparison.OrdinalIgnoreCase);
+
+                // ── Trigger condition B: Requirement text mentions a degree/qualification ─
+                bool isDegreeRequirement = reqLower.Contains("degree") || reqLower.Contains("bachelor")
+                    || reqLower.Contains("master") || reqLower.Contains("phd")
+                    || reqLower.Contains("associate") || reqLower.Contains("bsc")
+                    || reqLower.Contains("mba") || reqLower.Contains("msc")
+                    || reqLower.Contains("graduated") || reqLower.Contains("certification")
+                    || reqLower.Contains("qualification") || reqLower.Contains("diploma");
+
+                if (!isDegreeRequirement && !isEducationCategory) continue;
+
+                // ── Subject-word matching for degree-keyword requirements ──────────────
                 var reqSubjectWords = System.Text.RegularExpressions.Regex.Matches(reqLower, @"[a-z]{3,}")
                     .Cast<System.Text.RegularExpressions.Match>()
                     .Select(m => m.Value)
                     .Where(w => !stop.Contains(w))
                     .ToList();
 
-                // If the resume has ANY degree line, and either:
-                //   (a) the requirement has no specific subject words left (generic "a degree" ask), or
-                //   (b) at least one subject word overlaps with a resume degree line
-                // then treat it as a match instead of Missing.
-                bool subjectOverlap = !reqSubjectWords.Any()
+                bool subjectMatchInDegreeLines = !reqSubjectWords.Any()
                     || resumeDegreeLines.Any(line => reqSubjectWords.Any(w => line.Contains(w)));
 
-                if (subjectOverlap)
-                {
-                    r.MatchState = "Exact";
-                    r.MatchedText = resumeDegreeLines.First();
-                    r.Evidence = "Education";
-                    r.CanImprove = true;
-                }
+                // ── Education-category rescue: AI said "Education", resume has education ─
+                // This is the key safety net: if the LLM categorized this requirement
+                // as Education AND the resume contains ANY education content, rescue it.
+                bool educationCategoryRescue = isEducationCategory && hasAnyEducation;
+
+                if (!subjectMatchInDegreeLines && !educationCategoryRescue) continue;
+
+                r.MatchState  = "Exact";
+                r.MatchedText = resumeDegreeLines.Any()
+                    ? resumeDegreeLines.First()
+                    : (resumeLower.Contains("degree:") ? "Degree found" : "Education section found");
+                r.Evidence    = "Education";
+                r.CanImprove  = true;
             }
         }
 

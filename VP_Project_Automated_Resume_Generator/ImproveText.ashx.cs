@@ -236,6 +236,16 @@ namespace VP_Project_Automated_Resume_Generator
                 "If a CanImprove keyword does not fit in this specific field without sounding forced, " +
                 "skip it. Never force-fit keywords.\n\n" +
 
+                "RULE 2B - NO EXAGGERATION OR SCOPE CREEP\n" +
+                "Even if a keyword is in the CanImprove list, you must NOT exaggerate the candidate's experience. " +
+                "For example, if the resume says 'Design Research' and the CanImprove keyword is 'Usability Testing', " +
+                "you can mention research but DO NOT invent facts like 'conducted usability testing' unless explicitly stated in the FIELD TEXT.\n\n" +
+
+                "RULE 2C - NO KEYWORD STUFFING OR REPETITION\n" +
+                "Do NOT stuff the same keyword into multiple sentences. Do NOT repeatedly insert long generic phrases " +
+                "(like 'strong collaboration and communication skills') if it makes the writing sound unnatural. " +
+                "Only insert a keyword if it flows perfectly.\n\n" +
+
                 "RULE 3 - NEVER ADD GENUINE GAPS\n" +
                 "The Genuine Skill Gaps list is a hard block. Do not mention any of those keywords " +
                 "directly or indirectly, regardless of how relevant they seem to the job description.\n\n" +

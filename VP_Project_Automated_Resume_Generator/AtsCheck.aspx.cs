@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -653,7 +653,7 @@ namespace VP_Project_Automated_Resume_Generator
                             "WORK EXPERIENCE\n" +
                             $"{exp.JobTitle}\n" +
                             $"{exp.Company}\n" +
-                            $"{exp.StartDate} - {exp.EndDate}\n" +
+                            (string.IsNullOrWhiteSpace(exp.EndDate) ? $"{exp.StartDate}\n" : $"{exp.StartDate} - {exp.EndDate}\n") +
                             string.Join(
                                 "\n",
                                 exp.Achievements ??
@@ -781,3 +781,7 @@ namespace VP_Project_Automated_Resume_Generator
         }
     }
 }
+
+
+
+

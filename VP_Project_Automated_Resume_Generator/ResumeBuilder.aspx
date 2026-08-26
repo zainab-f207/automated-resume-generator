@@ -395,44 +395,84 @@
             return valid;
         }
 
-        window.collectData = function collectData() {
-            // Skills
+        window.collectData =         function collectData() {
+            function _v(id) { var el = document.querySelector('[id$="' + id + '"]'); return el ? el.value.trim() : ''; }
+            
             var skills = [];
+            if (_v('txtSkill')) skills.push(_v('txtSkill'));
+            if (_v('txtSkills')) skills.push(_v('txtSkills'));
             document.querySelectorAll('input[name="skills"]').forEach(function (input) {
-                skills.push(input.value.trim());
+                if (input.value.trim()) skills.push(input.value.trim());
             });
-            document.getElementById('hiddenSkills').value = skills.join('\n');
+            var hidSkills = document.getElementById('hiddenSkills');
+            if (hidSkills) hidSkills.value = skills.join('\n');
 
-            // Education
             var education = [];
+            if (_v('txtInstitute') || _v('txtDegree')) {
+                education.push('Institution: ' + _v('txtInstitute') + '\nDegree: ' + _v('txtDegree') + '\nYear: ' + _v('txtYear'));
+            }
             var institutes = document.querySelectorAll('input[name="institute"]');
             var degrees = document.querySelectorAll('input[name="degree"]');
             var years = document.querySelectorAll('input[name="year"]');
             for (var i = 0; i < institutes.length; i++) {
-                education.push('Institution: ' + institutes[i].value.trim() + '\n' + 'Degree: ' + degrees[i].value.trim() + '\n' + 'Year: ' + years[i].value.trim());
+                if (institutes[i].value.trim() || degrees[i].value.trim()) {
+                    education.push('Institution: ' + institutes[i].value.trim() + '\nDegree: ' + degrees[i].value.trim() + '\nYear: ' + years[i].value.trim());
+                }
             }
-            document.getElementById('hiddenEducation').value = education.join('\n');
+            var hidEdu = document.getElementById('hiddenEducation');
+            if (hidEdu) hidEdu.value = education.join('\n');
 
-            // Work Experience
             var work = [];
+            var mJT = document.querySelector('input[placeholder="Job Title"]');
+            if (mJT && !mJT.name.includes("jobtitle")) {
+                var mComp = _v('txtCompany');
+                var mDur = _v('txtDuration');
+                var mDesc = _v('txtDescription');
+                if (mJT.value.trim() || mComp) {
+                    work.push('Job Title: ' + mJT.value.trim() + '\nCompany: ' + mComp + '\nDuration: ' + mDur + '\nDescription: ' + mDesc);
+                }
+            }
             var jobtitles = document.querySelectorAll('input[name="jobtitle"]');
             var companies = document.querySelectorAll('input[name="company"]');
             var durations = document.querySelectorAll('input[name="duration"]');
             var descriptions = document.querySelectorAll('textarea[name="description"]');
             for (var i = 0; i < jobtitles.length; i++) {
-                work.push('Job Title: ' + jobtitles[i].value.trim() + '\n' + 'Company: ' + companies[i].value.trim() + '\n' + 'Duration: ' + durations[i].value.trim() + '\n' + 'Description: ' + descriptions[i].value.trim());
+                if (jobtitles[i].value.trim() || companies[i].value.trim()) {
+                    work.push('Job Title: ' + jobtitles[i].value.trim() + '\nCompany: ' + companies[i].value.trim() + '\nDuration: ' + durations[i].value.trim() + '\nDescription: ' + descriptions[i].value.trim());
+                }
             }
-            document.getElementById('hiddenWorkExperience').value = work.join('\n');
+            var hidWork = document.getElementById('hiddenWorkExperience');
+            if (hidWork) hidWork.value = work.join('\n');
 
-            // References
             var refs = [];
+            if (_v('txtRefName') || _v('txtRefContact')) {
+                refs.push('Name: ' + _v('txtRefName') + '\nRelation: ' + _v('txtRefRelation') + '\nContact: ' + _v('txtRefContact'));
+            }
             var names = document.querySelectorAll('input[name="refname"]');
             var rels = document.querySelectorAll('input[name="relation"]');
             var contacts = document.querySelectorAll('input[name="contact"]');
             for (var i = 0; i < names.length; i++) {
-                refs.push('Name: ' + names[i].value.trim() + '\n' + 'Relation: ' + rels[i].value.trim() + '\n' + 'Contact: ' + contacts[i].value.trim());
+                if (names[i].value.trim()) {
+                    refs.push('Name: ' + names[i].value.trim() + '\nRelation: ' + rels[i].value.trim() + '\nContact: ' + contacts[i].value.trim());
+                }
             }
-            document.getElementById('hiddenReferences').value = refs.join('\n');
+            var hidRef = document.getElementById('hiddenReferences');
+            if (hidRef) hidRef.value = refs.join('\n');
+            
+            var projs = []; var projsSubmit = [];
+            if (_v('txtProjectName')) {
+                projs.push('Project: ' + _v('txtProjectName') + '\nTech: ' + _v('txtProjectTech') + '\nDescription: ' + _v('txtProjectDesc')); projsSubmit.push(encodeURIComponent(_v('txtProjectName')) + '::' + encodeURIComponent(_v('txtProjectTech')) + '::' + encodeURIComponent(_v('txtProjectDesc')) + '::');
+            }
+            var projnames = document.querySelectorAll('input[name="projectname"]');
+            var projtechs = document.querySelectorAll('input[name="projecttech"]');
+            var projdescs = document.querySelectorAll('textarea[name="projectdesc"]');
+            for (var i = 0; i < projnames.length; i++) {
+                if (projnames[i].value.trim()) {
+                    projs.push('Project: ' + projnames[i].value.trim() + '\nTech: ' + projtechs[i].value.trim() + '\nDescription: ' + projdescs[i].value.trim()); projsSubmit.push(encodeURIComponent(projnames[i].value.trim()) + '::' + encodeURIComponent(projtechs[i].value.trim()) + '::' + encodeURIComponent(projdescs[i].value.trim()) + '::');
+                }
+            }
+            var hidProj = document.getElementById('hiddenProjects');
+            if (hidProj) hidProj.value = projsSubmit.join('||');
         }
 
        
@@ -1079,7 +1119,7 @@ attachDynamicImprove(block);
                     var tech = b.querySelector('[name="projectTech"]').value.trim();
                     var desc = b.querySelector('[name="projectDesc"]').value.trim();
                     if (name || tech || desc) {
-                        projects.push(encodeURIComponent(name) + '::' + encodeURIComponent(tech) + '::' + encodeURIComponent(desc.replace(/\n/g, '~~')));
+                        projects.push(encodeURIComponent(name) + '::' + encodeURIComponent(tech) + '::' + '::' + encodeURIComponent(desc.replace(/\n/g, '~~')));
                     }
                 });
                 document.getElementById('hiddenProjects').value = projects.join('||');
@@ -1368,6 +1408,7 @@ attachDynamicImprove(block);
         var _atsMissingKws      = [];
           var _atsAllRequirements = [];  // structured [{keyword,category,priority,state,evidence}]
           var _atsResumeText      = "";  // full resume text for AI evidence checking
+        var _atsRequiredScore   = 0;
         var _stepTitles = [
             'Step 1: User Resume Data',
             'Step 2: Job Description',
@@ -1481,6 +1522,7 @@ attachDynamicImprove(block);
                     _setScoreRing('overallArc', 'overallScoreNum', d.score        || 0);
                     _setScoreRing('reqArc',     'reqScoreNum',     d.requiredScore  || 0);
                     _setScoreRing('prefArc',    'prefScoreNum',    d.preferredScore || 0);
+                    _atsRequiredScore = d.requiredScore || 0;
                     var tbody = document.getElementById('matchTableBody');
                     if (tbody && d.matches) {
                         tbody.innerHTML = d.matches.map(function(m) {
@@ -1500,8 +1542,11 @@ attachDynamicImprove(block);
                                 '</tr>';
                         }).join('');
          }
+                  var oldGaps = document.getElementById('ats-gaps-container');
+         if (oldGaps) oldGaps.remove();
+
          if (d.biggestGaps && d.biggestGaps.length > 0) {
-             var gapHtml = '<div class="alert mt-3" style="background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.35);border-radius:10px;color:#e2e2e2;">' +
+             var gapHtml = '<div id="ats-gaps-container" class="alert mt-3" style="background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.35);border-radius:10px;color:#e2e2e2;">' +
                  '<strong style="color:#ff7675;"><i class="bi bi-exclamation-triangle-fill mr-2"></i>Biggest gaps to address:</strong><ol class="mb-0 mt-2">' +
                  d.biggestGaps.map(function(g){ return '<li>' + g + '</li>'; }).join('') + '</ol></div>';
              document.getElementById('matchTableContainer').insertAdjacentHTML('afterend', gapHtml);
@@ -1550,9 +1595,24 @@ attachDynamicImprove(block);
                 if (s < 6) dot.classList.add('done');
                 else if (s === 6) dot.classList.add('active');
             });
-            var titleEl = document.getElementById('wizardStepTitle');
-            if (titleEl) titleEl.textContent = 'Step 6: Improve with AI - Blur fields to see suggestions';
-            var aiReqs = _atsAllRequirements.length > 0 ? _atsAllRequirements : _atsMissingKws.map(function(k){ return { keyword: k, state: 'Missing', category: 'Unknown', priority: 'Required', evidence: '' }; });
+                        var titleEl = document.getElementById('wizardStepTitle');
+            var isHighMatch = _atsRequiredScore === 100;
+
+            if (isHighMatch) {
+                if (titleEl) titleEl.textContent = 'Step 6: Optional AI Polish - Blur fields to see suggestions';
+                var alertHtml = '<div class="alert alert-success mt-3" style="background:rgba(0,184,148,0.12);border:1px solid rgba(0,184,148,0.35);border-radius:10px;color:#e2e2e2;">' +
+                    '<strong style="color:#00b894;"><i class="bi bi-check-circle-fill mr-2"></i>Excellent Match!</strong> Your resume already matches 100% of the required job requirements. AI optimization is optional and will focus on improving clarity, relevance, and wording without adding unnecessary keywords.</div>';
+                
+                var oldAlert = document.getElementById('high-match-alert');
+                if (oldAlert) oldAlert.remove();
+                if (titleEl) titleEl.insertAdjacentHTML('afterend', '<div id="high-match-alert" class="container">' + alertHtml + '</div>');
+            } else {
+                if (titleEl) titleEl.textContent = 'Step 6: Improve with AI - Blur fields to see suggestions';
+                var oldAlert = document.getElementById('high-match-alert');
+                if (oldAlert) oldAlert.remove();
+            }
+
+            var aiReqs = isHighMatch ? [] : (_atsAllRequirements.length > 0 ? _atsAllRequirements : _atsMissingKws.map(function(k){ return { keyword: k, state: 'Missing', category: 'Unknown', priority: 'Required', evidence: '' }; }));
             // Trigger runDiffNow on all textareas that have an associated diff panel
             document.querySelectorAll('textarea').forEach(function(ta) {
                 var panel = null;
@@ -1597,6 +1657,7 @@ attachDynamicImprove(block);
 
     </script>
 </asp:Content>
+
 
 
 
