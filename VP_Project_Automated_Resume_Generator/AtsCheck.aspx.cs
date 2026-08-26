@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -163,37 +163,31 @@ namespace VP_Project_Automated_Resume_Generator
                     .Take(30)
                     .ToList();
 
-            if (top.Count == 0)
-            {
-                pnlMissing.Visible =
-                    false;
-
-                pnlNoMissing.Visible =
-                    true;
-            }
-            else
-            {
-                pnlMissing.Visible =
-                    true;
-
-                pnlNoMissing.Visible =
-                    false;
-
-                var sb =
-                    new StringBuilder();
-
-                foreach (var kw in top)
-                {
-                    sb.Append(
-                        "<span class='kw-chip'>" +
-                        HttpUtility.HtmlEncode(kw) +
-                        "</span>");
+            var sb = new StringBuilder();
+            var required = analysis.Requirements.Where(r => r != null && string.Equals(r.Priority, "Required", StringComparison.OrdinalIgnoreCase)).ToList();
+            var preferred = analysis.Requirements.Where(r => r != null && string.Equals(r.Priority, "Preferred", StringComparison.OrdinalIgnoreCase)).ToList();
+            Action<List<VP_Project_Automated_Resume_Generator.AtsRequirementResult>, string> renderGroup = (list, title) => {
+                if (list.Count > 0) {
+                    sb.Append("<h6 style='margin-top:10px;font-weight:bold;'>" + title + "</h6>");
+                    sb.Append("<ul style='list-style:none;padding-left:0;'>");
+                    foreach (var req in list) {
+                        string icon = "<i class='bi bi-circle-fill' style='color:#e17055;'></i>"; string status = "Not found in resume"; string color = "#e17055";
+                        if (string.Equals(req.MatchState, "Exact", StringComparison.OrdinalIgnoreCase)) {
+                            icon = "<i class='bi bi-check-circle-fill' style='color:#00b894;'></i>"; status = "Exact match"; color = "#00b894";
+                        } else if (string.Equals(req.MatchState, "Related", StringComparison.OrdinalIgnoreCase)) {
+                            icon = "<i class='bi bi-dash-circle-fill' style='color:#fdcb6e;'></i>"; status = "Related match: " + HttpUtility.HtmlEncode(req.Evidence); color = "#fdcb6e";
+                        }
+                        sb.Append("<li style='margin-bottom:5px;font-size:0.9rem;'>" + icon + " <strong>" + HttpUtility.HtmlEncode(req.Requirement) + "</strong> &mdash; <span style='color:" + color + "'>" + status + "</span></li>");
+                    }
+                    sb.Append("</ul>");
                 }
-
-                lblMissingKeywords.Text =
-                    sb.ToString();
+            };
+            renderGroup(required, "Required Skills");
+            renderGroup(preferred, "Preferred Skills");
+            if (required.Count == 0 && preferred.Count == 0) {
+                sb.Append("<p style='color:#00b894;font-weight:600;'><i class='bi bi-check-circle-fill mr-1'></i> Great! Your resume covers all job description keywords.</p>");
             }
-
+            litRequirementsBreakdown.Text = sb.ToString();
             // ========================================================
             // GENERATED RESUME
             // ========================================================
@@ -465,6 +459,13 @@ namespace VP_Project_Automated_Resume_Generator
                 }
             }
 
+            // References stored in session
+            string refHtml = Session["ResumeReferencesHtml"] as string ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(refHtml))
+            {
+                sb.Append($"<div style='margin:4px 0 10px;'>{refHtml}</div>");
+            }
+
             return sb.ToString();
         }
 
@@ -613,7 +614,23 @@ namespace VP_Project_Automated_Resume_Generator
                         p.JobTitle);
                 }
 
+
+                // LINKEDIN
+                if (!string.IsNullOrWhiteSpace(p.LinkedIn))
+                {
+                    parts.Add(
+                        "LINKEDIN\n" +
+                        p.LinkedIn);
+                }
                 // SUMMARY
+
+                // PORTFOLIO / WEBSITE
+                if (!string.IsNullOrWhiteSpace(p.Portfolio))
+                {
+                    parts.Add(
+                        "PORTFOLIO\n" +
+                        p.Portfolio);
+                }
 
                 if (!string.IsNullOrWhiteSpace(dm.Summary))
                 {
@@ -740,6 +757,13 @@ namespace VP_Project_Automated_Resume_Generator
                     }
                 }
 
+
+                // REFERENCES
+                string refText = Session["ResumeReferencesText"] as string ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(refText))
+                {
+                    parts.Add(refText.Trim());
+                }
                 return string.Join(
                     "\n\n",
                     parts.Where(

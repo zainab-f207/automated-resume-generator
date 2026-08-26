@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -105,7 +105,7 @@ namespace VP_Project_Automated_Resume_Generator
             dataModel.Personal.Email = txtEmail.Text;
             dataModel.Personal.Phone = txtPhone.Text;
             dataModel.Personal.Location = txtAddress.Text;
-            dataModel.Personal.LinkedIn = txtWebsite.Text;
+            dataModel.Personal.Portfolio = txtWebsite.Text;
             dataModel.Summary = txtAboutMe.Text;
 
             // ============================================================
@@ -559,6 +559,10 @@ namespace VP_Project_Automated_Resume_Generator
                     wizardJD;
             }
 
+            // Save references HTML so AtsCheck preview can show them
+            Session["ResumeReferencesHtml"] = referenceDetails;
+
+            Session["ResumeReferencesText"] = BuildReferenceDetailsText();
             Response.Redirect("AtsCheck.aspx");
         }
 
@@ -583,14 +587,19 @@ namespace VP_Project_Automated_Resume_Generator
                 "<h2>References</h2>" +
                 "<p><strong>" +
                 HttpUtility.HtmlEncode(txtName.Text) +
-                "</strong> — " +
+                "</strong> &mdash; " +
                 HttpUtility.HtmlEncode(txtRelation.Text) +
                 "<br/>" +
                 HttpUtility.HtmlEncode(txtContact.Text) +
                 "</p>";
-        }
 
-        // ================================================================
+        }
+        private string BuildReferenceDetailsText()
+        {
+            bool hasRef = !string.IsNullOrWhiteSpace(txtName.Text) || !string.IsNullOrWhiteSpace(txtRelation.Text) || !string.IsNullOrWhiteSpace(txtContact.Text);
+            if (!hasRef) return string.Empty;
+            return "\nREFERENCES\n" + txtName.Text + " - " + txtRelation.Text + "\n" + txtContact.Text;
+        }
         // SAVE DRAFT
         // ================================================================
 

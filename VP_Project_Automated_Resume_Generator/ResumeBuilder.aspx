@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ResumeBuilder.aspx.cs" Inherits="VP_Project_Automated_Resume_Generator.ResumeBuilder" %>
+ï»¿<%@ Page Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ResumeBuilder.aspx.cs" Inherits="VP_Project_Automated_Resume_Generator.ResumeBuilder" %>
 
 <asp:Content ID="HeadContent" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
@@ -473,6 +473,7 @@
             }
             var hidProj = document.getElementById('hiddenProjects');
             if (hidProj) hidProj.value = projsSubmit.join('||');
+            return true; // allow form submission to proceed
         }
 
        
@@ -1252,6 +1253,22 @@ attachDynamicImprove(block);
                 var inAiMode = (typeof _wizCurrentStep !== 'undefined' && _wizCurrentStep >= 6);
                 if (!inAiMode) { diffPanel.style.display = 'none'; return; }
 
+                // Skip re-firing if user already accepted a suggestion
+                if (textarea.dataset.diffAccepted === '1') {
+                    if (diffPanel.style.display === 'none') {
+                        diffPanel.style.display = 'block';
+                        diffPanel.innerHTML = '<div style="color:#00b894;padding:8px;"><i class="bi bi-check-circle-fill mr-1"></i>AI suggestion accepted. <button type="button" class="btn btn-sm btn-outline-secondary ml-2" style="font-size:0.75rem;padding:2px 8px;">&#8635; Regenerate</button></div>';
+                        (function(ta, dp) {
+                            dp.querySelector('button').onclick = function() {
+                                delete ta.dataset.diffAccepted;
+                                dp.style.display = 'none';
+                                ta.dispatchEvent(new Event('blur'));
+                            };
+                        })(textarea, diffPanel);
+                    }
+                    return;
+                }
+
                 // Build a proper structured requirements array (same shape ImproveText.ashx expects)
                 var currentReqs = (typeof _atsAllRequirements !== 'undefined' && _atsAllRequirements.length > 0)
                     ? _atsAllRequirements
@@ -1311,7 +1328,15 @@ attachDynamicImprove(block);
 
                               diffPanel.querySelector('.diff-accept').onclick = function () {
                                   textarea.value = suggested;
-                                  diffPanel.style.display = 'none';
+                                  textarea.dataset.diffAccepted = '1';
+                                  diffPanel.innerHTML = '<div style="color:#00b894;padding:8px;"><i class="bi bi-check-circle-fill mr-1"></i>Accepted. <button type="button" class="btn btn-sm btn-outline-secondary ml-2" style="font-size:0.75rem;padding:2px 8px;">&#8635; Regenerate</button></div>';
+                                  (function(ta, dp) {
+                                      dp.querySelector('button').onclick = function() {
+                                          delete ta.dataset.diffAccepted;
+                                          dp.style.display = 'none';
+                                          ta.dispatchEvent(new Event('blur'));
+                                      };
+                                  })(textarea, diffPanel);
                               };
                               diffPanel.querySelector('.diff-keep').onclick = function () {
                                   diffPanel.style.display = 'none';
@@ -1362,7 +1387,18 @@ attachDynamicImprove(block);
                       '<div class="diff-body">' + renderDiff(ops) + '</div>' +
                       '<div class="diff-actions"><button class="diff-accept" type="button">&#10003; Accept</button>' +
                       '<button class="diff-keep" type="button">&#215; Keep original</button></div>';
-                  diffPanel.querySelector('.diff-accept').onclick = function() { textarea.value = suggested; diffPanel.style.display = 'none'; };
+                  diffPanel.querySelector('.diff-accept').onclick = function() {
+                      textarea.value = suggested;
+                      textarea.dataset.diffAccepted = '1';
+                      diffPanel.innerHTML = '<div style="color:#00b894;padding:8px;"><i class="bi bi-check-circle-fill mr-1"></i>Accepted. <button type="button" class="btn btn-sm btn-outline-secondary ml-2" style="font-size:0.75rem;padding:2px 8px;">&#8635; Regenerate</button></div>';
+                      (function(ta, dp) {
+                          dp.querySelector('button').onclick = function() {
+                              delete ta.dataset.diffAccepted;
+                              dp.style.display = 'none';
+                              ta.dispatchEvent(new Event('blur'));
+                          };
+                      })(textarea, diffPanel);
+                  };
                   diffPanel.querySelector('.diff-keep').onclick = function() { diffPanel.style.display = 'none'; };
               })
               .catch(function(err) { 
@@ -1396,13 +1432,13 @@ attachDynamicImprove(block);
 
         // Attach to all existing static project/work blocks on page load
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.project-block, .work-block').forEach(function(block) {
+            document.querySelectorAll('.project-block, .work-block, .optional-field').forEach(function(block) {
                 attachDynamicImprove(block);
             });
         });
 
         // ------------------------------------------
-        // WIZARD ENGINE — injected once at end
+        // WIZARD ENGINE ï¿½ injected once at end
         // ------------------------------------------
         var _wizCurrentStep = 1;
         var _atsMissingKws      = [];
@@ -1622,7 +1658,7 @@ attachDynamicImprove(block);
                     panel = document.getElementById('diffPanelDesc');
                 } else {
                     // For dynamic textareas in projects or work blocks
-                    var container = ta.closest('.project-block, .work-block');
+                    var container = ta.closest('.project-block, .work-block, .form-row, .optional-field');
                     if (container) {
                         panel = container.querySelector('.dynamic-diff-panel, .ai-diff-panel');
                     }

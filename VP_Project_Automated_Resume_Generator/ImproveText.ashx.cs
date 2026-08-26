@@ -236,12 +236,21 @@ namespace VP_Project_Automated_Resume_Generator
                 "If a CanImprove keyword does not fit in this specific field without sounding forced, " +
                 "skip it. Never force-fit keywords.\n\n" +
 
+                "RULE 2C - NO TECHNOLOGY HALLUCINATION\n" +
+                "Do NOT add new tools or technologies (like Figma, React, Python, etc.) to the output unless they were already present in the FIELD TEXT, even if they are in the CanImprove list. Tools should only be added if the original text already implies their use in that specific context.\n\n" +
+
+                "RULE 2D - NATURAL SOFT SKILLS\n" +
+                "Integrate soft skills naturally. Do not awkwardly append phrases like 'using communication skills' or 'and collaboration' at the end of a sentence.\n\n" +
+
                 "RULE 2B - NO EXAGGERATION OR SCOPE CREEP\n" +
                 "Even if a keyword is in the CanImprove list, you must NOT exaggerate the candidate's experience. " +
                 "For example, if the resume says 'Design Research' and the CanImprove keyword is 'Usability Testing', " +
                 "you can mention research but DO NOT invent facts like 'conducted usability testing' unless explicitly stated in the FIELD TEXT.\n\n" +
 
-                "RULE 2C - NO KEYWORD STUFFING OR REPETITION\n" +
+                "RULE 2F - CONTEXTUAL ACCURACY\n" +
+                "Do not apply digital, software, or technical concepts to physical or unrelated mediums. For example, do not write 'responsive business cards' or 'agile print design'. Apply keywords strictly to their appropriate context.\n\n" +
+
+                "RULE 2E - NO KEYWORD STUFFING OR REPETITION\n" +
                 "Do NOT stuff the same keyword into multiple sentences. Do NOT repeatedly insert long generic phrases " +
                 "(like 'strong collaboration and communication skills') if it makes the writing sound unnatural. " +
                 "Only insert a keyword if it flows perfectly.\n\n" +

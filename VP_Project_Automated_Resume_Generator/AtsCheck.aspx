@@ -145,6 +145,7 @@
 
             <div class="text-center mt-2">
                 <asp:Button ID="btnCheckAts" runat="server" Text="&#128269; Check ATS Score"
+                                    </div>
                     CssClass="btn btn-primary px-5" OnClick="btnCheckAts_Click" />
             </div>
         </div>
@@ -167,108 +168,11 @@
                                     <span class="score-label">ATS Score</span>
                                 </div>
                             </div>
+                            <div style="font-size:0.75rem;color:#888;margin-top:12px;font-weight:normal;line-height:1.3;text-align:center;">
+                                *This is a comprehensive structural ATS score, which differs from the pure Keyword Match score in Step 4.
+                            </div>
                             <div class="score-verdict mt-3">
                                 <asp:Label ID="lblVerdict" runat="server" />
                             </div>
                         </div>
                     </div>
-
-                    <!-- Missing keywords -->
-                    <div class="col-md-8">
-                        <h6 style="color:var(--primary-light);margin-bottom:10px;">
-                            <i class="bi bi-tags-fill mr-1"></i> Keywords to Consider Adding
-                        </h6>
-                        <asp:Panel ID="pnlMissing" runat="server">
-                            <asp:Label ID="lblMissingKeywords" runat="server" />
-                        </asp:Panel>
-                        <asp:Panel ID="pnlNoMissing" runat="server" Visible="false">
-                            <p style="color:#00b894;font-weight:600;">
-                                <i class="bi bi-check-circle-fill mr-1"></i>
-                                Great! Your resume covers all job description keywords.
-                            </p>
-                        </asp:Panel>
-
-                        <!-- Quick tips -->
-                        <div class="mt-4">
-                            <h6 style="color:var(--primary-light);margin-bottom:8px;">
-                                <i class="bi bi-lightbulb-fill mr-1"></i> Quick ATS Tips
-                            </h6>
-                            <div class="tip-item"><i class="bi bi-check2-circle"></i> Use exact keywords from the job posting — avoid paraphrasing.</div>
-                            <div class="tip-item"><i class="bi bi-check2-circle"></i> Include both acronyms and full forms (e.g. "ML" and "Machine Learning").</div>
-                            <div class="tip-item"><i class="bi bi-check2-circle"></i> Match job title wording exactly at least once.</div>
-                            <div class="tip-item"><i class="bi bi-check2-circle"></i> Avoid tables and images — ATS bots can't read them.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </asp:Panel>
-
-    <!-- Pre-fill helper (if coming from ResumeBuilder session) -->
-    <asp:Panel ID="pnlSessionHint" runat="server" Visible="false">
-        <div class="alert" style="background:rgba(108,92,231,0.12);border:1px solid rgba(108,92,231,0.3);
-                                  border-radius:10px;color:var(--light);font-size:0.9rem;">
-            <i class="bi bi-magic mr-2" style="color:var(--primary-light)"></i>
-            <asp:Label ID="lblSessionHint" runat="server" />
-        </div>
-    </asp:Panel>
-
-
-    <!-- ===== Generated Resume Output Panel ===== -->
-    <asp:Panel ID="pnlGeneratedResume" runat="server" Visible="false">
-        <div class="ats-card" style="border:1px solid rgba(0,184,148,0.4);margin-top:28px;">
-            <div class="card-header" style="color:#00b894;">
-                <i class="bi bi-file-earmark-word-fill"></i> Your Resume is Ready
-            </div>
-            <div class="card-body text-center" style="padding:30px;">
-                <p style="color:#e2e2e2;font-size:1rem;margin-bottom:24px;">
-                    Your ATS-optimised resume has been generated. Download the editable DOCX or print as PDF.
-                </p>
-                <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-                    <asp:HyperLink ID="lnkDownloadDocx" runat="server"
-                        CssClass="btn btn-lg px-5"
-                        style="background:linear-gradient(135deg,#00b894,#00cec9);color:#fff;font-weight:700;box-shadow:0 4px 18px rgba(0,184,148,0.4);border-radius:10px;">
-                        <i class="bi bi-file-word-fill mr-2"></i> Download Editable DOCX
-                    </asp:HyperLink>
-                    <button type="button" class="btn btn-lg px-5" onclick="printResumePreview()"
-                        style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;font-weight:700;box-shadow:0 4px 18px rgba(108,92,231,0.4);border-radius:10px;">
-                        <i class="bi bi-printer-fill mr-2"></i> Save as PDF
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="ats-card mt-4">
-            <div class="card-header"><i class="bi bi-eye-fill"></i> Resume Preview</div>
-            <div class="card-body" style="padding:0;">
-                <div id="resumePreviewFrame" style="background:#fff;border-radius:0 0 16px 16px;padding:40px 50px;font-family:Arial,sans-serif;color:#111;line-height:1.55;">
-                    <asp:Literal ID="litResumePreview" runat="server" />
-                </div>
-            </div>
-        </div>
-    </asp:Panel>
-</div>
-
-<script>
-    (function () {
-        var scoreLabel = document.getElementById('scoreCircle');
-        var scoreNum   = <%: ScoreValue %>;
-
-        if (scoreNum > 0 && scoreLabel) {
-            var color = scoreNum >= 70 ? '#00b894' : scoreNum >= 40 ? '#fdcb6e' : '#e17055';
-            scoreLabel.style.setProperty('--score-color', color);
-            scoreLabel.style.setProperty('--pct', scoreNum + '%');
-        }
-    })();
-    function printResumePreview() {
-        var content = document.getElementById('resumePreviewFrame');
-        if (!content) { window.print(); return; }
-        var win = window.open('', '_blank', 'width=900,height=700');
-        win.document.write('<html><head><title>Resume</title><style>body{font-family:Arial,sans-serif;margin:0.6in;color:#111;line-height:1.5}h1{font-size:22pt;margin:0 0 4px}h2{font-size:12pt;text-transform:uppercase;border-bottom:1px solid #1a5276;color:#1a5276;padding-bottom:2px;margin:16px 0 6px}ul{margin:6px 0 10px 18px}p{margin:4px 0}</style></head><body>');
-        win.document.write(content.innerHTML);
-        win.document.write('</body></html>');
-        win.document.close();
-        setTimeout(function(){ win.print(); }, 500);
-    }
-</script>
-</asp:Content>
-
